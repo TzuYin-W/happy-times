@@ -1,42 +1,108 @@
 <!DOCTYPE html>
-<html lang="zh-Hant" class="light">
+<html lang="zh-Hant" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>快樂時光 · Lyckliga Stunder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>快樂時光 — Google 相簿分享牆</title>
+
+  <!-- iOS / 行動裝置 Web App 主畫面設定與圖示 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="快樂時光" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#FDFBF7" />
+  <link id="app-favicon" rel="icon" type="image/png" sizes="180x180" />
+  <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" />
+
+  <!-- 即時繪製 180x180 北歐小太陽 PNG 圖示（確保 iPhone 加入主畫面正確顯示） -->
+  <script>
+    (function generateWebAppIcons() {
+      try {
+        const size = 180;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        // 陽光黃滿版底色（iOS 會自動裁切為圓角 App 圖示）
+        ctx.fillStyle = '#FFD166';
+        ctx.fillRect(0, 0, size, size);
+
+        // 細緻深海藍內框點綴
+        ctx.strokeStyle = 'rgba(29, 53, 87, 0.12)';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(10, 10, size - 20, size - 20);
+
+        // 繪製 8 道北歐小太陽放射光線
+        const cx = size / 2;
+        const cy = size / 2;
+        ctx.strokeStyle = '#1D3557';
+        ctx.lineWidth = 12;
+        ctx.lineCap = 'round';
+
+        for (let i = 0; i < 8; i++) {
+          const angle = (i * Math.PI) / 4;
+          const x1 = cx + Math.cos(angle) * 46;
+          const y1 = cy + Math.sin(angle) * 46;
+          const x2 = cx + Math.cos(angle) * 66;
+          const y2 = cy + Math.sin(angle) * 66;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+
+        // 繪製太陽中心圓（燕麥奶油白填滿 + 深海藍描邊）
+        ctx.beginPath();
+        ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+        ctx.fillStyle = '#FDFBF7';
+        ctx.fill();
+        ctx.lineWidth = 11;
+        ctx.strokeStyle = '#1D3557';
+        ctx.stroke();
+
+        const pngUrl = canvas.toDataURL('image/png');
+        const appleIcon = document.getElementById('apple-touch-icon');
+        const favicon = document.getElementById('app-favicon');
+        if (appleIcon) appleIcon.href = pngUrl;
+        if (favicon) favicon.href = pngUrl;
+      } catch (e) {
+        console.warn('Web app icon generation skipped:', e);
+      }
+    })();
+  </script>
+
+  <!-- Google Fonts: Fredoka (圓潤北歐標題) + Noto Sans TC + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Quicksand, Nunito & Noto Sans TC -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Quicksand:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Nunito"', '"Noto Sans TC"', 'sans-serif'],
-            display: ['"Quicksand"', '"Noto Sans TC"', 'sans-serif'],
+            sans: ['"Inter"', '"Noto Sans TC"', 'sans-serif'],
+            display: ['"Fredoka"', '"Noto Sans TC"', 'sans-serif']
           },
           colors: {
             oat: {
-              light: '#FFFDF7',
-              warm: '#FAF6EE',
+              light: '#FDFBF7',
+              warm: '#F6F0E4',
+              deep: '#EBE2D0'
             },
             nordic: {
               navy: '#1D3557',
-              navySoft: '#456185',
-              darkBg: '#122136',
-              darkCard: '#1A2D47',
-              darkBorder: '#476A92',
+              navySoft: '#456184',
               yellow: '#FFD166',
-              blue: '#5DA9E9',
-              coral: '#FF7A85',
-              sage: '#76C893',
+              blue: '#8ECAE6',
+              coral: '#FF8FA3',
+              sage: '#95D5B2',
+              darkBg: '#162133',
+              darkCard: '#1F2E46',
+              darkBorder: '#3B5378'
             }
           }
         }
@@ -44,620 +110,499 @@
     };
   </script>
 
-  <style>
-    /* 鎖定水平捲動與觸控優化 */
-    html, body {
-      overflow-x: hidden;
-      max-width: 100vw;
-      -webkit-tap-highlight-color: transparent;
-    }
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-    /* 北歐復古硬質偏移陰影 */
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-image: radial-gradient(rgba(29, 53, 87, 0.08) 1.2px, transparent 1.2px);
+      background-size: 24px 24px;
+    }
+    .dark body {
+      background-image: radial-gradient(rgba(142, 202, 230, 0.08) 1.2px, transparent 1.2px);
+    }
     .nordic-shadow {
       box-shadow: 4px 4px 0px #1D3557;
     }
     .nordic-shadow-sm {
-      box-shadow: 3px 3px 0px #1D3557;
-    }
-    .nordic-shadow-lg {
-      box-shadow: 6px 6px 0px #1D3557;
+      box-shadow: 2.5px 2.5px 0px #1D3557;
     }
     .dark .nordic-shadow {
-      box-shadow: 4px 4px 0px #0A1320;
+      box-shadow: 4px 4px 0px #0B1320;
     }
     .dark .nordic-shadow-sm {
-      box-shadow: 3px 3px 0px #0A1320;
+      box-shadow: 2.5px 2.5px 0px #0B1320;
     }
-    .dark .nordic-shadow-lg {
-      box-shadow: 6px 6px 0px #0A1320;
-    }
-
-    /* 按鈕點擊彈跳手感 */
     .nordic-btn {
-      transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease, background-color 0.2s ease;
+      transition: transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.14s ease;
     }
-    .nordic-btn:hover {
+    .nordic-btn:hover:not(:disabled) {
       transform: translate(-1.5px, -1.5px);
     }
-    .nordic-btn:active {
+    .nordic-btn:active:not(:disabled) {
       transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0px #1D3557 !important;
+      box-shadow: 1px 1px 0px #1D3557;
     }
-    .dark .nordic-btn:active {
-      box-shadow: 1px 1px 0px #0A1320 !important;
-    }
-
-    /* 卡片微動畫 */
     .nordic-card {
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
     }
     .nordic-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-3px);
     }
-
-    /* 拖曳樣式 */
-    .dragging-card {
-      opacity: 0.5;
-      transform: scale(0.97) rotate(-1deg);
+    .drag-over {
+      outline: 3px dashed #FF8FA3;
+      outline-offset: 4px;
     }
-    .drag-over-card {
-      outline: 3px dashed #5DA9E9;
-      outline-offset: 6px;
-    }
-
-    /* 細緻捲軸 */
+    /* 自訂捲軸 */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
     }
     ::-webkit-scrollbar-track {
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
       background: rgba(29, 53, 87, 0.25);
-      border-radius: 9999px;
+      border-radius: 999px;
     }
     .dark ::-webkit-scrollbar-thumb {
-      background: rgba(255, 253, 247, 0.25);
-    }
-
-    /* 淡入彈跳動畫 */
-    @keyframes popIn {
-      0% { opacity: 0; transform: translateY(12px) scale(0.98); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .animate-pop-in {
-      animation: popIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
-
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-6px) rotate(4deg); }
-    }
-    .animate-float {
-      animation: floatSlow 4.5s ease-in-out infinite;
+      background: rgba(142, 202, 230, 0.25);
     }
   </style>
 </head>
-
-<body class="bg-oat-light text-nordic-navy dark:bg-nordic-darkBg dark:text-oat-light font-sans antialiased transition-colors duration-300 min-h-screen flex flex-col relative selection:bg-nordic-yellow selection:text-nordic-navy">
-
-  <!-- 背景北歐幾何裝飾點綴 -->
-  <div class="pointer-events-none fixed inset-0 overflow-hidden z-0 opacity-60 dark:opacity-25">
-    <svg class="absolute -top-10 -right-10 w-52 h-52 text-nordic-yellow/40" viewBox="0 0 200 200" fill="currentColor">
-      <circle cx="100" cy="100" r="80" />
-    </svg>
-    <svg class="absolute top-1/3 -left-12 w-36 h-36 text-nordic-blue/30" viewBox="0 0 120 120" fill="currentColor">
-      <rect x="15" y="15" width="90" height="90" rx="28" transform="rotate(15 60 60)" />
-    </svg>
-    <svg class="absolute bottom-12 right-8 w-28 h-28 text-nordic-coral/30" viewBox="0 0 100 100" fill="currentColor">
-      <path d="M50 5 C60 25, 75 40, 95 50 C75 60, 60 75, 50 95 C40 75, 25 60, 5 50 C25 40, 40 25, 50 5 Z" />
-    </svg>
-  </div>
+<body class="bg-oat-light dark:bg-nordic-darkBg text-nordic-navy dark:text-oat-light min-h-screen flex flex-col selection:bg-nordic-yellow selection:text-nordic-navy overflow-x-hidden">
 
   <!-- ==================== 頂部導覽列 ==================== -->
-  <header class="sticky top-0 z-30 bg-oat-light/90 dark:bg-nordic-darkBg/90 backdrop-blur-md border-b-2 border-nordic-navy dark:border-nordic-darkBorder transition-colors duration-300">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-18 flex items-center justify-between gap-3">
-      <!-- 品牌標誌：北歐太陽小花 + 快樂時光 -->
-      <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 rounded-xl bg-nordic-yellow border-2 border-nordic-navy flex items-center justify-center shrink-0 nordic-shadow-sm">
-          <!-- 手繪感北歐小太陽 SVG -->
-          <svg class="w-5 h-5 text-nordic-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="4" fill="#FF7A85" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+  <header class="sticky top-0 z-30 bg-oat-light/95 dark:bg-nordic-darkBg/95 backdrop-blur-md border-b-2 border-nordic-navy dark:border-nordic-darkBorder">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3">
+      <!-- 品牌 Logo：瑞典小太陽 -->
+      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-nordic-yellow border-2 border-nordic-navy flex items-center justify-center shrink-0 nordic-shadow-sm">
+          <svg viewBox="0 0 36 36" class="w-6 h-6 text-nordic-navy" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <circle cx="18" cy="18" r="6" fill="#FDFBF7"/>
+            <line x1="18" y1="4" x2="18" y2="8"/>
+            <line x1="18" y1="28" x2="18" y2="32"/>
+            <line x1="4" y1="18" x2="8" y2="18"/>
+            <line x1="28" y1="18" x2="32" y2="18"/>
+            <line x1="8.1" y1="8.1" x2="11" y2="11"/>
+            <line x1="25" y1="25" x2="27.9" y2="27.9"/>
+            <line x1="27.9" y1="8.1" x2="25" y2="11"/>
+            <line x1="11" y1="25" x2="8.1" y2="27.9"/>
           </svg>
         </div>
         <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <span class="font-display text-lg sm:text-xl font-bold tracking-wide truncate" id="nav-brand-title">快樂時光</span>
-            <span id="role-badge" class="hidden text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage text-nordic-navy shrink-0"></span>
-          </div>
-          <p class="hidden sm:block text-[10px] font-display font-semibold tracking-widest uppercase text-nordic-navySoft dark:text-nordic-blue">Lyckliga Stunder</p>
+          <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight leading-none truncate">快樂時光</h1>
         </div>
       </div>
 
-      <!-- 右側工具列 -->
-      <div class="flex items-center gap-2 shrink-0">
-        <!-- 一鍵分享按鈕（已授權時顯示） -->
-        <button id="btn-nav-share" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy nordic-shadow-sm nordic-btn" title="複製分享連結">
-          <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">分享網頁</span>
+      <!-- 右側控制區 -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- 深色模式切換 -->
+        <button id="btn-theme-toggle" class="p-2.5 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard hover:bg-nordic-yellow hover:text-nordic-navy nordic-btn" title="切換日/夜模式">
+          <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
         </button>
 
-        <!-- 管理者：訪客視角切換 -->
-        <button id="btn-visitor-preview" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard hover:bg-nordic-yellow hover:text-nordic-navy nordic-shadow-sm nordic-btn" title="切換訪客視角">
-          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline" id="visitor-preview-label">訪客視角</span>
-        </button>
-
-        <!-- 淺色 / 深色模式切換 -->
-        <button id="btn-theme-toggle" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard hover:bg-nordic-yellow hover:text-nordic-navy nordic-shadow-sm nordic-btn" aria-label="切換深淺模式">
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-nordic-yellow"></i>
-        </button>
-
-        <!-- 使用者頭像與登出 -->
-        <div id="user-menu" class="hidden items-center gap-2 pl-2 border-l-2 border-nordic-navy/20 dark:border-nordic-darkBorder/60">
-          <div class="w-8 h-8 rounded-full bg-nordic-coral border-2 border-nordic-navy text-nordic-navy flex items-center justify-center text-xs font-extrabold uppercase" id="user-avatar">G</div>
-          <button id="btn-logout" class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/80 hover:text-nordic-coral transition-colors px-1 py-1">
-            登出
+        <!-- 登入後顯示的功能列 -->
+        <div id="nav-user-controls" class="hidden flex items-center gap-2">
+          <!-- 管理者：訪客視角預覽切換 -->
+          <button id="btn-visitor-toggle" class="hidden items-center gap-1.5 px-3 py-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard text-xs font-bold hover:bg-nordic-sage hover:text-nordic-navy nordic-btn" title="切換訪客視角">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+            <span id="visitor-toggle-label" class="hidden md:inline">訪客視角</span>
           </button>
+
+          <!-- 分享此網頁 -->
+          <button id="btn-share-page" class="flex items-center gap-1.5 px-3 py-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy text-xs font-bold nordic-shadow-sm nordic-btn" title="複製分享連結">
+            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">分享網頁</span>
+          </button>
+
+          <!-- 使用者信箱膠囊與登出 -->
+          <div class="flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard">
+            <span id="nav-user-email" class="text-xs font-semibold max-w-[90px] sm:max-w-[150px] truncate"></span>
+            <button id="btn-logout" class="p-1.5 rounded-full hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="登出">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- ==================== 主內容區 ==================== -->
-  <main class="relative z-10 flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <!-- ==================== 主內容容器 ==================== -->
+  <main class="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
 
-    <!-- 1. 載入中畫面 -->
-    <section id="view-loading" class="py-24 flex flex-col items-center justify-center text-center">
-      <div class="w-12 h-12 rounded-2xl bg-nordic-yellow border-2 border-nordic-navy flex items-center justify-center nordic-shadow animate-bounce mb-4">
-        <i data-lucide="sun" class="w-6 h-6 text-nordic-navy"></i>
+    <!-- 視圖 1：載入中 -->
+    <section id="view-loading" class="min-h-[60vh] flex flex-col items-center justify-center text-center gap-4">
+      <div class="w-16 h-16 rounded-3xl bg-nordic-yellow border-2 border-nordic-navy nordic-shadow flex items-center justify-center animate-bounce">
+        <i data-lucide="sun" class="w-8 h-8 text-nordic-navy"></i>
       </div>
-      <p class="text-sm font-display font-bold tracking-wider text-nordic-navySoft dark:text-oat-light/80">正在開啟快樂時光...</p>
+      <p class="font-display text-lg font-bold tracking-wide">正在開啟快樂時光...</p>
     </section>
 
-    <!-- 2. Gmail 授權登入閘道 -->
-    <section id="view-login" class="hidden max-w-md mx-auto py-8 sm:py-16 animate-pop-in">
-      <div class="relative rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard p-7 sm:p-10 nordic-shadow-lg">
-        <!-- 可愛北歐小花裝飾 -->
-        <div class="absolute -top-6 -right-4 w-12 h-12 rounded-full bg-nordic-coral border-2 border-nordic-navy flex items-center justify-center nordic-shadow-sm animate-float">
-          <svg class="w-6 h-6 text-oat-light" viewBox="0 0 24 24" fill="currentColor">
-            <circle cx="12" cy="12" r="3" fill="#FFD166"/>
-            <circle cx="12" cy="6" r="3"/>
-            <circle cx="12" cy="18" r="3"/>
-            <circle cx="6" cy="12" r="3"/>
-            <circle cx="18" cy="12" r="3"/>
-          </svg>
+    <!-- 視圖 2：Gmail 授權登入閘道 -->
+    <section id="view-login" class="hidden min-h-[68vh] flex items-center justify-center py-4">
+      <div class="w-full max-w-md rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-6 sm:p-8 relative overflow-hidden">
+        <!-- 裝飾小花 SVG -->
+        <svg viewBox="0 0 60 60" class="w-14 h-14 text-nordic-coral/80 absolute -top-3 -right-3 rotate-12 pointer-events-none" fill="currentColor">
+          <circle cx="30" cy="14" r="10"/><circle cx="46" cy="30" r="10"/><circle cx="30" cy="46" r="10"/><circle cx="14" cy="30" r="10"/>
+          <circle cx="30" cy="30" r="9" fill="#FFD166"/>
+        </svg>
+
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold mb-4">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          <span>受邀親友限定相簿牆</span>
         </div>
 
-        <div class="text-center mb-7">
-          <span class="inline-block px-3 py-1 rounded-full bg-nordic-yellow border-2 border-nordic-navy text-nordic-navy text-[11px] font-display font-bold tracking-widest uppercase mb-3">
-            Happy Times · Private
-          </span>
-          <h1 class="font-display text-3xl sm:text-4xl font-bold tracking-wide mb-2" id="login-site-title">快樂時光</h1>
-          <p class="text-sm text-nordic-navySoft dark:text-oat-light/80 leading-relaxed">
-            歡迎來到我們的專屬相簿小天地！<br />請使用受邀的 Gmail 帳號登入以瀏覽回憶。
-          </p>
-        </div>
+        <h2 class="font-display text-2xl sm:text-3xl font-bold leading-snug mb-2">歡迎來到快樂時光</h2>
+        <p class="text-sm text-nordic-navySoft dark:text-oat-light/80 mb-6 leading-relaxed">
+          這裡收藏了我們珍貴的 Google 相簿回憶。請使用受授權的 Gmail 帳號登入以瀏覽與收藏照片。
+        </p>
 
         <!-- Google 正式登入按鈕 -->
-        <button id="btn-google-login" class="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-2xl bg-nordic-blue text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold mb-4">
-          <svg class="w-4 h-4" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        <button id="btn-google-login" class="w-full py-3.5 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 nordic-shadow-sm nordic-btn">
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <path fill="#1D3557" d="M21.35 11.1H12v2.98h5.35c-.23 1.48-1.69 4.35-5.35 4.35-3.22 0-5.85-2.67-5.85-5.93S8.78 6.57 12 6.57c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.68 4.02 14.55 3 12 3 7.03 3 3 7.03 3 12s4.03 9 9 9c5.19 0 8.63-3.65 8.63-8.79 0-.59-.06-1.04-.15-1.11z"/>
           </svg>
-          使用 Google 帳號登入
+          <span>使用 Google 帳號登入</span>
         </button>
 
-        <div id="google-auth-hint" class="hidden text-xs font-medium text-nordic-navy bg-nordic-yellow/60 border-2 border-nordic-navy rounded-2xl p-3 mb-5 leading-relaxed">
-          偵測到目前為預覽環境，Google 彈窗可能受限。請直接使用下方「預覽用 Gmail 驗證」即可體驗完整功能！
-        </div>
+        <p id="google-auth-hint" class="hidden mt-3 text-xs font-semibold text-nordic-coral bg-oat-light dark:bg-nordic-darkBg p-2.5 rounded-xl border border-nordic-coral">
+          若在預覽視窗中無法彈出 Google 登入，請先使用下方「測試用 Gmail」體驗，或部署至正式網域後使用。
+        </p>
 
         <!-- 分隔線 -->
-        <div class="relative my-6">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t-2 border-dashed border-nordic-navy/25 dark:border-nordic-darkBorder"></div>
-          </div>
-          <div class="relative flex justify-center text-[11px] font-bold tracking-wider uppercase">
-            <span class="bg-oat-warm dark:bg-nordic-darkCard px-3 text-nordic-navySoft dark:text-oat-light/70">預覽與測試登入</span>
-          </div>
+        <div class="my-6 flex items-center gap-3">
+          <div class="flex-1 h-0.5 bg-nordic-navy/15 dark:bg-nordic-darkBorder"></div>
+          <span class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/60">或預覽測試用登入</span>
+          <div class="flex-1 h-0.5 bg-nordic-navy/15 dark:bg-nordic-darkBorder"></div>
         </div>
 
-        <!-- 測試用 Gmail 模擬登入 -->
+        <!-- 測試用 Gmail 登入表單 -->
         <form id="form-sim-login" class="space-y-3">
           <div>
-            <label for="input-sim-email" class="block text-xs font-bold mb-1.5">輸入 Gmail 帳號進行驗證</label>
-            <input type="email" id="input-sim-email" required placeholder="happy@gmail.com" class="w-full px-4 py-3 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg focus:outline-none focus:ring-2 focus:ring-nordic-blue transition-all" />
+            <label for="input-sim-email" class="block text-xs font-bold mb-1.5">輸入授權 Gmail（預覽測試用）</label>
+            <input id="input-sim-email" type="email" required placeholder="yourname@gmail.com" class="w-full px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
           </div>
-          <button type="submit" class="w-full py-3 px-4 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold">
-            以此 Gmail 進入相簿
+          <button type="submit" class="w-full py-2.5 px-4 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy font-bold text-sm transition-colors">
+            以此 Gmail 進入
           </button>
-          <p class="text-[11px] text-nordic-navySoft dark:text-oat-light/70 text-center pt-1">
-            小提醒：首位登入的 Gmail 將自動成為管理者 (Admin) ✨
-          </p>
         </form>
       </div>
     </section>
 
-    <!-- 3. 尚未獲得存取權限畫面（親切可愛的瑞典風插畫） -->
-    <section id="view-unauthorized" class="hidden max-w-md mx-auto py-12 sm:py-20 text-center animate-pop-in">
-      <div class="rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard p-8 sm:p-10 nordic-shadow-lg">
-        <!-- 瑞典風可愛小房子與鎖頭插畫 SVG -->
-        <div class="w-24 h-24 mx-auto mb-5 rounded-3xl bg-nordic-yellow/40 border-2 border-nordic-navy flex items-center justify-center">
-          <svg class="w-16 h-16" viewBox="0 0 80 80" fill="none">
-            <!-- 北歐小紅屋 -->
-            <path d="M14 38L40 16L66 38V64H14V38Z" fill="#FF7A85" stroke="#1D3557" stroke-width="3" stroke-linejoin="round"/>
-            <!-- 屋頂煙囪 -->
-            <rect x="50" y="18" width="8" height="12" fill="#FFD166" stroke="#1D3557" stroke-width="3"/>
-            <!-- 圓拱門 -->
-            <path d="M32 64V48C32 43.5817 35.5817 40 40 40C44.4183 40 48 43.5817 48 48V64H32Z" fill="#FFFDF7" stroke="#1D3557" stroke-width="3"/>
-            <!-- 門把 -->
-            <circle cx="43" cy="53" r="2" fill="#1D3557"/>
-            <!-- 小雲朵 -->
-            <path d="M12 20C12 17.5 14 16 16.5 16C17.5 13.5 20 12 22.5 13C24.5 13.5 26 15.5 26 18C27.5 18 28.5 19.2 28.5 20.5C28.5 22 27.2 23 25.5 23H14.5C13 23 12 21.8 12 20Z" fill="#5DA9E9" stroke="#1D3557" stroke-width="2.5"/>
-          </svg>
+    <!-- 視圖 3：未授權提示頁 -->
+    <section id="view-unauthorized" class="hidden min-h-[65vh] flex items-center justify-center py-4">
+      <div class="w-full max-w-md rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-7 text-center">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-nordic-coral border-2 border-nordic-navy flex items-center justify-center nordic-shadow-sm">
+          <i data-lucide="shield-alert" class="w-8 h-8 text-nordic-navy"></i>
         </div>
-
-        <span class="inline-block px-3 py-1 rounded-full bg-nordic-coral/30 border-2 border-nordic-navy text-xs font-bold mb-3">
-          敲敲門 · 尚未開放
-        </span>
-        <h2 class="font-display text-2xl font-bold mb-2">這扇門還沒有鑰匙喔！</h2>
-        <p class="text-sm text-nordic-navySoft dark:text-oat-light/80 leading-relaxed mb-5">
-          您的 Gmail 帳號目前不在「快樂時光」的邀請名單中。請聯絡相簿主人將您加入授權名單，或切換其他已受邀的帳號。
+        <h2 class="font-display text-2xl font-bold mb-2">此帳號尚未獲得授權</h2>
+        <p class="text-sm text-nordic-navySoft dark:text-oat-light/80 mb-2">
+          目前登入信箱：<span id="unauth-email" class="font-bold text-nordic-navy dark:text-nordic-yellow"></span>
         </p>
-
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-oat-light dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder text-xs font-bold mb-6 max-w-full truncate">
-          <i data-lucide="mail" class="w-3.5 h-3.5 shrink-0 text-nordic-coral"></i>
-          <span id="unauth-email-display" class="truncate"></span>
-        </div>
-
-        <button id="btn-unauth-switch" class="w-full py-3 px-4 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold">
+        <p class="text-xs text-nordic-navySoft dark:text-oat-light/70 mb-6 leading-relaxed">
+          請聯繫相簿管理者將您的 Gmail 加入「授權親友名單」，或切換其他已授權的 Google 帳號。
+        </p>
+        <button id="btn-unauth-switch" class="w-full py-3 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
           切換其他 Gmail 帳號
         </button>
       </div>
     </section>
 
-    <!-- 4. 主相簿牆畫面（已授權） -->
-    <section id="view-gallery" class="hidden animate-pop-in">
-
-      <!-- 活潑北歐風頁首區塊 -->
-      <div class="relative rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard p-6 sm:p-8 mb-8 sm:mb-10 nordic-shadow">
-        <!-- 波浪裝飾線 -->
-        <svg class="hidden sm:block absolute top-6 right-8 w-24 h-6 text-nordic-sage" viewBox="0 0 120 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
-          <path d="M4 14 Q 18 2, 32 14 T 60 14 T 88 14 T 116 14" />
+    <!-- 視圖 4：主相簿牆 -->
+    <section id="view-gallery" class="hidden space-y-6 sm:space-y-8">
+      <!-- 歡迎橫幅（瑞典風格插畫感） -->
+      <div class="rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-5 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+        <!-- 北歐小波浪裝飾 -->
+        <svg viewBox="0 0 200 24" class="w-40 h-5 text-nordic-blue/40 absolute bottom-2 right-6 pointer-events-none hidden sm:block" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <path d="M2 14 Q 20 2, 38 14 T 74 14 T 110 14 T 146 14 T 182 14"/>
         </svg>
 
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div class="max-w-2xl">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nordic-yellow border-2 border-nordic-navy text-nordic-navy text-[11px] font-display font-bold tracking-widest uppercase mb-3">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-              Lyckliga Stunder · Happy Times
-            </div>
-            <h1 id="site-title" class="font-display text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-2.5">快樂時光</h1>
-            <p id="site-subtitle" class="text-sm sm:text-base text-nordic-navySoft dark:text-oat-light/80 leading-relaxed">
-              收藏我們最燦爛的旅行與日常笑聲！點擊任一相簿封面，即可預覽精選照片或前往 Google 相簿儲存高畫質原圖。
-            </p>
+        <div class="space-y-1.5 relative z-10">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="role-badge" class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold">
+              <i data-lucide="sparkles" class="w-3 h-3"></i>
+              <span>管理者模式</span>
+            </span>
+            <span id="album-count-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-oat-light dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder text-xs font-bold">
+              0 本相簿
+            </span>
           </div>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold">我們的快樂時光相簿集</h2>
+          <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/80">
+            點選任意相簿即可預覽精選照片、直接下載保存，或一鍵跳轉 Google 相簿 App 瀏覽全部原圖。
+          </p>
+        </div>
 
-          <!-- 管理者操作列 -->
-          <div id="admin-toolbar" class="hidden flex-wrap items-center gap-2.5 shrink-0">
-            <button id="btn-add-album" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
-              <i data-lucide="plus" class="w-4 h-4"></i>
-              新增相簿
-            </button>
-            <button id="btn-manage-access" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-nordic-sage text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
-              <i data-lucide="users" class="w-4 h-4"></i>
-              權限管理
-            </button>
-            <button id="btn-edit-site" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-oat-light dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
-              <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-              頁面設定
-            </button>
-          </div>
+        <!-- 管理者快捷操作列 -->
+        <div id="admin-toolbar" class="hidden flex flex-wrap items-center gap-2.5 relative z-10">
+          <button id="btn-open-add-album" class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm nordic-btn">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>新增 Google 相簿</span>
+          </button>
+          <button id="btn-open-access" class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm nordic-btn">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>授權名單</span>
+          </button>
         </div>
       </div>
 
-      <!-- 訪客預覽模式提示條 -->
-      <div id="visitor-preview-banner" class="hidden mb-6 px-4 py-3 rounded-2xl bg-nordic-blue/25 border-2 border-nordic-navy dark:border-nordic-darkBorder flex items-center justify-between gap-3 text-xs sm:text-sm font-bold">
-        <div class="flex items-center gap-2">
-          <i data-lucide="eye" class="w-4 h-4 shrink-0 text-nordic-blue"></i>
-          <span>目前正以「受邀訪客視角」預覽快樂時光</span>
+      <!-- 搜尋與提示列 -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="relative w-full sm:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-nordic-navySoft dark:text-oat-light/60"></i>
+          <input id="input-search" type="text" placeholder="搜尋相簿名稱、標籤或備註..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-nordic-yellow" />
         </div>
-        <button id="btn-exit-visitor-preview" class="px-3 py-1 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs shrink-0 hover:opacity-90">返回管理</button>
+        <p id="drag-hint" class="hidden text-xs font-semibold text-nordic-navySoft dark:text-oat-light/70 flex items-center gap-1.5">
+          <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
+          <span>電腦版可拖曳卡片排序，手機版可用箭頭調整順序</span>
+        </p>
       </div>
 
       <!-- 空狀態提示 -->
-      <div id="empty-albums-state" class="hidden py-16 px-6 text-center rounded-3xl border-2 border-dashed border-nordic-navy/40 dark:border-nordic-darkBorder bg-oat-warm/60 dark:bg-nordic-darkCard/50">
-        <div class="w-16 h-16 rounded-2xl bg-nordic-yellow/50 border-2 border-nordic-navy flex items-center justify-center mx-auto mb-4">
-          <i data-lucide="camera" class="w-8 h-8 text-nordic-navy"></i>
+      <div id="empty-albums-state" class="hidden rounded-3xl border-2 border-dashed border-nordic-navy/40 dark:border-nordic-darkBorder bg-oat-warm/60 dark:bg-nordic-darkCard/50 p-10 text-center space-y-3">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-nordic-blue border-2 border-nordic-navy flex items-center justify-center nordic-shadow-sm">
+          <i data-lucide="images" class="w-7 h-7 text-nordic-navy"></i>
         </div>
-        <p class="font-display text-xl font-bold mb-1.5">還沒有相簿喔！</p>
-        <p class="text-sm text-nordic-navySoft dark:text-oat-light/75 mb-5">貼上 Google 相簿分享連結，馬上建立第一張可愛的相簿卡片。</p>
-        <button id="btn-empty-add" class="hidden inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          新增第一個相簿
-        </button>
+        <h3 class="font-display text-lg font-bold">目前還沒有相簿喔！</h3>
+        <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/75">點擊上方「新增 Google 相簿」，貼上分享連結就能建立第一本相簿。</p>
       </div>
 
-      <!-- 相簿卡片牆 -->
-      <div id="albums-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+      <!-- 相簿卡片牆（手機版 3 欄並排，平板 3 欄，桌面 4 欄） -->
+      <div id="albums-grid" class="grid grid-cols-3 gap-2.5 sm:gap-5 md:gap-6 lg:grid-cols-4">
         <!-- 動態渲染相簿卡片 -->
       </div>
     </section>
   </main>
 
   <!-- ==================== 頁尾 ==================== -->
-  <footer class="relative z-10 mt-auto py-8 border-t-2 border-nordic-navy/15 dark:border-nordic-darkBorder/60">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-display font-bold text-nordic-navySoft dark:text-oat-light/75">
-      <div class="flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-nordic-yellow border border-nordic-navy"></span>
-        <span class="w-2.5 h-2.5 rounded-full bg-nordic-blue border border-nordic-navy"></span>
-        <span class="w-2.5 h-2.5 rounded-full bg-nordic-coral border border-nordic-navy"></span>
-        <span class="w-2.5 h-2.5 rounded-full bg-nordic-sage border border-nordic-navy"></span>
-        <span class="ml-1 tracking-wider uppercase">Lyckliga Stunder</span>
-      </div>
-      <span>快樂時光 · Designed by TZU YIN WANG (SARAH)</span>
-    </div>
+  <footer class="mt-auto py-6 text-center text-xs font-semibold text-nordic-navySoft dark:text-oat-light/60">
+    <p>快樂時光 — 專屬親友的 Google 相簿收藏牆</p>
   </footer>
 
   <!-- ==================== 彈窗 1：相簿檢視燈箱 ==================== -->
-  <div id="modal-viewer" class="hidden fixed inset-0 z-50 bg-nordic-navy/65 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6">
-    <div class="bg-oat-light dark:bg-nordic-darkCard w-full sm:max-w-3xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-lg flex flex-col overflow-hidden animate-pop-in">
+  <div id="modal-viewer" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+    <div class="w-full max-w-2xl max-h-[90vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
       <!-- 燈箱標頭 -->
-      <div class="flex items-center justify-between px-5 sm:px-6 py-4 bg-oat-warm dark:bg-nordic-darkBg/60 border-b-2 border-nordic-navy dark:border-nordic-darkBorder shrink-0">
-        <div class="min-w-0 pr-4">
-          <span id="viewer-tag-badge" class="inline-block px-2.5 py-0.5 rounded-full border-2 border-nordic-navy text-[11px] font-bold text-nordic-navy mb-1"></span>
-          <h3 id="viewer-title" class="font-display text-xl sm:text-2xl font-bold truncate"></h3>
+      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <span id="viewer-tag" class="inline-block px-2.5 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border border-nordic-navy text-[11px] font-bold mb-1"></span>
+          <h3 id="viewer-title" class="font-display text-lg sm:text-xl font-bold truncate"></h3>
         </div>
-        <button id="btn-close-viewer" class="p-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors shrink-0">
-          <i data-lucide="x" class="w-5 h-5"></i>
+        <button data-close-modal="modal-viewer" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors shrink-0">
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <!-- 燈箱內容 -->
       <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
-        <!-- 封面大圖 -->
-        <div class="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg">
-          <img id="viewer-cover" src="" alt="相簿封面" class="w-full h-full object-cover" />
+        <!-- 封面大圖（自適應填滿顯示框） -->
+        <div class="relative aspect-[4/3] sm:aspect-[16/10] w-full rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg">
+          <img id="viewer-cover" src="" alt="相簿封面" onerror="this.src='https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover object-center block" />
         </div>
 
-        <!-- 簡短備註 -->
-        <p id="viewer-note" class="hidden text-sm text-nordic-navySoft dark:text-oat-light/85 bg-oat-warm dark:bg-nordic-darkBg/60 px-4 py-3 rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder leading-relaxed"></p>
+        <!-- 備註說明 -->
+        <p id="viewer-note" class="hidden text-sm text-nordic-navySoft dark:text-oat-light/85 bg-oat-warm dark:bg-nordic-darkBg p-3.5 rounded-2xl border-2 border-nordic-navy/15 dark:border-nordic-darkBorder leading-relaxed"></p>
 
-        <!-- 主要動作按鈕 -->
-        <div class="flex flex-col sm:flex-row gap-3">
-          <a id="viewer-open-google" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold text-center">
+        <!-- 主要動作按鈕：跳轉 Google 相簿 App 與下載封面 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <a id="viewer-gphotos-link" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
             <i data-lucide="external-link" class="w-4 h-4"></i>
-            前往 Google 相簿開啟 / 儲存原圖
+            <span>開啟 Google 相簿看全部</span>
           </a>
-          <button id="viewer-copy-url" class="inline-flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-sm nordic-btn text-sm font-bold">
-            <i data-lucide="link" class="w-4 h-4"></i>
-            複製相簿連結
+          <button id="viewer-download-cover" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>直接儲存封面照片</span>
           </button>
         </div>
-        <p class="text-xs text-nordic-navySoft dark:text-oat-light/70 text-center sm:text-left">
-          💡 手機點擊「前往 Google 相簿」會自動喚起 Google 相簿 App，方便瀏覽全部高畫質原圖並一鍵存進手機喔！
-        </p>
 
-        <!-- 精選照片預覽區 -->
-        <div id="viewer-featured-section" class="hidden pt-4 border-t-2 border-dashed border-nordic-navy/20 dark:border-nordic-darkBorder">
-          <div class="flex items-center justify-between mb-3">
-            <h4 class="text-xs font-display font-bold tracking-wider uppercase flex items-center gap-1.5">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-nordic-coral"></i>
-              精選照片搶先看（點擊可放大與直接儲存）
+        <!-- 精選照片牆（可點擊放大與直接下載） -->
+        <div id="viewer-featured-section" class="hidden space-y-3 pt-2 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder">
+          <div class="flex items-center justify-between">
+            <h4 class="font-display text-sm font-bold flex items-center gap-1.5">
+              <i data-lucide="camera" class="w-4 h-4 text-nordic-coral"></i>
+              <span>精選照片（可直接下載儲存）</span>
             </h4>
-            <span id="viewer-featured-count" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-nordic-sage/40 border border-nordic-navy"></span>
+            <span id="viewer-featured-count" class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/70"></span>
           </div>
-          <div id="viewer-featured-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <!-- 動態渲染精選照片 -->
-          </div>
+          <div id="viewer-featured-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== 彈窗 1B：單張照片全螢幕放大與直接下載 ==================== -->
-  <div id="modal-photo-zoom" class="hidden fixed inset-0 z-[60] bg-nordic-navy/95 backdrop-blur-md flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-4xl flex items-center justify-between mb-4 text-oat-light">
-      <span class="text-xs font-display font-bold tracking-widest uppercase">Photo Preview</span>
-      <div class="flex items-center gap-2.5">
-        <button id="btn-download-zoomed" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold hover:opacity-90 transition-opacity">
-          <i data-lucide="download" class="w-4 h-4"></i>
-          直接儲存照片
-        </button>
-        <button id="btn-close-zoom" class="p-2 rounded-full bg-oat-light/15 hover:bg-nordic-coral text-oat-light transition-colors">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-    </div>
-    <img id="zoomed-photo-img" src="" alt="放大照片" class="max-h-[78vh] max-w-full rounded-2xl border-2 border-oat-light/30 object-contain shadow-2xl" />
-  </div>
-
-  <!-- ==================== 彈窗 2：新增 / 編輯相簿（Admin） ==================== -->
-  <div id="modal-album-editor" class="hidden fixed inset-0 z-50 bg-nordic-navy/65 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6">
-    <div class="bg-oat-light dark:bg-nordic-darkCard w-full sm:max-w-xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-lg flex flex-col overflow-hidden animate-pop-in">
-      <div class="flex items-center justify-between px-6 py-4 bg-oat-warm dark:bg-nordic-darkBg/60 border-b-2 border-nordic-navy dark:border-nordic-darkBorder shrink-0">
-        <h3 id="editor-modal-title" class="font-display text-xl font-bold">新增相簿</h3>
-        <button id="btn-close-editor" class="p-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral transition-colors">
-          <i data-lucide="x" class="w-5 h-5"></i>
+  <!-- ==================== 彈窗 2：新增 / 編輯相簿 ==================== -->
+  <div id="modal-album-editor" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+    <div class="w-full max-w-xl max-h-[92vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
+      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between">
+        <h3 id="editor-modal-title" class="font-display text-lg font-bold">新增 Google 相簿</h3>
+        <button data-close-modal="modal-album-editor" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <form id="form-album" class="flex-1 overflow-y-auto p-6 space-y-5">
-        <input type="hidden" id="album-id" />
+      <form id="form-album-editor" class="flex-1 overflow-y-auto p-5 space-y-4">
+        <input type="hidden" id="edit-album-id" />
 
         <!-- Google 相簿連結 + 自動抓取 -->
         <div>
           <label class="block text-xs font-bold mb-1.5">Google 相簿分享連結 *</label>
           <div class="flex gap-2">
-            <input type="url" id="album-url" required placeholder="https://photos.app.goo.gl/..." class="flex-1 px-3.5 py-2.5 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
-            <button type="button" id="btn-fetch-meta" class="px-3.5 py-2.5 rounded-2xl bg-nordic-blue text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs font-bold shrink-0 inline-flex items-center gap-1.5">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-              抓取封面
+            <input id="input-album-url" type="url" required placeholder="https://photos.app.goo.gl/..." class="flex-1 px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+            <button type="button" id="btn-fetch-meta" class="px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-blue text-nordic-navy font-bold text-xs whitespace-nowrap nordic-shadow-sm nordic-btn flex items-center gap-1.5">
+              <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+              <span>抓取封面</span>
             </button>
           </div>
-          <p id="fetch-status" class="text-xs font-medium text-nordic-blue mt-1.5 hidden"></p>
+          <p id="fetch-status" class="mt-1 text-[11px] font-semibold text-nordic-navySoft dark:text-oat-light/70"></p>
         </div>
 
-        <!-- 相簿名稱與日期/標籤 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- 相簿名稱與小標籤 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold mb-1.5">相簿名稱 *</label>
-            <input type="text" id="album-title" required placeholder="例如：斯德哥爾摩夏日野餐" class="w-full px-3.5 py-2.5 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none" />
+            <input id="input-album-title" type="text" required placeholder="例如：2026 北海道冬日旅行" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
           </div>
           <div>
-            <label class="block text-xs font-bold mb-1.5">可愛標籤 / 日期</label>
-            <input type="text" id="album-subtitle" placeholder="例如：2026.08 · 旅行" class="w-full px-3.5 py-2.5 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none" />
+            <label class="block text-xs font-bold mb-1.5">小標籤（日期 / 地點）</label>
+            <input id="input-album-subtitle" type="text" placeholder="例如：2026.02 家族出遊" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
           </div>
         </div>
 
-        <!-- 北歐粉彩色塊標籤選擇 -->
+        <!-- 卡片標籤色系 -->
         <div>
-          <label class="block text-xs font-bold mb-2">卡片標籤色系</label>
-          <div class="flex items-center gap-3" id="color-picker-group">
+          <label class="block text-xs font-bold mb-1.5">北歐標籤色彩</label>
+          <div class="flex flex-wrap gap-2" id="color-picker-group">
             <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="yellow" class="peer hidden" checked />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-nordic-navy peer-checked:ring-offset-2 transition-all">陽光黃</span>
+              <input type="radio" name="album-color" value="yellow" checked class="sr-only peer" />
+              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">☀️ 陽光黃</span>
             </label>
             <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="blue" class="peer hidden" />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-nordic-blue text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-nordic-navy peer-checked:ring-offset-2 transition-all">峽灣藍</span>
+              <input type="radio" name="album-color" value="blue" class="sr-only peer" />
+              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-blue text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌊 峽灣藍</span>
             </label>
             <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="coral" class="peer hidden" />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-nordic-coral text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-nordic-navy peer-checked:ring-offset-2 transition-all">莓果粉</span>
+              <input type="radio" name="album-color" value="coral" class="sr-only peer" />
+              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-coral text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🍓 莓果粉</span>
             </label>
             <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="sage" class="peer hidden" />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-nordic-navy peer-checked:ring-offset-2 transition-all">鼠尾草綠</span>
+              <input type="radio" name="album-color" value="sage" class="sr-only peer" />
+              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌿 鼠尾草綠</span>
             </label>
           </div>
-        </div>
-
-        <!-- 簡短備註 -->
-        <div>
-          <label class="block text-xs font-bold mb-1.5">簡短備註（選填）</label>
-          <input type="text" id="album-note" placeholder="寫一句關於這本相簿的快樂小記..." class="w-full px-3.5 py-2.5 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none" />
         </div>
 
         <!-- 封面圖片預覽與備援上傳 -->
         <div>
           <label class="block text-xs font-bold mb-1.5">封面圖片（自動抓取、貼上網址或本機上傳）</label>
           <div class="flex flex-col sm:flex-row gap-3 items-start">
-            <div class="w-full sm:w-36 aspect-[4/3] rounded-2xl overflow-hidden bg-oat-warm dark:bg-nordic-darkBg shrink-0 border-2 border-nordic-navy dark:border-nordic-darkBorder">
-              <img id="album-cover-preview" src="https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" class="w-full h-full object-cover" />
+            <div class="w-full sm:w-36 aspect-square sm:aspect-[4/3] rounded-2xl overflow-hidden bg-oat-warm dark:bg-nordic-darkBg shrink-0 border-2 border-nordic-navy dark:border-nordic-darkBorder">
+              <img id="album-cover-preview" src="https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" onerror="this.src='https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview'" class="w-full h-full object-cover object-center block" />
             </div>
             <div class="flex-1 w-full space-y-2">
-              <input type="text" id="album-cover-url" placeholder="自動抓取或手動貼上圖片網址..." class="w-full px-3 py-2 text-xs rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none" />
-              <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder hover:bg-nordic-yellow hover:text-nordic-navy cursor-pointer text-xs font-bold transition-colors">
+              <input id="input-album-cover" type="text" placeholder="貼上圖片網址，或由下方上傳" class="w-full px-3.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-xs focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+              <label class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy text-xs font-bold cursor-pointer transition-colors">
                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                從手機 / 電腦上傳封面（自動壓縮）
-                <input type="file" id="input-upload-cover" accept="image/*" class="hidden" />
+                <span>從裝置上傳封面（自動壓縮）</span>
+                <input id="input-cover-file" type="file" accept="image/*" class="hidden" />
               </label>
             </div>
           </div>
         </div>
 
-        <!-- 精選照片預覽（可選） -->
-        <div class="pt-4 border-t-2 border-dashed border-nordic-navy/20 dark:border-nordic-darkBorder">
+        <!-- 備註 -->
+        <div>
+          <label class="block text-xs font-bold mb-1.5">相簿備註（選填）</label>
+          <textarea id="input-album-note" rows="2" placeholder="寫一段關於這趟旅程或活動的小故事..." class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue"></textarea>
+        </div>
+
+        <!-- 精選照片上傳（選填，最多 4 張） -->
+        <div class="pt-2 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder">
           <div class="flex items-center justify-between mb-2">
-            <label class="text-xs font-bold">精選照片預覽（選填，最多 6 張供訪客直接下載）</label>
-            <label class="inline-flex items-center gap-1 text-xs font-bold text-nordic-blue underline cursor-pointer hover:opacity-80">
+            <label class="text-xs font-bold">上傳精選照片（選填，最多 4 張供網頁直接下載）</label>
+            <label class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage text-nordic-navy text-xs font-bold cursor-pointer">
               <i data-lucide="image-plus" class="w-3.5 h-3.5"></i>
-              上傳照片
-              <input type="file" id="input-upload-featured" accept="image/*" multiple class="hidden" />
+              <span>加入照片</span>
+              <input id="input-featured-files" type="file" accept="image/*" multiple class="hidden" />
             </label>
           </div>
-          <div class="flex gap-2 mb-3">
-            <input type="url" id="input-featured-url" placeholder="或貼上精選照片網址..." class="flex-1 px-3 py-2 text-xs rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none" />
-            <button type="button" id="btn-add-featured-url" class="px-3.5 py-2 rounded-xl bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold">加入</button>
-          </div>
-          <div id="editor-featured-list" class="grid grid-cols-3 gap-2.5">
-            <!-- 動態顯示已加入的精選照片 -->
-          </div>
+          <div id="editor-featured-list" class="grid grid-cols-4 gap-2"></div>
         </div>
-      </form>
 
-      <div class="px-6 py-4 bg-oat-warm dark:bg-nordic-darkBg/60 border-t-2 border-nordic-navy dark:border-nordic-darkBorder flex items-center justify-end gap-2.5 shrink-0">
-        <button type="button" id="btn-cancel-editor" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold hover:bg-nordic-navy/10 transition-colors">取消</button>
-        <button type="submit" form="form-album" id="btn-save-album" class="px-5 py-2.5 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">儲存相簿</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 彈窗 3：Gmail 權限管理（Admin） ==================== -->
-  <div id="modal-access" class="hidden fixed inset-0 z-50 bg-nordic-navy/65 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-6">
-    <div class="bg-oat-light dark:bg-nordic-darkCard w-full sm:max-w-lg max-h-[88vh] rounded-t-3xl sm:rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-lg flex flex-col overflow-hidden animate-pop-in">
-      <div class="flex items-center justify-between px-6 py-4 bg-oat-warm dark:bg-nordic-darkBg/60 border-b-2 border-nordic-navy dark:border-nordic-darkBorder">
-        <h3 class="font-display text-xl font-bold">Gmail 權限管理</h3>
-        <button id="btn-close-access" class="p-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral transition-colors">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-6 space-y-5">
-        <div>
-          <label class="block text-xs font-bold mb-1.5">批次新增授權 Gmail（支援逗號或換行貼上多個）</label>
-          <textarea id="input-add-emails" rows="3" placeholder="friend1@gmail.com, friend2@gmail.com" class="w-full px-3.5 py-2.5 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none"></textarea>
-          <button id="btn-submit-emails" class="mt-2.5 w-full py-2.5 rounded-2xl bg-nordic-sage text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
-            加入授權名單
+        <!-- 提交按鈕 -->
+        <div class="pt-3 flex justify-end gap-2.5">
+          <button type="button" data-close-modal="modal-album-editor" class="px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">
+            取消
+          </button>
+          <button type="submit" id="btn-save-album" class="px-5 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
+            儲存相簿
           </button>
         </div>
-
-        <div class="pt-3 border-t-2 border-dashed border-nordic-navy/20 dark:border-nordic-darkBorder">
-          <p class="text-xs font-bold mb-3">目前已授權帳號</p>
-          <ul id="allowed-emails-list" class="space-y-2">
-            <!-- 動態渲染名單 -->
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 彈窗 4：頁面標題與簡介設定（Admin） ==================== -->
-  <div id="modal-site-settings" class="hidden fixed inset-0 z-50 bg-nordic-navy/65 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-oat-light dark:bg-nordic-darkCard w-full max-w-md rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-lg overflow-hidden animate-pop-in">
-      <div class="flex items-center justify-between px-6 py-4 bg-oat-warm dark:bg-nordic-darkBg/60 border-b-2 border-nordic-navy dark:border-nordic-darkBorder">
-        <h3 class="font-display text-xl font-bold">頁面標題與簡介</h3>
-        <button id="btn-close-site-settings" class="p-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral transition-colors">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-      <form id="form-site-settings" class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-bold mb-1.5">網站主標題</label>
-          <input type="text" id="input-site-title" required class="w-full px-3.5 py-2.5 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold mb-1.5">網站簡介文字</label>
-          <textarea id="input-site-subtitle" rows="3" class="w-full px-3.5 py-2.5 text-sm rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg focus:outline-none"></textarea>
-        </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" id="btn-cancel-site-settings" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold hover:bg-nordic-navy/10">取消</button>
-          <button type="submit" class="px-5 py-2.5 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">儲存設定</button>
-        </div>
       </form>
     </div>
   </div>
 
-  <!-- ==================== 彈窗 5：自訂確認對話框 ==================== -->
-  <div id="modal-confirm" class="hidden fixed inset-0 z-[70] bg-nordic-navy/65 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-oat-light dark:bg-nordic-darkCard w-full max-w-sm rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder p-6 nordic-shadow-lg animate-pop-in">
-      <h4 id="confirm-title" class="font-display text-lg font-bold mb-2">確認操作</h4>
-      <p id="confirm-message" class="text-sm text-nordic-navySoft dark:text-oat-light/80 mb-6"></p>
-      <div class="flex justify-end gap-2.5">
-        <button id="btn-confirm-cancel" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold hover:bg-nordic-navy/10">取消</button>
-        <button id="btn-confirm-ok" class="px-4 py-2 rounded-xl bg-nordic-coral text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">確認刪除</button>
+  <!-- ==================== 彈窗 3：授權 Gmail 名單管理 ==================== -->
+  <div id="modal-access" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+    <div class="w-full max-w-lg max-h-[88vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
+      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between">
+        <h3 class="font-display text-lg font-bold flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-5 h-5 text-nordic-sage"></i>
+          <span>Gmail 授權名單管理</span>
+        </h3>
+        <button data-close-modal="modal-access" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5 space-y-5">
+        <div class="p-3.5 rounded-2xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy/15 dark:border-nordic-darkBorder text-xs space-y-1">
+          <p class="font-bold">管理者帳號：<span id="access-admin-email" class="text-nordic-navySoft dark:text-nordic-yellow"></span></p>
+          <p class="text-nordic-navySoft dark:text-oat-light/70">只有在下方名單中的 Gmail 帳號才能檢視相簿牆（支援批次貼上，以逗號或換行分隔）。</p>
+        </div>
+
+        <form id="form-add-emails" class="space-y-2.5">
+          <label class="block text-xs font-bold">新增授權 Gmail</label>
+          <textarea id="input-new-emails" rows="2" placeholder="friend1@gmail.com, friend2@gmail.com" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-sage"></textarea>
+          <button type="submit" class="w-full py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-sage text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
+            加入授權名單
+          </button>
+        </form>
+
+        <div>
+          <h4 class="text-xs font-bold mb-2">已授權的親友名單（<span id="allowed-count">0</span>）</h4>
+          <ul id="allowed-emails-list" class="space-y-2"></ul>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== Toast 通知訊息 ==================== -->
-  <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] pointer-events-none flex flex-col gap-2 w-[90vw] max-w-sm items-center"></div>
+  <!-- ==================== 彈窗 4：確認刪除對話框 ==================== -->
+  <div id="modal-confirm" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow p-6 text-center space-y-4">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-nordic-coral border-2 border-nordic-navy flex items-center justify-center">
+        <i data-lucide="trash-2" class="w-6 h-6 text-nordic-navy"></i>
+      </div>
+      <div>
+        <h3 class="font-display text-lg font-bold mb-1">確定要刪除這本相簿嗎？</h3>
+        <p id="confirm-album-name" class="text-xs text-nordic-navySoft dark:text-oat-light/75"></p>
+      </div>
+      <div class="flex gap-2.5 pt-1">
+        <button id="btn-confirm-cancel" class="flex-1 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">取消</button>
+        <button id="btn-confirm-delete" class="flex-1 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-coral text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">確認刪除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Toast 提示條 ==================== -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
+    <div class="px-5 py-2.5 rounded-full border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm flex items-center gap-2 whitespace-nowrap">
+      <i data-lucide="sparkles" class="w-4 h-4"></i>
+      <span id="toast-message"></span>
+    </div>
+  </div>
 
   <!-- ==================== JavaScript & Firebase 邏輯 ==================== -->
   <script type="module">
@@ -667,7 +612,11 @@
       signInAnonymously,
       signInWithCustomToken,
       GoogleAuthProvider,
-      signInWithPopup
+      signInWithPopup,
+      onAuthStateChanged,
+      setPersistence,
+      browserLocalPersistence,
+      signOut
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import {
       getFirestore,
@@ -681,6 +630,7 @@
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // ==================== 1. Firebase 初始化 ====================
+    // 部署至 GitHub Pages / Vercel 時，請將下方 firebaseConfig 替換為您的 Firebase 專案設定碼
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'happy-times-archive';
     const firebaseConfig = {
   apiKey: "AIzaSyCEPIQ7ziVpGgdUlYMk4982djktit9Kouk",
@@ -690,191 +640,189 @@
   messagingSenderId: "356799091424",
   appId: "1:356799091424:web:26947c642c2527f8cb7685",
   measurementId: "G-RGW6QSYY5L"
-}
+};
 
-    let app, auth, db;
+    // 測試用 Email 持久化儲存鍵值
+    const SIM_EMAIL_STORAGE_KEY = 'happy_times_sim_email';
+    const LOCAL_ALBUMS_KEY = 'happy_times_local_albums';
+    const LOCAL_SETTINGS_KEY = 'happy_times_local_settings';
+
+    let app = null;
+    let auth = null;
+    let db = null;
     let firebaseReady = false;
 
     if (firebaseConfig) {
-      app = initializeApp(firebaseConfig);
-      auth = getAuth(app);
-      db = getFirestore(app);
-      firebaseReady = true;
+      try {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        firebaseReady = true;
+      } catch (err) {
+        console.error('Firebase init failed:', err);
+      }
     }
 
-    // 北歐粉彩色塊對應表
-    const COLOR_MAP = {
-      yellow: { bg: 'bg-nordic-yellow', label: '陽光黃' },
-      blue:   { bg: 'bg-nordic-blue',   label: '峽灣藍' },
-      coral:  { bg: 'bg-nordic-coral',  label: '莓果粉' },
-      sage:   { bg: 'bg-nordic-sage',   label: '鼠尾草綠' }
-    };
-    const COLOR_KEYS = ['yellow', 'blue', 'coral', 'sage'];
+    // ==================== 2. 狀態管理與工具函式 ====================
+    const $ = (id) => document.getElementById(id);
 
-    // ==================== 2. 應用程式狀態 ====================
     const state = {
       firebaseUser: null,
       currentEmail: null,
-      isAdmin: false,
-      isAuthorized: false,
       visitorPreviewMode: false,
-      siteSettings: {
-        title: '快樂時光',
-        subtitle: '收藏我們最燦爛的旅行與日常笑聲！點擊任一相簿封面，即可預覽精選照片或前往 Google 相簿儲存高畫質原圖。',
-        adminEmails: [],
+      settings: {
+        adminEmail: null,
         allowedEmails: []
       },
       albums: [],
-      editorFeaturedPhotos: [],
-      draggedAlbumId: null,
-      unsubSettings: null,
-      unsubAlbums: null
+      searchQuery: '',
+      listenersStarted: false,
+      editingFeatured: [],
+      pendingDeleteId: null,
+      draggedAlbumId: null
     };
 
-    const $ = (id) => document.getElementById(id);
-
-    const views = {
-      loading: $('view-loading'),
-      login: $('view-login'),
-      unauthorized: $('view-unauthorized'),
-      gallery: $('view-gallery')
+    const TAG_COLOR_MAP = {
+      yellow: 'bg-nordic-yellow',
+      blue: 'bg-nordic-blue',
+      coral: 'bg-nordic-coral',
+      sage: 'bg-nordic-sage'
     };
 
-    // ==================== 3. 工具函式 ====================
-    function showToast(message, duration = 2600) {
-      const toast = document.createElement('div');
-      toast.className = 'px-4 py-2.5 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm text-xs font-bold animate-pop-in flex items-center gap-1.5';
-      toast.innerHTML = `<span>✨</span><span>${message}</span>`;
-      $('toast-container').appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.25s ease';
-        setTimeout(() => toast.remove(), 250);
-      }, duration);
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = $('toast');
+      $('toast-message').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-4');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2800);
     }
 
-    function copyTextToClipboard(text, successMsg = '已複製連結，快傳給親友吧！') {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      try {
-        document.execCommand('copy');
-        showToast(successMsg);
-      } catch (err) {
-        showToast('複製失敗，請手動複製網址');
-      }
-      document.body.removeChild(textarea);
-    }
-
-    let confirmCallback = null;
-    function showConfirm(title, message, onConfirm) {
-      $('confirm-title').textContent = title;
-      $('confirm-message').textContent = message;
-      confirmCallback = onConfirm;
-      $('modal-confirm').classList.remove('hidden');
-    }
-
-    $('btn-confirm-cancel').addEventListener('click', () => {
-      $('modal-confirm').classList.add('hidden');
-      confirmCallback = null;
-    });
-    $('btn-confirm-ok').addEventListener('click', () => {
-      $('modal-confirm').classList.add('hidden');
-      if (confirmCallback) confirmCallback();
-      confirmCallback = null;
-    });
-
-    function compressImageFile(file, maxWidth = 960, quality = 0.72) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let { width, height } = img;
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', quality));
-          };
-          img.onerror = reject;
-          img.src = e.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+    function switchView(viewName) {
+      ['loading', 'login', 'unauthorized', 'gallery'].forEach((v) => {
+        const el = $(`view-${v}`);
+        if (el) el.classList.toggle('hidden', v !== viewName);
       });
     }
 
-    // ==================== 4. 深淺模式切換 ====================
-    $('btn-theme-toggle').addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
+    function openModal(id) {
+      const el = $(id);
+      if (el) el.classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      const el = $(id);
+      if (el) el.classList.add('hidden');
+    }
+
+    document.querySelectorAll('[data-close-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
     });
 
-    // ==================== 5. Firestore 雲端同步 ====================
+    // 點擊彈窗背景關閉
+    ['modal-viewer', 'modal-album-editor', 'modal-access', 'modal-confirm'].forEach((id) => {
+      $(id).addEventListener('click', (e) => {
+        if (e.target.id === id) closeModal(id);
+      });
+    });
+
+    // ==================== 3. 主題切換（日/夜模式） ====================
+    function initTheme() {
+      const saved = localStorage.getItem('happy_times_theme');
+      if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+      $('btn-theme-toggle').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('happy_times_theme', isDark ? 'dark' : 'light');
+      });
+    }
+    initTheme();
+
+    // ==================== 4. Firestore 路徑與本機備援 ====================
     function getSettingsDocRef() {
-      return doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'site');
+      return doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'access');
     }
 
     function getAlbumsColRef() {
       return collection(db, 'artifacts', appId, 'public', 'data', 'albums');
     }
 
-    function startFirestoreListeners() {
-      if (!firebaseReady || !state.firebaseUser) return;
+    function saveLocalFallback() {
+      try {
+        localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(state.settings));
+        localStorage.setItem(LOCAL_ALBUMS_KEY, JSON.stringify(state.albums));
+      } catch (e) {}
+    }
 
-      if (state.unsubSettings) state.unsubSettings();
-      state.unsubSettings = onSnapshot(
+    function loadLocalFallback() {
+      try {
+        const s = localStorage.getItem(LOCAL_SETTINGS_KEY);
+        const a = localStorage.getItem(LOCAL_ALBUMS_KEY);
+        if (s) state.settings = JSON.parse(s);
+        if (a) state.albums = JSON.parse(a);
+      } catch (e) {}
+    }
+
+    function startFirestoreListeners() {
+      if (!firebaseReady || state.listenersStarted) return;
+      state.listenersStarted = true;
+
+      onSnapshot(
         getSettingsDocRef(),
         (snap) => {
           if (snap.exists()) {
             const data = snap.data();
-            // 若舊資料仍為「光影手帖」，自動以新版「快樂時光」為預設
-            const resolvedTitle = (!data.title || data.title === '光影手帖') ? '快樂時光' : data.title;
-            state.siteSettings = {
-              title: resolvedTitle,
-              subtitle: data.subtitle || '收藏我們最燦爛的旅行與日常笑聲！點擊任一相簿封面，即可預覽精選照片或前往 Google 相簿儲存高畫質原圖。',
-              adminEmails: Array.isArray(data.adminEmails) ? data.adminEmails : [],
+            state.settings = {
+              adminEmail: data.adminEmail || null,
               allowedEmails: Array.isArray(data.allowedEmails) ? data.allowedEmails : []
             };
           }
           evaluateAccessAndRender();
         },
-        (error) => console.error('Settings listener error:', error)
+        (err) => {
+          console.error('Settings listener error:', err);
+          if (!state.currentEmail) {
+            switchView('login');
+          }
+        }
       );
 
-      if (state.unsubAlbums) state.unsubAlbums();
-      state.unsubAlbums = onSnapshot(
+      onSnapshot(
         getAlbumsColRef(),
-        (snapshot) => {
+        (snap) => {
           const list = [];
-          snapshot.forEach((docSnap) => {
-            list.push({ id: docSnap.id, ...docSnap.data() });
-          });
+          snap.forEach((d) => list.push({ id: d.id, ...d.data() }));
           list.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
           state.albums = list;
-          renderAlbumsGrid();
+          renderAlbums();
         },
-        (error) => console.error('Albums listener error:', error)
+        (err) => {
+          console.error('Albums listener error:', err);
+        }
       );
     }
 
-    // ==================== 6. 權限判斷與畫面切換 ====================
-    function switchView(viewName) {
-      Object.values(views).forEach((el) => el.classList.add('hidden'));
-      views[viewName].classList.remove('hidden');
-      lucide.createIcons();
+    // ==================== 5. 權限判斷與畫面渲染 ====================
+    function isRealAdmin() {
+      if (!state.currentEmail || !state.settings.adminEmail) return false;
+      return state.currentEmail.toLowerCase() === state.settings.adminEmail.toLowerCase();
+    }
+
+    function isAuthorized() {
+      if (!state.currentEmail) return false;
+      if (isRealAdmin()) return true;
+      return state.settings.allowedEmails.some(
+        (e) => e.toLowerCase() === state.currentEmail.toLowerCase()
+      );
     }
 
     async function handleEmailLogin(email) {
-      const normalized = email.trim().toLowerCase();
+      const normalized = (email || '').trim().toLowerCase();
       if (!normalized || !normalized.includes('@')) {
         showToast('請輸入有效的 Gmail 地址');
         return;
@@ -882,19 +830,20 @@
 
       state.currentEmail = normalized;
 
-      if (firebaseReady && state.firebaseUser && state.siteSettings.adminEmails.length === 0) {
-        const updatedSettings = {
-          ...state.siteSettings,
-          title: '快樂時光',
-          adminEmails: [normalized],
-          allowedEmails: [normalized]
-        };
-        try {
-          await setDoc(getSettingsDocRef(), updatedSettings, { merge: true });
-          state.siteSettings = updatedSettings;
-          showToast('歡迎！已將您設為首位管理者 (Admin)');
-        } catch (err) {
-          console.error('Init admin error:', err);
+      // 若尚無管理者，首位登入者自動成為管理者
+      if (!state.settings.adminEmail) {
+        state.settings.adminEmail = normalized;
+        if (!state.settings.allowedEmails.includes(normalized)) {
+          state.settings.allowedEmails.push(normalized);
+        }
+        if (firebaseReady) {
+          try {
+            await setDoc(getSettingsDocRef(), state.settings, { merge: true });
+          } catch (err) {
+            console.warn('Set initial admin warning:', err);
+          }
+        } else {
+          saveLocalFallback();
         }
       }
 
@@ -902,172 +851,151 @@
     }
 
     function evaluateAccessAndRender() {
-      $('nav-brand-title').textContent = state.siteSettings.title;
-      $('login-site-title').textContent = state.siteSettings.title;
-      $('site-title').textContent = state.siteSettings.title;
-      $('site-subtitle').textContent = state.siteSettings.subtitle;
-
       if (!state.currentEmail) {
-        $('user-menu').classList.add('hidden');
-        $('user-menu').classList.remove('flex');
-        $('btn-visitor-preview').classList.add('hidden');
-        $('btn-nav-share').classList.add('hidden');
-        $('role-badge').classList.add('hidden');
+        $('nav-user-controls').classList.add('hidden');
         switchView('login');
         return;
       }
 
-      $('user-menu').classList.remove('hidden');
-      $('user-menu').classList.add('flex');
-      $('user-avatar').textContent = state.currentEmail.charAt(0).toUpperCase();
+      $('nav-user-controls').classList.remove('hidden');
+      $('nav-user-email').textContent = state.currentEmail;
 
-      const email = state.currentEmail;
-      const isAdmin = state.siteSettings.adminEmails.includes(email);
-      const isAllowed = isAdmin || state.siteSettings.allowedEmails.includes(email);
-
-      state.isAdmin = isAdmin;
-      state.isAuthorized = isAllowed;
-
-      if (!isAllowed) {
-        $('unauth-email-display').textContent = email;
-        $('btn-visitor-preview').classList.add('hidden');
-        $('btn-nav-share').classList.add('hidden');
-        $('role-badge').classList.add('hidden');
+      if (!isAuthorized()) {
+        $('unauth-email').textContent = state.currentEmail;
+        $('btn-visitor-toggle').classList.add('hidden');
         switchView('unauthorized');
         return;
       }
 
-      const effectiveAdmin = state.isAdmin && !state.visitorPreviewMode;
+      const realAdmin = isRealAdmin();
+      const effectiveAdmin = realAdmin && !state.visitorPreviewMode;
 
-      $('btn-nav-share').classList.remove('hidden');
-      $('btn-nav-share').classList.add('inline-flex');
+      $('btn-visitor-toggle').classList.toggle('hidden', !realAdmin);
+      $('btn-visitor-toggle').classList.toggle('flex', realAdmin);
+      $('visitor-toggle-label').textContent = state.visitorPreviewMode ? '回到管理' : '訪客視角';
 
-      $('role-badge').classList.remove('hidden');
-      $('role-badge').textContent = effectiveAdmin ? 'ADMIN' : 'GUEST';
+      $('admin-toolbar').classList.toggle('hidden', !effectiveAdmin);
+      $('admin-toolbar').classList.toggle('flex', effectiveAdmin);
+      $('drag-hint').classList.toggle('hidden', !effectiveAdmin);
 
-      if (state.isAdmin) {
-        $('btn-visitor-preview').classList.remove('hidden');
-        $('btn-visitor-preview').classList.add('inline-flex');
-        $('visitor-preview-label').textContent = state.visitorPreviewMode ? '返回管理' : '訪客視角';
-      } else {
-        $('btn-visitor-preview').classList.add('hidden');
-      }
-
-      if (effectiveAdmin) {
-        $('admin-toolbar').classList.remove('hidden');
-        $('admin-toolbar').classList.add('flex');
-        $('visitor-preview-banner').classList.add('hidden');
-        $('btn-empty-add').classList.remove('hidden');
-      } else {
-        $('admin-toolbar').classList.add('hidden');
-        $('admin-toolbar').classList.remove('flex');
-        $('btn-empty-add').classList.add('hidden');
-        if (state.isAdmin && state.visitorPreviewMode) {
-          $('visitor-preview-banner').classList.remove('hidden');
-        } else {
-          $('visitor-preview-banner').classList.add('hidden');
-        }
-      }
+      $('role-badge').innerHTML = effectiveAdmin
+        ? '<i data-lucide="sparkles" class="w-3 h-3"></i><span>管理者模式</span>'
+        : '<i data-lucide="heart" class="w-3 h-3"></i><span>受邀親友模式</span>';
 
       switchView('gallery');
-      renderAlbumsGrid();
-      renderAllowedEmailsList();
+      renderAlbums();
+      renderAccessList();
+      lucide.createIcons();
     }
 
-    // ==================== 7. 渲染相簿卡片牆 ====================
-    function renderAlbumsGrid() {
+    // ==================== 6. 渲染相簿卡片牆（手機版 3 欄並排） ====================
+    function renderAlbums() {
       const grid = $('albums-grid');
       const emptyState = $('empty-albums-state');
-      const effectiveAdmin = state.isAdmin && !state.visitorPreviewMode;
+      const effectiveAdmin = isRealAdmin() && !state.visitorPreviewMode;
 
-      if (state.albums.length === 0) {
-        grid.innerHTML = '';
+      const q = state.searchQuery.trim().toLowerCase();
+      const filtered = state.albums.filter((a) => {
+        if (!q) return true;
+        return (
+          (a.title || '').toLowerCase().includes(q) ||
+          (a.subtitle || '').toLowerCase().includes(q) ||
+          (a.note || '').toLowerCase().includes(q)
+        );
+      });
+
+      $('album-count-badge').textContent = `${state.albums.length} 本相簿`;
+
+      grid.innerHTML = '';
+      if (filtered.length === 0) {
         emptyState.classList.remove('hidden');
-        lucide.createIcons();
         return;
       }
-
       emptyState.classList.add('hidden');
-      grid.innerHTML = '';
 
-      state.albums.forEach((album, index) => {
-        const colorKey = album.colorTag && COLOR_MAP[album.colorTag] ? album.colorTag : COLOR_KEYS[index % COLOR_KEYS.length];
-        const tagBgClass = COLOR_MAP[colorKey].bg;
+      filtered.forEach((album, index) => {
+        const tagBgClass = TAG_COLOR_MAP[album.color] || 'bg-nordic-yellow';
+        const coverSrc = album.coverUrl || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times';
+        const featuredCount = Array.isArray(album.featuredPhotos) ? album.featuredPhotos.length : 0;
 
         const card = document.createElement('article');
-        card.className = 'group relative flex flex-col rounded-3xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow nordic-card';
+        card.className = 'group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow-sm sm:nordic-shadow nordic-card';
         card.dataset.id = album.id;
 
-        if (effectiveAdmin) {
+        if (effectiveAdmin && !q) {
           card.draggable = true;
-          card.addEventListener('dragstart', (e) => {
+          card.addEventListener('dragstart', () => {
             state.draggedAlbumId = album.id;
-            card.classList.add('dragging-card');
-            e.dataTransfer.effectAllowed = 'move';
+            card.classList.add('opacity-50');
           });
           card.addEventListener('dragend', () => {
-            card.classList.remove('dragging-card');
-            document.querySelectorAll('.drag-over-card').forEach((el) => el.classList.remove('drag-over-card'));
+            state.draggedAlbumId = null;
+            card.classList.remove('opacity-50');
+            document.querySelectorAll('.drag-over').forEach((el) => el.classList.remove('drag-over'));
           });
           card.addEventListener('dragover', (e) => {
             e.preventDefault();
-            if (state.draggedAlbumId !== album.id) card.classList.add('drag-over-card');
-          });
-          card.addEventListener('dragleave', () => card.classList.remove('drag-over-card'));
-          card.addEventListener('drop', (e) => {
-            e.preventDefault();
-            card.classList.remove('drag-over-card');
             if (state.draggedAlbumId && state.draggedAlbumId !== album.id) {
-              reorderAlbumsByDrag(state.draggedAlbumId, album.id);
+              card.classList.add('drag-over');
+            }
+          });
+          card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+          card.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            card.classList.remove('drag-over');
+            if (state.draggedAlbumId && state.draggedAlbumId !== album.id) {
+              await reorderAlbumsById(state.draggedAlbumId, album.id);
             }
           });
         }
 
-        const coverSrc = album.coverUrl || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times';
-        const featuredCount = Array.isArray(album.featuredPhotos) ? album.featuredPhotos.length : 0;
+        const safeTitle = escapeHtml(album.title || '未命名相簿');
+        const safeSub = escapeHtml(album.subtitle || '快樂回憶');
+        const safeNote = escapeHtml(album.note || '');
 
         card.innerHTML = `
-          <!-- 封面預覽區 -->
-          <div class="relative aspect-[4/3] w-full overflow-hidden border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg cursor-pointer" data-action="view">
-            <img src="${coverSrc}" alt="${album.title}" loading="lazy" onerror="this.src='https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
-            <!-- 左上角北歐粉彩標籤 -->
-            <span class="absolute top-3 left-3 px-3 py-1 rounded-full ${tagBgClass} text-nordic-navy border-2 border-nordic-navy text-[11px] font-bold nordic-shadow-sm max-w-[75%] truncate">
-              ${album.subtitle || '快樂回憶'}
+          <div class="relative aspect-square sm:aspect-[4/3] w-full overflow-hidden border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg cursor-pointer" data-action="view">
+            <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover object-center block group-hover:scale-105 transition-transform duration-500 ease-out" />
+            <span class="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-3 sm:py-1 rounded-full ${tagBgClass} text-nordic-navy border border-nordic-navy sm:border-2 text-[9px] sm:text-[11px] font-bold max-w-[85%] sm:max-w-[75%] truncate">
+              ${safeSub}
             </span>
             ${featuredCount > 0 ? `
-              <span class="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-oat-light/95 text-nordic-navy border-2 border-nordic-navy text-[10px] font-bold">
+              <span class="hidden sm:inline-block absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-oat-light/95 text-nordic-navy border-2 border-nordic-navy text-[10px] font-bold">
                 📷 ${featuredCount} 張精選
               </span>
             ` : ''}
           </div>
 
-          <!-- 資訊區 -->
-          <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-3">
+          <div class="p-1.5 sm:p-4 flex-1 flex flex-col justify-between gap-1.5 sm:gap-3">
             <div class="cursor-pointer" data-action="view">
-              <h2 class="font-display text-lg sm:text-xl font-bold leading-snug line-clamp-2 mb-1">${album.title}</h2>
-              ${album.note ? `<p class="text-xs text-nordic-navySoft dark:text-oat-light/75 line-clamp-2">${album.note}</p>` : ''}
+              <h2 class="font-display text-xs sm:text-base font-bold leading-snug line-clamp-2 mb-0.5 sm:mb-1">${safeTitle}</h2>
+              ${safeNote ? `<p class="hidden sm:line-clamp-2 text-xs text-nordic-navySoft dark:text-oat-light/75">${safeNote}</p>` : ''}
             </div>
 
             ${effectiveAdmin ? `
-              <!-- 管理者控制列 -->
-              <div class="pt-3 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1">
-                  <button data-action="move-up" ${index === 0 ? 'disabled' : ''} class="p-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往前移動">
-                    <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+              <div class="pt-1.5 sm:pt-3 border-t border-dashed sm:border-t-2 border-nordic-navy/15 dark:border-nordic-darkBorder flex flex-wrap items-center justify-between gap-1">
+                <div class="flex items-center gap-0.5 sm:gap-1">
+                  <button data-action="move-up" ${index === 0 ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往前移動">
+                    <i data-lucide="arrow-left" class="w-3 h-3 sm:hidden"></i>
+                    <i data-lucide="arrow-up" class="w-3.5 h-3.5 hidden sm:block"></i>
                   </button>
-                  <button data-action="move-down" ${index === state.albums.length - 1 ? 'disabled' : ''} class="p-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往後移動">
-                    <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+                  <button data-action="move-down" ${index === filtered.length - 1 ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往後移動">
+                    <i data-lucide="arrow-right" class="w-3 h-3 sm:hidden"></i>
+                    <i data-lucide="arrow-down" class="w-3.5 h-3.5 hidden sm:block"></i>
                   </button>
                 </div>
-                <div class="flex items-center gap-1.5">
-                  <button data-action="edit" class="px-3 py-1 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy text-xs font-bold transition-colors">編輯</button>
-                  <button data-action="delete" class="p-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="刪除">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <div class="flex items-center gap-0.5 sm:gap-1.5">
+                  <button data-action="edit" class="p-1 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy text-xs font-bold transition-colors" title="編輯">
+                    <i data-lucide="pencil" class="w-3 h-3 sm:hidden"></i>
+                    <span class="hidden sm:inline">編輯</span>
+                  </button>
+                  <button data-action="delete" class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="刪除">
+                    <i data-lucide="trash-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
                   </button>
                 </div>
               </div>
             ` : `
-              <div class="pt-2 flex items-center justify-between text-xs font-bold text-nordic-navySoft dark:text-nordic-blue cursor-pointer" data-action="view">
+              <div class="hidden sm:flex pt-2 items-center justify-between text-xs font-bold text-nordic-navySoft dark:text-nordic-blue cursor-pointer" data-action="view">
                 <span>打開相簿看照片</span>
                 <span class="w-7 h-7 rounded-full ${tagBgClass} border-2 border-nordic-navy text-nordic-navy flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
                   <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
@@ -1077,22 +1005,20 @@
           </div>
         `;
 
+        // 綁定卡片點擊事件
         card.querySelectorAll('[data-action="view"]').forEach((el) => {
-          el.addEventListener('click', () => openAlbumViewer(album, colorKey));
+          el.addEventListener('click', () => openAlbumViewer(album));
         });
 
-        if (effectiveAdmin) {
-          card.querySelector('[data-action="edit"]')?.addEventListener('click', () => openAlbumEditor(album));
-          card.querySelector('[data-action="delete"]')?.addEventListener('click', () => {
-            showConfirm('刪除相簿', `確定要刪除「${album.title}」嗎？此動作無法復原喔！`, async () => {
-              if (!firebaseReady || !state.firebaseUser) return;
-              await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'albums', album.id));
-              showToast('已刪除相簿');
-            });
-          });
-          card.querySelector('[data-action="move-up"]')?.addEventListener('click', () => moveAlbumByOffset(index, -1));
-          card.querySelector('[data-action="move-down"]')?.addEventListener('click', () => moveAlbumByOffset(index, 1));
-        }
+        const btnUp = card.querySelector('[data-action="move-up"]');
+        const btnDown = card.querySelector('[data-action="move-down"]');
+        const btnEdit = card.querySelector('[data-action="edit"]');
+        const btnDel = card.querySelector('[data-action="delete"]');
+
+        if (btnUp) btnUp.addEventListener('click', () => moveAlbumByOffset(album.id, -1));
+        if (btnDown) btnDown.addEventListener('click', () => moveAlbumByOffset(album.id, 1));
+        if (btnEdit) btnEdit.addEventListener('click', () => openAlbumEditor(album));
+        if (btnDel) btnDel.addEventListener('click', () => promptDeleteAlbum(album));
 
         grid.appendChild(card);
       });
@@ -1100,328 +1026,403 @@
       lucide.createIcons();
     }
 
-    // ==================== 8. 排序同步 ====================
-    async function persistAlbumsOrder(orderedList) {
-      if (!firebaseReady || !state.firebaseUser) return;
-      try {
-        await Promise.all(
-          orderedList.map((album, idx) =>
-            updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'albums', album.id), { order: idx })
-          )
-        );
-        showToast('已更新相簿順序');
-      } catch (err) {
-        console.error('Reorder error:', err);
-        showToast('更新順序失敗');
-      }
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
 
-    function moveAlbumByOffset(index, offset) {
-      const targetIndex = index + offset;
-      if (targetIndex < 0 || targetIndex >= state.albums.length) return;
-      const copy = [...state.albums];
-      const [moved] = copy.splice(index, 1);
-      copy.splice(targetIndex, 0, moved);
-      persistAlbumsOrder(copy);
-    }
-
-    function reorderAlbumsByDrag(draggedId, targetId) {
-      const fromIndex = state.albums.findIndex((a) => a.id === draggedId);
-      const toIndex = state.albums.findIndex((a) => a.id === targetId);
-      if (fromIndex === -1 || toIndex === -1) return;
-      const copy = [...state.albums];
-      const [moved] = copy.splice(fromIndex, 1);
-      copy.splice(toIndex, 0, moved);
-      persistAlbumsOrder(copy);
-    }
-
-    // ==================== 9. 相簿檢視燈箱與照片下載 ====================
-    let currentZoomedUrl = '';
-
-    function openAlbumViewer(album, colorKey = 'yellow') {
-      const tagEl = $('viewer-tag-badge');
+    // ==================== 7. 相簿檢視燈箱與照片下載 ====================
+    function openAlbumViewer(album) {
+      const tagEl = $('viewer-tag');
       tagEl.textContent = album.subtitle || '快樂回憶';
-      tagEl.className = `inline-block px-2.5 py-0.5 rounded-full border-2 border-nordic-navy text-[11px] font-bold text-nordic-navy mb-1 ${COLOR_MAP[colorKey]?.bg || 'bg-nordic-yellow'}`;
+      tagEl.className = `inline-block px-2.5 py-0.5 rounded-full ${TAG_COLOR_MAP[album.color] || 'bg-nordic-yellow'} text-nordic-navy border border-nordic-navy text-[11px] font-bold mb-1`;
 
-      $('viewer-title').textContent = album.title;
-      $('viewer-cover').src = album.coverUrl || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times';
-      $('viewer-open-google').href = album.url;
-      $('viewer-copy-url').onclick = () => copyTextToClipboard(album.url, '已複製 Google 相簿連結！');
+      $('viewer-title').textContent = album.title || '未命名相簿';
+      const coverSrc = album.coverUrl || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times';
+      $('viewer-cover').src = coverSrc;
 
       const noteEl = $('viewer-note');
-      if (album.note && album.note.trim()) {
+      if (album.note) {
         noteEl.textContent = album.note;
         noteEl.classList.remove('hidden');
       } else {
         noteEl.classList.add('hidden');
       }
 
+      $('viewer-gphotos-link').href = album.url || '#';
+      $('viewer-download-cover').onclick = () => downloadImage(coverSrc, `${album.title || 'happy-times'}-cover.jpg`);
+
       const featured = Array.isArray(album.featuredPhotos) ? album.featuredPhotos : [];
-      const featuredSection = $('viewer-featured-section');
-      const featuredGrid = $('viewer-featured-grid');
+      const sec = $('viewer-featured-section');
+      const grid = $('viewer-featured-grid');
+      grid.innerHTML = '';
 
       if (featured.length > 0) {
-        featuredSection.classList.remove('hidden');
-        $('viewer-featured-count').textContent = `${featured.length} 張`;
-        featuredGrid.innerHTML = '';
-        featured.forEach((photoUrl, idx) => {
+        sec.classList.remove('hidden');
+        $('viewer-featured-count').textContent = `共 ${featured.length} 張`;
+        featured.forEach((src, i) => {
           const item = document.createElement('div');
-          item.className = 'relative aspect-square rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg cursor-pointer group';
+          item.className = 'group relative aspect-square rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg';
           item.innerHTML = `
-            <img src="${photoUrl}" alt="精選照片 ${idx + 1}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            <div class="absolute inset-0 bg-nordic-navy/0 group-hover:bg-nordic-navy/25 transition-colors flex items-end justify-end p-2">
-              <span class="p-1.5 rounded-xl bg-nordic-yellow border-2 border-nordic-navy text-nordic-navy opacity-0 group-hover:opacity-100 transition-opacity">
-                <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
-              </span>
-            </div>
+            <img src="${src}" alt="精選照片 ${i + 1}" class="w-full h-full object-cover object-center block" />
+            <button type="button" class="absolute bottom-2 right-2 p-2 rounded-full border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy nordic-shadow-sm hover:scale-105 transition-transform" title="下載照片">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            </button>
           `;
-          item.addEventListener('click', () => openPhotoZoom(photoUrl));
-          featuredGrid.appendChild(item);
+          item.querySelector('button').addEventListener('click', () => {
+            downloadImage(src, `${album.title || 'happy-times'}-photo-${i + 1}.jpg`);
+          });
+          grid.appendChild(item);
         });
+        lucide.createIcons();
       } else {
-        featuredSection.classList.add('hidden');
+        sec.classList.add('hidden');
       }
 
-      $('modal-viewer').classList.remove('hidden');
-      lucide.createIcons();
+      openModal('modal-viewer');
     }
 
-    $('btn-close-viewer').addEventListener('click', () => $('modal-viewer').classList.add('hidden'));
-    $('modal-viewer').addEventListener('click', (e) => {
-      if (e.target === $('modal-viewer')) $('modal-viewer').classList.add('hidden');
-    });
-
-    function openPhotoZoom(url) {
-      currentZoomedUrl = url;
-      $('zoomed-photo-img').src = url;
-      $('modal-photo-zoom').classList.remove('hidden');
-      lucide.createIcons();
+    async function downloadImage(url, filename) {
+      try {
+        if (url.startsWith('data:')) {
+          triggerDownload(url, filename);
+          showToast('開始下載照片');
+          return;
+        }
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        triggerDownload(blobUrl, filename);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 3000);
+        showToast('開始下載照片');
+      } catch (err) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+        showToast('已在新分頁開啟原圖，可長按或右鍵儲存');
+      }
     }
 
-    $('btn-close-zoom').addEventListener('click', () => $('modal-photo-zoom').classList.add('hidden'));
-    $('btn-download-zoomed').addEventListener('click', () => {
-      if (!currentZoomedUrl) return;
-      const link = document.createElement('a');
-      link.href = currentZoomedUrl;
-      link.download = `happy-times-${Date.now()}.jpg`;
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      showToast('已開始儲存照片！');
-    });
+    function triggerDownload(href, filename) {
+      const a = document.createElement('a');
+      a.href = href;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
 
-    // ==================== 10. 新增 / 編輯相簿 ====================
+    // ==================== 8. 新增與編輯相簿 + 自動抓取封面 ====================
     function openAlbumEditor(album = null) {
-      $('editor-modal-title').textContent = album ? '編輯相簿' : '新增相簿';
-      $('album-id').value = album ? album.id : '';
-      $('album-url').value = album ? album.url : '';
-      $('album-title').value = album ? album.title : '';
-      $('album-subtitle').value = album ? album.subtitle || '' : '';
-      $('album-note').value = album ? album.note || '' : '';
-      $('album-cover-url').value = album ? album.coverUrl || '' : '';
-      $('album-cover-preview').src = (album && album.coverUrl) || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview';
-      $('fetch-status').classList.add('hidden');
+      $('edit-album-id').value = album ? album.id : '';
+      $('editor-modal-title').textContent = album ? '編輯相簿資訊' : '新增 Google 相簿';
+      $('input-album-url').value = album ? (album.url || '') : '';
+      $('input-album-title').value = album ? (album.title || '') : '';
+      $('input-album-subtitle').value = album ? (album.subtitle || '') : '';
+      $('input-album-cover').value = album ? (album.coverUrl || '') : '';
+      $('input-album-note').value = album ? (album.note || '') : '';
+      $('fetch-status').textContent = '';
 
-      const defaultColor = (album && album.colorTag) || COLOR_KEYS[state.albums.length % COLOR_KEYS.length];
-      const radio = document.querySelector(`input[name="album-color"][value="${defaultColor}"]`);
+      const color = album?.color || 'yellow';
+      const radio = document.querySelector(`input[name="album-color"][value="${color}"]`);
       if (radio) radio.checked = true;
 
-      state.editorFeaturedPhotos = album && Array.isArray(album.featuredPhotos) ? [...album.featuredPhotos] : [];
+      updateCoverPreview(album?.coverUrl || '');
+      state.editingFeatured = Array.isArray(album?.featuredPhotos) ? [...album.featuredPhotos] : [];
       renderEditorFeaturedList();
 
-      $('modal-album-editor').classList.remove('hidden');
-      lucide.createIcons();
+      openModal('modal-album-editor');
     }
 
-    function renderEditorFeaturedList() {
-      const container = $('editor-featured-list');
-      container.innerHTML = '';
-      state.editorFeaturedPhotos.forEach((url, idx) => {
-        const div = document.createElement('div');
-        div.className = 'relative aspect-square rounded-xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm';
-        div.innerHTML = `
-          <img src="${url}" class="w-full h-full object-cover" />
-          <button type="button" class="absolute top-1 right-1 p-1 rounded-full bg-nordic-coral border border-nordic-navy text-nordic-navy hover:scale-110 transition-transform">
-            <i data-lucide="x" class="w-3 h-3"></i>
-          </button>
-        `;
-        div.querySelector('button').addEventListener('click', () => {
-          state.editorFeaturedPhotos.splice(idx, 1);
-          renderEditorFeaturedList();
-        });
-        container.appendChild(div);
-      });
-      lucide.createIcons();
+    function updateCoverPreview(url) {
+      $('album-cover-preview').src = url || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview';
     }
 
-    async function fetchGooglePhotosMetadata() {
-      const url = $('album-url').value.trim();
+    $('input-album-cover').addEventListener('input', (e) => {
+      updateCoverPreview(e.target.value.trim());
+    });
+
+    // 自動透過 Microlink API 抓取 Google 相簿標題與封面
+    $('btn-fetch-meta').addEventListener('click', async () => {
+      const url = $('input-album-url').value.trim();
       if (!url) {
-        showToast('請先貼上 Google 相簿連結');
+        showToast('請先貼上 Google 相簿分享連結');
         return;
       }
-
-      const statusEl = $('fetch-status');
-      statusEl.textContent = '✨ 正在自動抓取相簿封面與標題...';
-      statusEl.classList.remove('hidden');
+      const status = $('fetch-status');
+      status.textContent = '正在抓取相簿標題與封面...';
 
       try {
-        const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+        const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}`;
+        const res = await fetch(apiUrl);
         const json = await res.json();
         if (json.status === 'success' && json.data) {
           const { title, image } = json.data;
-          if (title && !$('album-title').value.trim()) {
-            $('album-title').value = title.replace(/\s*[-–|]\s*Google\s*(Photos|相簿).*$/i, '').trim();
+          if (title && !$('input-album-title').value.trim()) {
+            $('input-album-title').value = title.replace(/\s*-\s*Google 相簿\s*$/i, '').replace(/\s*-\s*Google Photos\s*$/i, '').trim();
           }
           if (image && image.url) {
-            $('album-cover-url').value = image.url;
-            $('album-cover-preview').src = image.url;
-            statusEl.textContent = '🎉 已成功抓取預覽封面！';
+            $('input-album-cover').value = image.url;
+            updateCoverPreview(image.url);
+            status.textContent = '已成功抓取封面圖片！';
           } else {
-            statusEl.textContent = '無法自動取得封面，可手動貼上網址或從手機/電腦上傳圖片。';
+            status.textContent = '無法自動取得封面，請手動貼上網址或從裝置上傳。';
           }
         } else {
-          statusEl.textContent = '無法自動抓取，請手動貼上封面網址或上傳圖片。';
+          status.textContent = '無法自動抓取，請手動輸入名稱並上傳封面。';
         }
       } catch (err) {
-        statusEl.textContent = '連線抓取失敗，請改用本機上傳封面或貼上圖片網址。';
-      }
-    }
-
-    $('btn-fetch-meta').addEventListener('click', fetchGooglePhotosMetadata);
-    $('album-url').addEventListener('paste', () => setTimeout(fetchGooglePhotosMetadata, 150));
-
-    $('album-cover-url').addEventListener('input', (e) => {
-      const val = e.target.value.trim();
-      $('album-cover-preview').src = val || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview';
-    });
-
-    $('input-upload-cover').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      try {
-        const compressed = await compressImageFile(file, 900, 0.72);
-        $('album-cover-url').value = compressed;
-        $('album-cover-preview').src = compressed;
-        showToast('已壓縮並套用封面圖片');
-      } catch (err) {
-        showToast('圖片處理失敗');
-      }
-      e.target.value = '';
-    });
-
-    $('input-upload-featured').addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files);
-      for (const file of files) {
-        if (state.editorFeaturedPhotos.length >= 6) {
-          showToast('精選照片最多 6 張喔！');
-          break;
-        }
-        try {
-          const compressed = await compressImageFile(file, 720, 0.65);
-          state.editorFeaturedPhotos.push(compressed);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      renderEditorFeaturedList();
-      e.target.value = '';
-    });
-
-    $('btn-add-featured-url').addEventListener('click', () => {
-      const val = $('input-featured-url').value.trim();
-      if (!val) return;
-      if (state.editorFeaturedPhotos.length >= 6) {
-        showToast('精選照片最多 6 張喔！');
-        return;
-      }
-      state.editorFeaturedPhotos.push(val);
-      $('input-featured-url').value = '';
-      renderEditorFeaturedList();
-    });
-
-    $('form-album').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!firebaseReady || !state.firebaseUser) return;
-
-      const id = $('album-id').value;
-      const selectedColor = document.querySelector('input[name="album-color"]:checked')?.value || 'yellow';
-
-      const payload = {
-        url: $('album-url').value.trim(),
-        title: $('album-title').value.trim(),
-        subtitle: $('album-subtitle').value.trim(),
-        note: $('album-note').value.trim(),
-        colorTag: selectedColor,
-        coverUrl: $('album-cover-url').value.trim(),
-        featuredPhotos: state.editorFeaturedPhotos,
-        updatedAt: Date.now()
-      };
-
-      try {
-        if (id) {
-          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'albums', id), payload);
-          showToast('已更新相簿！');
-        } else {
-          payload.order = state.albums.length;
-          payload.createdAt = Date.now();
-          await addDoc(getAlbumsColRef(), payload);
-          showToast('已新增相簿！');
-        }
-        $('modal-album-editor').classList.add('hidden');
-      } catch (err) {
-        console.error('Save album error:', err);
-        showToast('儲存失敗，請確認圖片大小或網路狀態');
+        console.warn('Microlink fetch error:', err);
+        status.textContent = '抓取失敗（可能受隱私設定限制），請手動上傳封面。';
       }
     });
 
-    $('btn-add-album').addEventListener('click', () => openAlbumEditor(null));
-    $('btn-empty-add').addEventListener('click', () => openAlbumEditor(null));
-    $('btn-close-editor').addEventListener('click', () => $('modal-album-editor').classList.add('hidden'));
-    $('btn-cancel-editor').addEventListener('click', () => $('modal-album-editor').classList.add('hidden'));
-
-    // ==================== 11. 權限管理 ====================
-    function renderAllowedEmailsList() {
-      const listEl = $('allowed-emails-list');
-      listEl.innerHTML = '';
-
-      const allEmails = Array.from(new Set([...state.siteSettings.adminEmails, ...state.siteSettings.allowedEmails]));
-
-      allEmails.forEach((email) => {
-        const isAdminEmail = state.siteSettings.adminEmails.includes(email);
-        const li = document.createElement('li');
-        li.className = 'flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-xs sm:text-sm font-medium';
-        li.innerHTML = `
-          <div class="flex items-center gap-2 min-w-0">
-            <span class="truncate">${email}</span>
-            ${isAdminEmail ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border border-nordic-navy font-bold uppercase shrink-0">Admin</span>' : ''}
-          </div>
-          ${!isAdminEmail ? `
-            <button data-remove-email="${email}" class="text-nordic-coral font-bold hover:underline text-xs shrink-0">移除</button>
-          ` : ''}
-        `;
-
-        li.querySelector('[data-remove-email]')?.addEventListener('click', async () => {
-          const updated = state.siteSettings.allowedEmails.filter((e) => e !== email);
-          await setDoc(getSettingsDocRef(), { allowedEmails: updated }, { merge: true });
-          showToast(`已移除 ${email}`);
-        });
-
-        listEl.appendChild(li);
+    // 圖片壓縮工具（確保符合 Firestore 單筆文件大小限制）
+    function compressImageFile(file, maxWidth = 720, quality = 0.72) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = ev.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
       });
     }
 
-    $('btn-manage-access').addEventListener('click', () => {
-      renderAllowedEmailsList();
-      $('modal-access').classList.remove('hidden');
+    $('input-cover-file').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const dataUrl = await compressImageFile(file, 720, 0.75);
+        $('input-album-cover').value = dataUrl;
+        updateCoverPreview(dataUrl);
+        showToast('已壓縮並套用封面圖片');
+      } catch (err) {
+        showToast('圖片處理失敗，請換一張試試');
+      }
+      e.target.value = '';
     });
-    $('btn-close-access').addEventListener('click', () => $('modal-access').classList.add('hidden'));
 
-    $('btn-submit-emails').addEventListener('click', async () => {
-      const raw = $('input-add-emails').value;
+    $('input-featured-files').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files || []);
+      for (const f of files) {
+        if (state.editingFeatured.length >= 4) {
+          showToast('每本相簿最多上傳 4 張精選照片');
+          break;
+        }
+        try {
+          const dataUrl = await compressImageFile(f, 640, 0.7);
+          state.editingFeatured.push(dataUrl);
+        } catch (err) {
+          console.warn('Featured compress error:', err);
+        }
+      }
+      renderEditorFeaturedList();
+      e.target.value = '';
+    });
+
+    function renderEditorFeaturedList() {
+      const box = $('editor-featured-list');
+      box.innerHTML = '';
+      state.editingFeatured.forEach((src, idx) => {
+        const div = document.createElement('div');
+        div.className = 'relative aspect-square rounded-xl overflow-hidden border-2 border-nordic-navy';
+        div.innerHTML = `
+          <img src="${src}" class="w-full h-full object-cover object-center block" />
+          <button type="button" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-nordic-coral text-nordic-navy border border-nordic-navy flex items-center justify-center text-xs font-bold">×</button>
+        `;
+        div.querySelector('button').addEventListener('click', () => {
+          state.editingFeatured.splice(idx, 1);
+          renderEditorFeaturedList();
+        });
+        box.appendChild(div);
+      });
+    }
+
+    $('form-album-editor').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = $('edit-album-id').value;
+      const color = document.querySelector('input[name="album-color"]:checked')?.value || 'yellow';
+
+      const payload = {
+        url: $('input-album-url').value.trim(),
+        title: $('input-album-title').value.trim(),
+        subtitle: $('input-album-subtitle').value.trim(),
+        coverUrl: $('input-album-cover').value.trim(),
+        note: $('input-album-note').value.trim(),
+        color,
+        featuredPhotos: state.editingFeatured,
+        updatedAt: Date.now()
+      };
+
+      const btn = $('btn-save-album');
+      btn.disabled = true;
+
+      try {
+        if (firebaseReady) {
+          if (id) {
+            await updateDoc(doc(getAlbumsColRef(), id), payload);
+            showToast('已更新相簿資訊');
+          } else {
+            payload.order = state.albums.length;
+            payload.createdAt = Date.now();
+            await addDoc(getAlbumsColRef(), payload);
+            showToast('已新增相簿！');
+          }
+        } else {
+          if (id) {
+            const idx = state.albums.findIndex((a) => a.id === id);
+            if (idx >= 0) state.albums[idx] = { ...state.albums[idx], ...payload };
+          } else {
+            state.albums.push({ id: `local-${Date.now()}`, order: state.albums.length, ...payload });
+          }
+          saveLocalFallback();
+          renderAlbums();
+          showToast('已儲存至本機預覽');
+        }
+        closeModal('modal-album-editor');
+      } catch (err) {
+        console.error('Save album error:', err);
+        showToast('儲存失敗：請確認已用管理者 Google 帳號登入且規則正確');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // ==================== 9. 排序與刪除相簿 ====================
+    async function moveAlbumByOffset(albumId, offset) {
+      const idx = state.albums.findIndex((a) => a.id === albumId);
+      const targetIdx = idx + offset;
+      if (idx < 0 || targetIdx < 0 || targetIdx >= state.albums.length) return;
+
+      const updated = [...state.albums];
+      const [moved] = updated.splice(idx, 1);
+      updated.splice(targetIdx, 0, moved);
+      await persistAlbumOrder(updated);
+    }
+
+    async function reorderAlbumsById(sourceId, targetId) {
+      const srcIdx = state.albums.findIndex((a) => a.id === sourceId);
+      const tgtIdx = state.albums.findIndex((a) => a.id === targetId);
+      if (srcIdx < 0 || tgtIdx < 0) return;
+
+      const updated = [...state.albums];
+      const [moved] = updated.splice(srcIdx, 1);
+      updated.splice(tgtIdx, 0, moved);
+      await persistAlbumOrder(updated);
+    }
+
+    async function persistAlbumOrder(orderedList) {
+      state.albums = orderedList.map((a, i) => ({ ...a, order: i }));
+      renderAlbums();
+
+      if (firebaseReady) {
+        try {
+          await Promise.all(
+            state.albums.map((a, i) => updateDoc(doc(getAlbumsColRef(), a.id), { order: i }))
+          );
+          showToast('已更新相簿順序');
+        } catch (err) {
+          console.error('Reorder error:', err);
+          showToast('排序同步失敗，請檢查管理者權限');
+        }
+      } else {
+        saveLocalFallback();
+        showToast('已更新相簿順序');
+      }
+    }
+
+    function promptDeleteAlbum(album) {
+      state.pendingDeleteId = album.id;
+      $('confirm-album-name').textContent = `「${album.title || '未命名相簿'}」刪除後無法復原喔！`;
+      openModal('modal-confirm');
+    }
+
+    $('btn-confirm-cancel').addEventListener('click', () => {
+      state.pendingDeleteId = null;
+      closeModal('modal-confirm');
+    });
+
+    $('btn-confirm-delete').addEventListener('click', async () => {
+      const id = state.pendingDeleteId;
+      if (!id) return;
+      try {
+        if (firebaseReady) {
+          await deleteDoc(doc(getAlbumsColRef(), id));
+        } else {
+          state.albums = state.albums.filter((a) => a.id !== id);
+          saveLocalFallback();
+          renderAlbums();
+        }
+        showToast('已刪除相簿');
+      } catch (err) {
+        console.error('Delete album error:', err);
+        showToast('刪除失敗：請確認已用管理者 Google 帳號登入');
+      } finally {
+        state.pendingDeleteId = null;
+        closeModal('modal-confirm');
+      }
+    });
+
+    // ==================== 10. Gmail 授權名單管理 ====================
+    function renderAccessList() {
+      $('access-admin-email').textContent = state.settings.adminEmail || '尚未設定';
+      const listEl = $('allowed-emails-list');
+      const emails = state.settings.allowedEmails || [];
+      $('allowed-count').textContent = emails.length;
+      listEl.innerHTML = '';
+
+      if (emails.length === 0) {
+        listEl.innerHTML = '<li class="text-xs text-nordic-navySoft dark:text-oat-light/60 py-2">尚無授權名單</li>';
+        return;
+      }
+
+      emails.forEach((email) => {
+        const isAdminItem = state.settings.adminEmail && email.toLowerCase() === state.settings.adminEmail.toLowerCase();
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between gap-2 px-3.5 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-xs sm:text-sm';
+        li.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="truncate font-semibold">${escapeHtml(email)}</span>
+            ${isAdminItem ? '<span class="px-2 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border border-nordic-navy text-[10px] font-bold shrink-0">管理者</span>' : ''}
+          </div>
+          ${!isAdminItem ? `
+            <button type="button" class="p-1.5 rounded-xl hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="移除授權">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          ` : ''}
+        `;
+        const delBtn = li.querySelector('button');
+        if (delBtn) {
+          delBtn.addEventListener('click', () => removeAllowedEmail(email));
+        }
+        listEl.appendChild(li);
+      });
+      lucide.createIcons();
+    }
+
+    $('form-add-emails').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const raw = $('input-new-emails').value;
       const parsed = raw
-        .split(/[\n,;]+/)
+        .split(/[\s,;]+/)
         .map((s) => s.trim().toLowerCase())
         .filter((s) => s && s.includes('@'));
 
@@ -1430,45 +1431,87 @@
         return;
       }
 
-      const merged = Array.from(new Set([...state.siteSettings.allowedEmails, ...parsed]));
-      await setDoc(getSettingsDocRef(), { allowedEmails: merged }, { merge: true });
-      $('input-add-emails').value = '';
-      showToast(`已加入 ${parsed.length} 位受邀親友！`);
+      const merged = Array.from(new Set([...(state.settings.allowedEmails || []), ...parsed]));
+      state.settings.allowedEmails = merged;
+
+      try {
+        if (firebaseReady) {
+          await setDoc(getSettingsDocRef(), state.settings, { merge: true });
+        } else {
+          saveLocalFallback();
+        }
+        $('input-new-emails').value = '';
+        renderAccessList();
+        showToast(`已新增 ${parsed.length} 筆授權信箱`);
+      } catch (err) {
+        console.error('Update access error:', err);
+        showToast('更新名單失敗：請檢查管理者權限');
+      }
     });
 
-    // ==================== 12. 頁面設定與一鍵分享 ====================
-    $('btn-edit-site').addEventListener('click', () => {
-      $('input-site-title').value = state.siteSettings.title;
-      $('input-site-subtitle').value = state.siteSettings.subtitle;
-      $('modal-site-settings').classList.remove('hidden');
-    });
-    $('btn-close-site-settings').addEventListener('click', () => $('modal-site-settings').classList.add('hidden'));
-    $('btn-cancel-site-settings').addEventListener('click', () => $('modal-site-settings').classList.add('hidden'));
+    async function removeAllowedEmail(targetEmail) {
+      state.settings.allowedEmails = (state.settings.allowedEmails || []).filter(
+        (e) => e.toLowerCase() !== targetEmail.toLowerCase()
+      );
+      try {
+        if (firebaseReady) {
+          await setDoc(getSettingsDocRef(), state.settings, { merge: true });
+        } else {
+          saveLocalFallback();
+        }
+        renderAccessList();
+        showToast('已移除授權');
+      } catch (err) {
+        console.error('Remove access error:', err);
+        showToast('移除失敗：請檢查管理者權限');
+      }
+    }
 
-    $('form-site-settings').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const title = $('input-site-title').value.trim() || '快樂時光';
-      const subtitle = $('input-site-subtitle').value.trim();
-      await setDoc(getSettingsDocRef(), { title, subtitle }, { merge: true });
-      $('modal-site-settings').classList.add('hidden');
-      showToast('已更新頁面設定');
+    // ==================== 11. 互動事件（搜尋、分享、訪客視角） ====================
+    $('input-search').addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      renderAlbums();
     });
 
-    $('btn-nav-share').addEventListener('click', () => {
-      copyTextToClipboard(window.location.href, '已複製「快樂時光」分享連結！');
+    $('btn-open-add-album').addEventListener('click', () => openAlbumEditor(null));
+    $('btn-open-access').addEventListener('click', () => {
+      renderAccessList();
+      openModal('modal-access');
     });
 
-    // ==================== 13. 訪客視角切換 & 登出 ====================
-    $('btn-visitor-preview').addEventListener('click', () => {
+    $('btn-visitor-toggle').addEventListener('click', () => {
       state.visitorPreviewMode = !state.visitorPreviewMode;
       evaluateAccessAndRender();
-    });
-    $('btn-exit-visitor-preview').addEventListener('click', () => {
-      state.visitorPreviewMode = false;
-      evaluateAccessAndRender();
+      showToast(state.visitorPreviewMode ? '已切換為訪客視角' : '已回到管理者模式');
     });
 
-    function logoutUser() {
+    $('btn-share-page').addEventListener('click', () => {
+      const shareUrl = window.location.href;
+      const tempInput = document.createElement('input');
+      tempInput.value = shareUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('已複製網頁分享連結！');
+      } catch (err) {
+        showToast('請從瀏覽器網址列複製連結');
+      }
+      document.body.removeChild(tempInput);
+    });
+
+    // ==================== 12. 登出與登入事件 ====================
+    async function logoutUser() {
+      try {
+        localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
+      } catch (e) {}
+      if (firebaseReady && auth && auth.currentUser && !auth.currentUser.isAnonymous) {
+        try {
+          await signOut(auth);
+        } catch (err) {
+          console.warn('Sign out warning:', err);
+        }
+      }
       state.currentEmail = null;
       state.visitorPreviewMode = false;
       evaluateAccessAndRender();
@@ -1478,17 +1521,21 @@
     $('btn-logout').addEventListener('click', logoutUser);
     $('btn-unauth-switch').addEventListener('click', logoutUser);
 
-    // ==================== 14. 登入事件 ====================
     $('btn-google-login').addEventListener('click', async () => {
       if (!firebaseReady) {
         $('google-auth-hint').classList.remove('hidden');
         return;
       }
       try {
+        await setPersistence(auth, browserLocalPersistence);
         const provider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth, provider);
         if (result.user && result.user.email) {
+          try {
+            localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
+          } catch (e) {}
           state.firebaseUser = result.user;
+          startFirestoreListeners();
           await handleEmailLogin(result.user.email);
         }
       } catch (err) {
@@ -1500,33 +1547,88 @@
 
     $('form-sim-login').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = $('input-sim-email').value;
+      const email = $('input-sim-email').value.trim().toLowerCase();
+      if (email && email.includes('@')) {
+        try {
+          localStorage.setItem(SIM_EMAIL_STORAGE_KEY, email);
+        } catch (err) {}
+      }
       await handleEmailLogin(email);
       $('input-sim-email').value = '';
     });
 
-    // ==================== 15. 啟動流程 ====================
+    // ==================== 13. 啟動流程（優先還原持久登入狀態） ====================
     async function bootstrap() {
       lucide.createIcons();
 
+      let savedSimEmail = null;
+      try {
+        savedSimEmail = localStorage.getItem(SIM_EMAIL_STORAGE_KEY);
+      } catch (e) {}
+
       if (!firebaseReady) {
-        switchView('login');
+        loadLocalFallback();
+        if (savedSimEmail) {
+          await handleEmailLogin(savedSimEmail);
+        } else {
+          switchView('login');
+        }
         return;
       }
 
       try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await setPersistence(auth, browserLocalPersistence);
+      } catch (err) {
+        console.warn('Set persistence warning:', err);
+      }
+
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        try {
           const cred = await signInWithCustomToken(auth, __initial_auth_token);
           state.firebaseUser = cred.user;
-        } else {
-          const cred = await signInAnonymously(auth);
-          state.firebaseUser = cred.user;
+          startFirestoreListeners();
+          if (savedSimEmail) {
+            await handleEmailLogin(savedSimEmail);
+          }
+          return;
+        } catch (err) {
+          console.error('Custom token init error:', err);
         }
-        startFirestoreListeners();
-      } catch (err) {
-        console.error('Firebase auth init error:', err);
-        switchView('login');
       }
+
+      let initialized = false;
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          state.firebaseUser = user;
+          startFirestoreListeners();
+
+          if (user.email) {
+            await handleEmailLogin(user.email);
+          } else if (savedSimEmail && !state.currentEmail) {
+            await handleEmailLogin(savedSimEmail);
+          } else if (!state.currentEmail) {
+            evaluateAccessAndRender();
+          }
+          initialized = true;
+        } else if (!initialized) {
+          initialized = true;
+          try {
+            const cred = await signInAnonymously(auth);
+            state.firebaseUser = cred.user;
+            startFirestoreListeners();
+            if (savedSimEmail) {
+              await handleEmailLogin(savedSimEmail);
+            }
+          } catch (err) {
+            console.warn('Anonymous sign-in skipped or disabled:', err);
+            if (savedSimEmail) {
+              await handleEmailLogin(savedSimEmail);
+            } else {
+              switchView('login');
+            }
+          }
+        }
+      });
     }
 
     bootstrap();

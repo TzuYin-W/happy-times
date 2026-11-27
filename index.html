@@ -838,6 +838,7 @@
     import {
       getFirestore,
       doc,
+      getDoc,
       setDoc,
       addDoc,
       updateDoc,
@@ -849,7 +850,7 @@
     // ==================== 1. Firebase 初始化 ====================
     // 部署至 GitHub Pages / Vercel 時，請將下方 firebaseConfig 替換為您的 Firebase 專案設定碼
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'happy-times-archive';
-   const firebaseConfig = {
+    const firebaseConfig = {
   apiKey: "AIzaSyCEPIQ7ziVpGgdUlYMk4982djktit9Kouk",
   authDomain: "happy-times-8c74e.firebaseapp.com",
   projectId: "happy-times-8c74e",
@@ -902,6 +903,8 @@
       selectMode: false,
       selectedAlbumIds: new Set(),
       listenersStarted: false,
+      settingsLoaded: false,
+      settingsDocExists: false,
       editingFeatured: [],
       editorCover: { fit: 'contain', offsetX: 0, offsetY: 0, scale: 1 },
       zoomViewer: { x: 0, y: 0, scale: 1 },
@@ -1121,6 +1124,8 @@
 
       if (!firebaseReady) {
         loadLocalFallback();
+        state.settingsLoaded = true;
+        state.settingsDocExists = Boolean(state.settings.adminEmail);
         evaluateAccessAndRender();
         return;
       }
@@ -1128,6 +1133,8 @@
       onSnapshot(
         getSettingsDocRef(),
         (snap) => {
+          state.settingsLoaded = true;
+          state.settingsDocExists = snap.exists();
           if (snap.exists()) {
             const data = snap.data();
             state.settings = {
@@ -1142,7 +1149,9 @@
         (err) => {
           console.error('Settings listener error:', err);
           showToast('讀取設定失敗：請確認 Firebase 權限規則');
-          evaluateAccessAndRender();
+          if (!state.currentEmail) {
+            evaluateAccessAndRender();
+          }
         }
       );
 
@@ -1178,19 +1187,46 @@
     }
 
     async function claimAdminIfNeeded(email) {
-      if (!email || state.settings.adminEmail) return;
+      if (!email || !state.settingsLoaded || state.settingsDocExists || state.settings.adminEmail) return;
       const lower = email.toLowerCase();
-      state.settings = {
-        adminEmail: lower,
-        allowedEmails: [lower]
-      };
+
       if (firebaseReady) {
         try {
+          // 寫入前再次從雲端確認，絕對不覆蓋既有的授權親友名單
+          const existingSnap = await getDoc(getSettingsDocRef());
+          if (existingSnap.exists()) {
+            const data = existingSnap.data();
+            const existingAllowed = Array.isArray(data.allowedEmails) ? data.allowedEmails : [];
+            state.settingsDocExists = true;
+            state.settings = {
+              adminEmail: data.adminEmail || lower,
+              allowedEmails: existingAllowed.length > 0 ? existingAllowed : [lower]
+            };
+            if (!data.adminEmail) {
+              await setDoc(getSettingsDocRef(), {
+                adminEmail: lower,
+                allowedEmails: Array.from(new Set([...existingAllowed, lower]))
+              }, { merge: true });
+            }
+            evaluateAccessAndRender();
+            return;
+          }
+
+          state.settingsDocExists = true;
+          state.settings = {
+            adminEmail: lower,
+            allowedEmails: [lower]
+          };
           await setDoc(getSettingsDocRef(), state.settings, { merge: true });
         } catch (err) {
           console.warn('Claim admin error:', err);
         }
       } else {
+        state.settingsDocExists = true;
+        state.settings = {
+          adminEmail: lower,
+          allowedEmails: Array.from(new Set([...(state.settings.allowedEmails || []), lower]))
+        };
         saveLocalFallback();
       }
     }
@@ -1211,10 +1247,16 @@
         return;
       }
 
+      // 等待雲端設定讀取完成後再判斷權限，避免在讀取前誤判為新資料庫而覆蓋名單
+      if (firebaseReady && !state.settingsLoaded) {
+        switchView('loading');
+        return;
+      }
+
       navControls.classList.remove('hidden');
       $('nav-user-email').textContent = state.currentEmail;
 
-      if (!state.settings.adminEmail) {
+      if (!state.settingsDocExists && !state.settings.adminEmail) {
         claimAdminIfNeeded(state.currentEmail);
       }
 

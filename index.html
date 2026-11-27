@@ -517,37 +517,29 @@
           </div>
           <div class="space-y-1">
             <label class="block text-xs font-bold">小標籤（選填，留空會自動帶日期地點）</label>
-            <input id="input-album-subtitle" type="text" placeholder="例如：2026.07 · 沖繩" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
+            <input id="input-album-subtitle" type="text" placeholder="例如：2026.07.15–18 · 沖繩" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
           </div>
         </div>
 
-        <!-- 年份 / 月份 / 地點 -->
-        <div class="grid grid-cols-3 gap-2.5">
-          <div class="space-y-1">
-            <label class="block text-xs font-bold">年份</label>
-            <input id="input-album-year" type="number" min="1990" max="2099" placeholder="2026" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
+        <!-- 日期（含年月日與多日區間）與地點 -->
+        <div class="rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm/40 dark:bg-nordic-darkBg/60 p-3.5 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="space-y-1">
+              <label class="block text-xs font-bold">開始日期（年 / 月 / 日）</label>
+              <input id="input-album-start-date" type="date" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-sm focus:outline-none" />
+            </div>
+            <div class="space-y-1">
+              <div class="flex items-center justify-between gap-2">
+                <label class="block text-xs font-bold">結束日期（多日區間，選填）</label>
+                <button id="btn-clear-end-date" type="button" class="text-[11px] font-bold text-nordic-navySoft dark:text-nordic-blue hover:underline">清除</button>
+              </div>
+              <input id="input-album-end-date" type="date" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-sm focus:outline-none" />
+            </div>
           </div>
-          <div class="space-y-1">
-            <label class="block text-xs font-bold">月份</label>
-            <select id="input-album-month" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none">
-              <option value="">未設定</option>
-              <option value="01">1 月</option>
-              <option value="02">2 月</option>
-              <option value="03">3 月</option>
-              <option value="04">4 月</option>
-              <option value="05">5 月</option>
-              <option value="06">6 月</option>
-              <option value="07">7 月</option>
-              <option value="08">8 月</option>
-              <option value="09">9 月</option>
-              <option value="10">10 月</option>
-              <option value="11">11 月</option>
-              <option value="12">12 月</option>
-            </select>
-          </div>
+          <p class="text-[11px] text-nordic-navySoft dark:text-oat-light/70">單日相簿只需填寫「開始日期」；若包含一天以上的照片，再填寫「結束日期」即可顯示日期區間並精準依日期排序。</p>
           <div class="space-y-1">
             <label class="block text-xs font-bold">地點</label>
-            <input id="input-album-location" type="text" placeholder="例如：台北、東京" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
+            <input id="input-album-location" type="text" placeholder="例如：台北、東京、沖繩" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-sm focus:outline-none" />
           </div>
         </div>
 
@@ -909,22 +901,101 @@
       return `object-position: ${posX}% ${posY}%; transform: scale(${scale}); transform-origin: center center;`;
     }
 
+    function pad2(val) {
+      const n = parseInt(val, 10);
+      return Number.isNaN(n) ? '' : String(n).padStart(2, '0');
+    }
+
+    function parseIsoDateParts(isoStr) {
+      if (!isoStr || typeof isoStr !== 'string') return null;
+      const match = isoStr.trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+      if (!match) return null;
+      return { year: match[1], month: pad2(match[2]), day: pad2(match[3]) };
+    }
+
+    function getAlbumDateInfo(album) {
+      const startFromIso = parseIsoDateParts(album?.startDate);
+      const start = startFromIso || {
+        year: String(album?.year || '').trim(),
+        month: pad2(album?.month),
+        day: pad2(album?.day)
+      };
+
+      const endFromIso = parseIsoDateParts(album?.endDate);
+      const end = endFromIso || (album?.endYear ? {
+        year: String(album.endYear).trim(),
+        month: pad2(album.endMonth),
+        day: pad2(album.endDay)
+      } : null);
+
+      const validEnd = end && end.year && (
+        end.year !== start.year || end.month !== start.month || end.day !== start.day
+      ) ? end : null;
+
+      return { start, end: validEnd };
+    }
+
+    function formatAlbumDateRange(album, style = 'compact') {
+      const { start, end } = getAlbumDateInfo(album);
+      if (!start.year) return '';
+
+      const sep = style === 'full' ? '/' : '.';
+      const fmtStart = [start.year, start.month, start.day].filter(Boolean).join(sep);
+      if (!end) return fmtStart;
+
+      let fmtEnd = '';
+      if (style === 'compact') {
+        if (end.year === start.year && end.month === start.month && end.day) {
+          fmtEnd = end.day;
+        } else if (end.year === start.year) {
+          fmtEnd = [end.month, end.day].filter(Boolean).join(sep);
+        } else {
+          fmtEnd = [end.year, end.month, end.day].filter(Boolean).join(sep);
+        }
+        return `${fmtStart}–${fmtEnd}`;
+      }
+
+      fmtEnd = end.year === start.year
+        ? [end.month, end.day].filter(Boolean).join(sep)
+        : [end.year, end.month, end.day].filter(Boolean).join(sep);
+      return `${fmtStart} ~ ${fmtEnd}`;
+    }
+
+    function getAlbumSortDateNums(album) {
+      const { start, end } = getAlbumDateInfo(album);
+      const sy = parseInt(start.year, 10);
+      if (Number.isNaN(sy)) return { startNum: null, endNum: null };
+      const sm = parseInt(start.month, 10) || 0;
+      const sd = parseInt(start.day, 10) || 0;
+      const startNum = sy * 10000 + sm * 100 + sd;
+
+      let endNum = startNum;
+      if (end && end.year) {
+        const ey = parseInt(end.year, 10);
+        if (!Number.isNaN(ey)) {
+          const em = parseInt(end.month, 10) || 0;
+          const ed = parseInt(end.day, 10) || 0;
+          endNum = ey * 10000 + em * 100 + ed;
+        }
+      }
+      return { startNum, endNum };
+    }
+
     function sortAlbumsList(list, sortMode) {
       const arr = [...list];
       if (sortMode === 'date-desc' || sortMode === 'date-asc') {
-        const getDateNum = (a) => {
-          const y = parseInt(a.year, 10);
-          if (Number.isNaN(y)) return null;
-          const m = parseInt(a.month, 10);
-          return y * 100 + (Number.isNaN(m) ? 0 : m);
-        };
         arr.sort((a, b) => {
-          const da = getDateNum(a);
-          const db = getDateNum(b);
-          if (da === null && db === null) return (a.order ?? 0) - (b.order ?? 0);
-          if (da === null) return 1;
-          if (db === null) return -1;
-          if (da !== db) return sortMode === 'date-desc' ? db - da : da - db;
+          const da = getAlbumSortDateNums(a);
+          const db = getAlbumSortDateNums(b);
+          if (da.startNum === null && db.startNum === null) return (a.order ?? 0) - (b.order ?? 0);
+          if (da.startNum === null) return 1;
+          if (db.startNum === null) return -1;
+          if (da.startNum !== db.startNum) {
+            return sortMode === 'date-desc' ? db.startNum - da.startNum : da.startNum - db.startNum;
+          }
+          if (da.endNum !== db.endNum) {
+            return sortMode === 'date-desc' ? db.endNum - da.endNum : da.endNum - db.endNum;
+          }
           return (a.order ?? 0) - (b.order ?? 0);
         });
       } else if (sortMode === 'location-asc') {
@@ -976,8 +1047,17 @@
     }
 
     function populateFilterOptions(visibleAlbums) {
-      const years = Array.from(new Set(visibleAlbums.map((a) => String(a.year || '').trim()).filter(Boolean))).sort((a, b) => b.localeCompare(a));
-      const months = Array.from(new Set(visibleAlbums.map((a) => String(a.month || '').trim()).filter(Boolean))).sort();
+      const yearSet = new Set();
+      const monthSet = new Set();
+      visibleAlbums.forEach((a) => {
+        const { start, end } = getAlbumDateInfo(a);
+        if (start.year) yearSet.add(start.year);
+        if (start.month) monthSet.add(start.month);
+        if (end?.year) yearSet.add(end.year);
+        if (end?.month) monthSet.add(end.month);
+      });
+      const years = Array.from(yearSet).sort((a, b) => b.localeCompare(a));
+      const months = Array.from(monthSet).sort();
       const locations = Array.from(new Set(visibleAlbums.map((a) => String(a.location || '').trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'zh-Hant'));
 
       const fillSelect = (el, defaultLabel, items, currentVal, formatFn = (v) => v) => {
@@ -1291,7 +1371,7 @@
       }
 
       const safeTitle = escapeHtml(album.title || '未命名相簿');
-      const autoSub = [album.year && album.month ? `${album.year}.${album.month}` : (album.year || ''), album.location || ''].filter(Boolean).join(' · ');
+      const autoSub = [formatAlbumDateRange(album, 'compact'), album.location || ''].filter(Boolean).join(' · ');
       const safeSub = escapeHtml(album.subtitle || autoSub || '快樂回憶');
       const safeNote = escapeHtml(album.note || '');
       const coverClass = getCoverImgClass(album);
@@ -1398,15 +1478,18 @@
 
       const q = state.searchQuery.trim().toLowerCase();
       const filtered = visibleAlbums.filter((a) => {
-        if (state.filterYear && String(a.year || '').trim() !== state.filterYear) return false;
-        if (state.filterMonth && String(a.month || '').trim() !== state.filterMonth) return false;
+        const { start, end } = getAlbumDateInfo(a);
+        if (state.filterYear && start.year !== state.filterYear && end?.year !== state.filterYear) return false;
+        if (state.filterMonth && start.month !== state.filterMonth && end?.month !== state.filterMonth) return false;
         if (state.filterLocation && String(a.location || '').trim() !== state.filterLocation) return false;
         if (!q) return true;
         return (
           (a.title || '').toLowerCase().includes(q) ||
           (a.subtitle || '').toLowerCase().includes(q) ||
           (a.location || '').toLowerCase().includes(q) ||
-          (a.note || '').toLowerCase().includes(q)
+          (a.note || '').toLowerCase().includes(q) ||
+          (a.startDate || '').toLowerCase().includes(q) ||
+          (a.endDate || '').toLowerCase().includes(q)
         );
       });
 
@@ -1553,7 +1636,8 @@
 
       const pillsBox = $('viewer-meta-pills');
       const pills = [];
-      if (album.year) pills.push(`📅 ${album.year} 年${album.month ? ` ${Number(album.month)} 月` : ''}`);
+      const fullDateText = formatAlbumDateRange(album, 'full');
+      if (fullDateText) pills.push(`📅 ${fullDateText}`);
       else if (album.month) pills.push(`📅 ${Number(album.month)} 月`);
       if (album.location) pills.push(`📍 ${album.location}`);
       if (pills.length > 0) {
@@ -1754,8 +1838,21 @@
       $('input-album-url').value = album ? (album.url || '') : '';
       $('input-album-title').value = album ? (album.title || '') : '';
       $('input-album-subtitle').value = album ? (album.subtitle || '') : '';
-      $('input-album-year').value = album ? (album.year || '') : new Date().getFullYear();
-      $('input-album-month').value = album ? (album.month || '') : '';
+
+      let startDateVal = '';
+      let endDateVal = '';
+      if (album) {
+        const { start, end } = getAlbumDateInfo(album);
+        if (start.year) {
+          startDateVal = `${start.year}-${start.month || '01'}-${start.day || '01'}`;
+        }
+        if (end && end.year) {
+          endDateVal = `${end.year}-${end.month || '01'}-${end.day || '01'}`;
+        }
+      }
+      $('input-album-start-date').value = startDateVal;
+      $('input-album-end-date').value = endDateVal;
+      $('input-album-end-date').min = startDateVal;
       $('input-album-location').value = album ? (album.location || '') : '';
       $('input-album-cover').value = album ? (album.coverUrl || '') : '';
       $('input-album-note').value = album ? (album.note || '') : '';
@@ -1793,6 +1890,19 @@
 
     $('input-album-cover').addEventListener('input', (e) => {
       updateCoverPreview(e.target.value.trim());
+    });
+
+    $('input-album-start-date').addEventListener('change', (e) => {
+      const startVal = e.target.value;
+      const endInput = $('input-album-end-date');
+      endInput.min = startVal;
+      if (startVal && endInput.value && endInput.value < startVal) {
+        endInput.value = startVal;
+      }
+    });
+
+    $('btn-clear-end-date').addEventListener('click', () => {
+      $('input-album-end-date').value = '';
     });
 
     function compressImageFile(file, maxSize = 900, quality = 0.78) {
@@ -1912,6 +2022,24 @@
       const color = document.querySelector('input[name="album-color"]:checked')?.value || 'yellow';
       const visibility = document.querySelector('input[name="album-visibility"]:checked')?.value || 'all';
 
+      let startDate = $('input-album-start-date').value.trim();
+      let endDate = $('input-album-end-date').value.trim();
+
+      if (!startDate && endDate) {
+        startDate = endDate;
+        endDate = '';
+      }
+      if (startDate && endDate && endDate < startDate) {
+        showToast('結束日期不可早於開始日期');
+        return;
+      }
+      if (startDate && endDate && endDate === startDate) {
+        endDate = '';
+      }
+
+      const startParts = parseIsoDateParts(startDate);
+      const endParts = parseIsoDateParts(endDate);
+
       let allowedViewers = [];
       if (visibility === 'custom') {
         const checked = Array.from(document.querySelectorAll('.viewer-checkbox:checked')).map((el) => el.value.toLowerCase());
@@ -1942,8 +2070,14 @@
         url: $('input-album-url').value.trim(),
         title: $('input-album-title').value.trim(),
         subtitle: $('input-album-subtitle').value.trim(),
-        year: $('input-album-year').value.trim(),
-        month: $('input-album-month').value.trim(),
+        startDate,
+        endDate,
+        year: startParts ? startParts.year : '',
+        month: startParts ? startParts.month : '',
+        day: startParts ? startParts.day : '',
+        endYear: endParts ? endParts.year : '',
+        endMonth: endParts ? endParts.month : '',
+        endDay: endParts ? endParts.day : '',
         location: $('input-album-location').value.trim(),
         coverUrl: $('input-album-cover').value.trim(),
         coverFit: state.editorCover.fit,

@@ -23,16 +23,13 @@
         canvas.height = size;
         const ctx = canvas.getContext('2d');
 
-        // 陽光黃滿版底色（iOS 會自動裁切為圓角 App 圖示）
         ctx.fillStyle = '#FFD166';
         ctx.fillRect(0, 0, size, size);
 
-        // 細緻深海藍內框點綴
         ctx.strokeStyle = 'rgba(29, 53, 87, 0.12)';
         ctx.lineWidth = 6;
         ctx.strokeRect(10, 10, size - 20, size - 20);
 
-        // 繪製 8 道北歐小太陽放射光線
         const cx = size / 2;
         const cy = size / 2;
         ctx.strokeStyle = '#1D3557';
@@ -51,7 +48,6 @@
           ctx.stroke();
         }
 
-        // 繪製太陽中心圓（燕麥奶油白填滿 + 深海藍描邊）
         ctx.beginPath();
         ctx.arc(cx, cy, 30, 0, Math.PI * 2);
         ctx.fillStyle = '#FDFBF7';
@@ -154,7 +150,6 @@
       outline: 3px dashed #FF8FA3;
       outline-offset: 4px;
     }
-    /* 自訂捲軸 */
     ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -198,27 +193,22 @@
 
       <!-- 右側控制區 -->
       <div class="flex items-center gap-2 sm:gap-2.5">
-        <!-- 深色模式切換 -->
         <button id="btn-theme-toggle" class="p-2.5 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard hover:bg-nordic-yellow hover:text-nordic-navy nordic-btn" title="切換日/夜模式">
           <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
           <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
         </button>
 
-        <!-- 登入後顯示的功能列 -->
         <div id="nav-user-controls" class="hidden flex items-center gap-2">
-          <!-- 管理者：訪客視角預覽切換 -->
           <button id="btn-visitor-toggle" class="hidden items-center gap-1.5 px-3 py-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard text-xs font-bold hover:bg-nordic-sage hover:text-nordic-navy nordic-btn" title="切換訪客視角">
             <i data-lucide="eye" class="w-3.5 h-3.5"></i>
             <span id="visitor-toggle-label" class="hidden md:inline">訪客視角</span>
           </button>
 
-          <!-- 分享此網頁 -->
           <button id="btn-share-page" class="flex items-center gap-1.5 px-3 py-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy text-xs font-bold nordic-shadow-sm nordic-btn" title="複製分享連結">
             <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
             <span class="hidden sm:inline">分享網頁</span>
           </button>
 
-          <!-- 使用者信箱膠囊與登出 -->
           <div class="flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard">
             <span id="nav-user-email" class="text-xs font-semibold max-w-[90px] sm:max-w-[150px] truncate"></span>
             <button id="btn-logout" class="p-1.5 rounded-full hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="登出">
@@ -244,7 +234,6 @@
     <!-- 視圖 2：Gmail 授權登入閘道 -->
     <section id="view-login" class="hidden min-h-[68vh] flex items-center justify-center py-4">
       <div class="w-full max-w-md rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-6 sm:p-8 relative overflow-hidden">
-        <!-- 裝飾小花 SVG -->
         <svg viewBox="0 0 60 60" class="w-14 h-14 text-nordic-coral/80 absolute -top-3 -right-3 rotate-12 pointer-events-none" fill="currentColor">
           <circle cx="30" cy="14" r="10"/><circle cx="46" cy="30" r="10"/><circle cx="30" cy="46" r="10"/><circle cx="14" cy="30" r="10"/>
           <circle cx="30" cy="30" r="9" fill="#FFD166"/>
@@ -260,7 +249,6 @@
           這裡收藏了我們珍貴的 Google 相簿回憶。請使用受授權的 Gmail 帳號登入以瀏覽與收藏照片。
         </p>
 
-        <!-- Google 正式登入按鈕 -->
         <button id="btn-google-login" class="w-full py-3.5 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 nordic-shadow-sm nordic-btn">
           <svg class="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#1D3557" d="M21.35 11.1H12v2.98h5.35c-.23 1.48-1.69 4.35-5.35 4.35-3.22 0-5.85-2.67-5.85-5.93S8.78 6.57 12 6.57c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.68 4.02 14.55 3 12 3 7.03 3 3 7.03 3 12s4.03 9 9 9c5.19 0 8.63-3.65 8.63-8.79 0-.59-.06-1.04-.15-1.11z"/>
@@ -272,14 +260,12 @@
           若在預覽視窗中無法彈出 Google 登入，請先使用下方「測試用 Gmail」體驗，或部署至正式網域後使用。
         </p>
 
-        <!-- 分隔線 -->
         <div class="my-6 flex items-center gap-3">
           <div class="flex-1 h-0.5 bg-nordic-navy/15 dark:bg-nordic-darkBorder"></div>
           <span class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/60">或預覽測試用登入</span>
           <div class="flex-1 h-0.5 bg-nordic-navy/15 dark:bg-nordic-darkBorder"></div>
         </div>
 
-        <!-- 測試用 Gmail 登入表單 -->
         <form id="form-sim-login" class="space-y-3">
           <div>
             <label for="input-sim-email" class="block text-xs font-bold mb-1.5">輸入授權 Gmail（預覽測試用）</label>
@@ -313,9 +299,19 @@
 
     <!-- 視圖 4：主相簿牆 -->
     <section id="view-gallery" class="hidden space-y-6 sm:space-y-8">
-      <!-- 歡迎橫幅（瑞典風格插畫感） -->
+      <!-- 管理者專用：指定親友視角預覽條 -->
+      <div id="visitor-preview-bar" class="hidden rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage/90 text-nordic-navy px-4 py-3 flex flex-wrap items-center justify-between gap-3 nordic-shadow-sm">
+        <div class="flex items-center gap-2 text-xs sm:text-sm font-bold">
+          <i data-lucide="eye" class="w-4 h-4 shrink-0"></i>
+          <span>訪客視角預覽中 — 模擬查看特定親友看到的內容：</span>
+        </div>
+        <select id="select-preview-user" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-nordic-navy text-xs font-bold focus:outline-none">
+          <option value="">一般訪客（僅全員可見相簿）</option>
+        </select>
+      </div>
+
+      <!-- 歡迎橫幅 -->
       <div class="rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-5 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
-        <!-- 北歐小波浪裝飾 -->
         <svg viewBox="0 0 200 24" class="w-40 h-5 text-nordic-blue/40 absolute bottom-2 right-6 pointer-events-none hidden sm:block" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
           <path d="M2 14 Q 20 2, 38 14 T 74 14 T 110 14 T 146 14 T 182 14"/>
         </svg>
@@ -342,6 +338,10 @@
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
             <span>新增 Google 相簿</span>
           </button>
+          <button id="btn-toggle-select-mode" class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm nordic-btn">
+            <i data-lucide="check-square" class="w-4 h-4"></i>
+            <span id="select-mode-label">多選管理</span>
+          </button>
           <button id="btn-open-access" class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm nordic-btn">
             <i data-lucide="users" class="w-4 h-4"></i>
             <span>授權名單</span>
@@ -349,15 +349,68 @@
         </div>
       </div>
 
-      <!-- 搜尋與提示列 -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="relative w-full sm:w-80">
-          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-nordic-navySoft dark:text-oat-light/60"></i>
-          <input id="input-search" type="text" placeholder="搜尋相簿名稱、標籤或備註..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-nordic-yellow" />
+      <!-- 管理者多選批次操作列 -->
+      <div id="batch-action-bar" class="hidden rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-yellow/95 text-nordic-navy p-3 sm:p-4 flex flex-wrap items-center justify-between gap-2.5 nordic-shadow-sm">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-oat-light border-2 border-nordic-navy text-xs font-bold">
+            已選取 <span id="batch-selected-count">0</span> 本
+          </span>
+          <button id="btn-batch-select-all" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue transition-colors">
+            全選
+          </button>
         </div>
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <button id="btn-batch-move-top" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors" title="移到最前面">
+            移至最前
+          </button>
+          <button id="btn-batch-move-up" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors flex items-center gap-1" title="往前移動">
+            <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+            <span>前移</span>
+          </button>
+          <button id="btn-batch-move-down" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors flex items-center gap-1" title="往後移動">
+            <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+            <span>後移</span>
+          </button>
+          <button id="btn-batch-move-bottom" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors" title="移到最後面">
+            移至最後
+          </button>
+          <button id="btn-batch-delete" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-coral text-nordic-navy text-xs font-bold disabled:opacity-40 flex items-center gap-1 nordic-btn">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>刪除所選</span>
+          </button>
+          <button id="btn-batch-exit" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-navy text-oat-light text-xs font-bold">
+            完成
+          </button>
+        </div>
+      </div>
+
+      <!-- 搜尋與年份 / 月份 / 地點篩選列 -->
+      <div class="space-y-3">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div class="relative w-full lg:w-72 shrink-0">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-nordic-navySoft dark:text-oat-light/60"></i>
+            <input id="input-search" type="text" placeholder="搜尋相簿名稱、地點或備註..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-nordic-yellow" />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="filter-year" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow">
+              <option value="">所有年份</option>
+            </select>
+            <select id="filter-month" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow">
+              <option value="">所有月份</option>
+            </select>
+            <select id="filter-location" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow">
+              <option value="">所有地點</option>
+            </select>
+            <button id="btn-clear-filters" type="button" class="hidden px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-coral/90 text-nordic-navy text-xs font-bold nordic-btn">
+              清除篩選
+            </button>
+          </div>
+        </div>
+
         <p id="drag-hint" class="hidden text-xs font-semibold text-nordic-navySoft dark:text-oat-light/70 flex items-center gap-1.5">
           <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
-          <span>電腦版可拖曳卡片排序，手機版可用箭頭調整順序</span>
+          <span>電腦版可拖曳卡片排序，手機版可用箭頭調整順序，或點「多選管理」批次移動與刪除</span>
         </p>
       </div>
 
@@ -366,14 +419,12 @@
         <div class="w-14 h-14 mx-auto rounded-2xl bg-nordic-blue border-2 border-nordic-navy flex items-center justify-center nordic-shadow-sm">
           <i data-lucide="images" class="w-7 h-7 text-nordic-navy"></i>
         </div>
-        <h3 class="font-display text-lg font-bold">目前還沒有相簿喔！</h3>
-        <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/75">點擊上方「新增 Google 相簿」，貼上分享連結就能建立第一本相簿。</p>
+        <h3 class="font-display text-lg font-bold">目前還沒有符合條件的相簿喔！</h3>
+        <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/75">點擊上方「新增 Google 相簿」貼上分享連結，或調整目前的篩選條件。</p>
       </div>
 
-      <!-- 相簿卡片牆（手機版 3 欄並排，平板 3 欄，桌面 4 欄） -->
-      <div id="albums-grid" class="grid grid-cols-3 gap-2.5 sm:gap-5 md:gap-6 lg:grid-cols-4">
-        <!-- 動態渲染相簿卡片 -->
-      </div>
+      <!-- 相簿卡片牆（手機版 3 欄並排，桌面 4 欄） -->
+      <div id="albums-grid" class="grid grid-cols-3 gap-2.5 sm:gap-5 md:gap-6 lg:grid-cols-4"></div>
     </section>
   </main>
 
@@ -385,7 +436,6 @@
   <!-- ==================== 彈窗 1：相簿檢視燈箱 ==================== -->
   <div id="modal-viewer" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
     <div class="w-full max-w-2xl max-h-[90vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
-      <!-- 燈箱標頭 -->
       <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between gap-3">
         <div class="min-w-0">
           <span id="viewer-tag" class="inline-block px-2.5 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border border-nordic-navy text-[11px] font-bold mb-1"></span>
@@ -396,17 +446,20 @@
         </button>
       </div>
 
-      <!-- 燈箱內容 -->
       <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
-        <!-- 封面大圖（自適應填滿顯示框） -->
-        <div class="relative aspect-[4/3] sm:aspect-[16/10] w-full rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg">
-          <img id="viewer-cover" src="" alt="相簿封面" onerror="this.src='https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover object-center block" />
+        <!-- 正方形封面大圖（點擊可放大縮小左右橫移檢視） -->
+        <div id="viewer-cover-box" class="group relative aspect-square max-w-md mx-auto w-full rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg cursor-zoom-in">
+          <img id="viewer-cover" src="" alt="相簿封面" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover block" />
+          <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-oat-light/95 text-nordic-navy border-2 border-nordic-navy text-xs font-bold flex items-center gap-1.5 nordic-shadow-sm group-hover:scale-105 transition-transform">
+            <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
+            <span>點擊放大 / 左右移動</span>
+          </div>
         </div>
 
-        <!-- 備註說明 -->
+        <div id="viewer-meta-pills" class="hidden flex flex-wrap items-center justify-center gap-2"></div>
+
         <p id="viewer-note" class="hidden text-sm text-nordic-navySoft dark:text-oat-light/85 bg-oat-warm dark:bg-nordic-darkBg p-3.5 rounded-2xl border-2 border-nordic-navy/15 dark:border-nordic-darkBorder leading-relaxed"></p>
 
-        <!-- 主要動作按鈕：跳轉 Google 相簿 App 與下載封面 -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <a id="viewer-gphotos-link" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
             <i data-lucide="external-link" class="w-4 h-4"></i>
@@ -418,7 +471,6 @@
           </button>
         </div>
 
-        <!-- 精選照片牆（可點擊放大與直接下載） -->
         <div id="viewer-featured-section" class="hidden space-y-3 pt-2 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder">
           <div class="flex items-center justify-between">
             <h4 class="font-display text-sm font-bold flex items-center gap-1.5">
@@ -466,49 +518,124 @@
             <input id="input-album-title" type="text" required placeholder="例如：2026 北海道冬日旅行" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
           </div>
           <div>
-            <label class="block text-xs font-bold mb-1.5">小標籤（日期 / 地點）</label>
-            <input id="input-album-subtitle" type="text" placeholder="例如：2026.02 家族出遊" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+            <label class="block text-xs font-bold mb-1.5">小標籤（選填，顯示於封面左上）</label>
+            <input id="input-album-subtitle" type="text" placeholder="例如：家族出遊" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+          </div>
+        </div>
+
+        <!-- 年份 / 月份 / 地點 -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <div>
+            <label class="block text-xs font-bold mb-1.5">年份</label>
+            <input id="input-album-year" type="number" min="1990" max="2100" placeholder="2026" class="w-full px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1.5">月份</label>
+            <select id="input-album-month" class="w-full px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue">
+              <option value="">未指定</option>
+              <option value="01">1 月</option>
+              <option value="02">2 月</option>
+              <option value="03">3 月</option>
+              <option value="04">4 月</option>
+              <option value="05">5 月</option>
+              <option value="06">6 月</option>
+              <option value="07">7 月</option>
+              <option value="08">8 月</option>
+              <option value="09">9 月</option>
+              <option value="10">10 月</option>
+              <option value="11">11 月</option>
+              <option value="12">12 月</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1.5">地點</label>
+            <input id="input-album-location" type="text" placeholder="例如：北海道" class="w-full px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
           </div>
         </div>
 
         <!-- 卡片標籤色系 -->
         <div>
-          <label class="block text-xs font-bold mb-1.5">北歐標籤色彩</label>
-          <div class="flex flex-wrap gap-2" id="color-picker-group">
+          <label class="block text-xs font-bold mb-1.5">北歐標籤色系</label>
+          <div class="flex flex-wrap gap-2">
             <label class="cursor-pointer">
               <input type="radio" name="album-color" value="yellow" checked class="sr-only peer" />
-              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">☀️ 陽光黃</span>
+              <span class="inline-block px-3 py-1 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">☀️ 陽光黃</span>
             </label>
             <label class="cursor-pointer">
               <input type="radio" name="album-color" value="blue" class="sr-only peer" />
-              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-blue text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌊 峽灣藍</span>
+              <span class="inline-block px-3 py-1 rounded-full bg-nordic-blue text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌊 峽灣藍</span>
             </label>
             <label class="cursor-pointer">
               <input type="radio" name="album-color" value="coral" class="sr-only peer" />
-              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-coral text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🍓 莓果粉</span>
+              <span class="inline-block px-3 py-1 rounded-full bg-nordic-coral text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🍓 莓果粉</span>
             </label>
             <label class="cursor-pointer">
               <input type="radio" name="album-color" value="sage" class="sr-only peer" />
-              <span class="inline-block px-3 py-1.5 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌿 鼠尾草綠</span>
+              <span class="inline-block px-3 py-1 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌿 森林綠</span>
             </label>
           </div>
         </div>
 
-        <!-- 封面圖片預覽與備援上傳 -->
+        <!-- 正方形封面圖片預覽 + 互動縮放平移構圖 -->
         <div>
-          <label class="block text-xs font-bold mb-1.5">封面圖片（自動抓取、貼上網址或本機上傳）</label>
-          <div class="flex flex-col sm:flex-row gap-3 items-start">
-            <div class="w-full sm:w-36 aspect-square sm:aspect-[4/3] rounded-2xl overflow-hidden bg-oat-warm dark:bg-nordic-darkBg shrink-0 border-2 border-nordic-navy dark:border-nordic-darkBorder">
-              <img id="album-cover-preview" src="https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" onerror="this.src='https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview'" class="w-full h-full object-cover object-center block" />
+          <label class="block text-xs font-bold mb-1.5">正方形封面圖片（可直接拖曳調整位置、放大縮小，或本機上傳）</label>
+          <div class="flex flex-col sm:flex-row gap-3.5 items-start">
+            <div class="space-y-2 shrink-0 w-full sm:w-44">
+              <div id="cover-crop-stage" class="relative w-44 h-44 mx-auto sm:mx-0 aspect-square rounded-2xl overflow-hidden bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder cursor-grab active:cursor-grabbing select-none touch-none">
+                <img id="album-cover-preview" src="https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" draggable="false" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview'" class="w-full h-full object-cover block pointer-events-none" />
+                <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-nordic-navy/75 text-oat-light text-[10px] font-bold pointer-events-none whitespace-nowrap">
+                  按住拖曳調整構圖
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 w-44 mx-auto sm:mx-0">
+                <button type="button" id="btn-cover-zoom-out" class="w-7 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-xs flex items-center justify-center hover:bg-nordic-yellow hover:text-nordic-navy">-</button>
+                <input id="input-cover-zoom" type="range" min="1" max="3" step="0.05" value="1" class="flex-1 accent-nordic-navy" />
+                <button type="button" id="btn-cover-zoom-in" class="w-7 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-xs flex items-center justify-center hover:bg-nordic-yellow hover:text-nordic-navy">+</button>
+                <button type="button" id="btn-cover-reset" class="px-2 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-[10px] hover:bg-nordic-blue hover:text-nordic-navy" title="重設封面位置與縮放">重設</button>
+              </div>
             </div>
+
             <div class="flex-1 w-full space-y-2">
               <input id="input-album-cover" type="text" placeholder="貼上圖片網址，或由下方上傳" class="w-full px-3.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-xs focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
-              <label class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy text-xs font-bold cursor-pointer transition-colors">
-                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                <span>從裝置上傳封面（自動壓縮）</span>
-                <input id="input-cover-file" type="file" accept="image/*" class="hidden" />
-              </label>
+              <div class="flex flex-wrap gap-2">
+                <label class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy text-xs font-bold cursor-pointer transition-colors">
+                  <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                  <span>從裝置上傳封面</span>
+                  <input id="input-cover-file" type="file" accept="image/*" class="hidden" />
+                </label>
+                <button type="button" id="btn-editor-preview-zoom" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy text-xs font-bold hover:opacity-90 transition-opacity">
+                  <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                  <span>全螢幕檢視原圖</span>
+                </button>
+              </div>
+              <p class="text-[11px] text-nordic-navySoft dark:text-oat-light/70 leading-relaxed">
+                提示：在左側正方形框內拖曳即可左右/上下平移構圖，拉動滑桿可放大縮小，儲存後首頁卡片會完全依照您的構圖顯示。
+              </p>
             </div>
+          </div>
+        </div>
+
+        <!-- 個人化可見權限 -->
+        <div class="pt-2 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder space-y-2.5">
+          <label class="block text-xs font-bold">誰可以看到這本相簿？（個人化分享權限）</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="album-visibility" value="all" checked class="sr-only peer" />
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-sage peer-checked:text-nordic-navy">
+                🌍 所有授權親友皆可見
+              </span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="album-visibility" value="custom" class="sr-only peer" />
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-coral peer-checked:text-nordic-navy">
+                🔒 僅限指定個人可見
+              </span>
+            </label>
+          </div>
+          <div id="editor-viewers-box" class="hidden p-3 rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg space-y-2.5">
+            <p class="text-[11px] font-semibold text-nordic-navySoft dark:text-oat-light/75">勾選可觀看此相簿的親友（管理者永遠可見）：</p>
+            <div id="editor-viewers-checkboxes" class="flex flex-wrap gap-2"></div>
+            <input id="input-album-extra-viewers" type="text" placeholder="或直接輸入新的 Gmail（多筆請用逗號分隔，會自動加入授權名單）" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs focus:outline-none focus:ring-2 focus:ring-nordic-coral" />
           </div>
         </div>
 
@@ -531,7 +658,6 @@
           <div id="editor-featured-list" class="grid grid-cols-4 gap-2"></div>
         </div>
 
-        <!-- 提交按鈕 -->
         <div class="pt-3 flex justify-end gap-2.5">
           <button type="button" data-close-modal="modal-album-editor" class="px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">
             取消
@@ -586,13 +712,48 @@
         <i data-lucide="trash-2" class="w-6 h-6 text-nordic-navy"></i>
       </div>
       <div>
-        <h3 class="font-display text-lg font-bold mb-1">確定要刪除這本相簿嗎？</h3>
+        <h3 id="confirm-modal-title" class="font-display text-lg font-bold mb-1">確定要刪除這本相簿嗎？</h3>
         <p id="confirm-album-name" class="text-xs text-nordic-navySoft dark:text-oat-light/75"></p>
       </div>
       <div class="flex gap-2.5 pt-1">
         <button id="btn-confirm-cancel" class="flex-1 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">取消</button>
         <button id="btn-confirm-delete" class="flex-1 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-coral text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">確認刪除</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ==================== 彈窗 5：封面照片互動放大縮小 / 左右平移檢視器 ==================== -->
+  <div id="modal-image-zoom" class="hidden fixed inset-0 z-[55] bg-nordic-navy/90 backdrop-blur-md flex flex-col">
+    <div class="px-4 py-3 flex items-center justify-between gap-3 text-oat-light border-b border-oat-light/15">
+      <div class="flex items-center gap-2 text-xs sm:text-sm font-bold min-w-0">
+        <i data-lucide="move" class="w-4 h-4 text-nordic-yellow shrink-0"></i>
+        <span id="zoom-modal-title" class="truncate">封面照片檢視（可拖曳左右移動與縮放）</span>
+      </div>
+      <button data-close-modal="modal-image-zoom" class="p-2 rounded-full border-2 border-oat-light/40 hover:bg-nordic-coral hover:text-nordic-navy hover:border-nordic-navy transition-colors shrink-0">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div id="zoom-stage" class="flex-1 relative overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none">
+      <img id="zoom-target-img" src="" alt="放大檢視封面" draggable="false" class="max-w-[92vw] max-h-[75vh] object-contain pointer-events-none select-none transition-transform duration-75" />
+    </div>
+
+    <div class="px-4 py-3.5 bg-nordic-navy/80 border-t border-oat-light/15 flex flex-wrap items-center justify-center gap-2.5">
+      <button type="button" id="btn-zoom-left" class="p-2 rounded-xl border-2 border-oat-light/30 text-oat-light hover:bg-nordic-yellow hover:text-nordic-navy transition-colors" title="向左平移">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      </button>
+      <button type="button" id="btn-zoom-right" class="p-2 rounded-xl border-2 border-oat-light/30 text-oat-light hover:bg-nordic-yellow hover:text-nordic-navy transition-colors" title="向右平移">
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-oat-light/10 border border-oat-light/25">
+        <button type="button" id="btn-zoom-out" class="w-7 h-7 rounded-lg bg-oat-light/20 text-oat-light font-bold hover:bg-nordic-yellow hover:text-nordic-navy">-</button>
+        <input id="input-zoom-slider" type="range" min="0.5" max="4" step="0.1" value="1" class="w-28 sm:w-40 accent-nordic-yellow" />
+        <button type="button" id="btn-zoom-in" class="w-7 h-7 rounded-lg bg-oat-light/20 text-oat-light font-bold hover:bg-nordic-yellow hover:text-nordic-navy">+</button>
+        <span id="zoom-percent-label" class="text-xs font-bold text-nordic-yellow w-11 text-center">100%</span>
+      </div>
+      <button type="button" id="btn-zoom-reset" class="px-3 py-2 rounded-xl border-2 border-oat-light/30 text-oat-light text-xs font-bold hover:bg-nordic-blue hover:text-nordic-navy transition-colors">
+        重設視角
+      </button>
     </div>
   </div>
 
@@ -642,7 +803,6 @@
   measurementId: "G-RGW6QSYY5L"
 };
 
-    // 測試用 Email 持久化儲存鍵值
     const SIM_EMAIL_STORAGE_KEY = 'happy_times_sim_email';
     const LOCAL_ALBUMS_KEY = 'happy_times_local_albums';
     const LOCAL_SETTINGS_KEY = 'happy_times_local_settings';
@@ -670,15 +830,24 @@
       firebaseUser: null,
       currentEmail: null,
       visitorPreviewMode: false,
+      previewAsEmail: '',
       settings: {
         adminEmail: null,
         allowedEmails: []
       },
       albums: [],
       searchQuery: '',
+      filterYear: '',
+      filterMonth: '',
+      filterLocation: '',
+      selectMode: false,
+      selectedAlbumIds: new Set(),
       listenersStarted: false,
       editingFeatured: [],
+      editorCover: { posX: 50, posY: 50, scale: 1 },
+      zoomViewer: { x: 0, y: 0, scale: 1 },
       pendingDeleteId: null,
+      pendingBatchDelete: false,
       draggedAlbumId: null
     };
 
@@ -688,6 +857,15 @@
       coral: 'bg-nordic-coral',
       sage: 'bg-nordic-sage'
     };
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
     let toastTimer = null;
     function showToast(msg) {
@@ -702,75 +880,144 @@
       }, 2800);
     }
 
-    function switchView(viewName) {
-      ['loading', 'login', 'unauthorized', 'gallery'].forEach((v) => {
-        const el = $(`view-${v}`);
-        if (el) el.classList.toggle('hidden', v !== viewName);
-      });
-    }
-
     function openModal(id) {
-      const el = $(id);
-      if (el) el.classList.remove('hidden');
+      $(id).classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      lucide.createIcons();
     }
 
     function closeModal(id) {
-      const el = $(id);
-      if (el) el.classList.add('hidden');
+      $(id).classList.add('hidden');
+      const anyOpen = ['modal-viewer', 'modal-album-editor', 'modal-access', 'modal-confirm', 'modal-image-zoom']
+        .some((m) => !$(m).classList.contains('hidden'));
+      if (!anyOpen) document.body.classList.remove('overflow-hidden');
     }
 
     document.querySelectorAll('[data-close-modal]').forEach((btn) => {
       btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
     });
 
-    // 點擊彈窗背景關閉
     ['modal-viewer', 'modal-album-editor', 'modal-access', 'modal-confirm'].forEach((id) => {
       $(id).addEventListener('click', (e) => {
         if (e.target.id === id) closeModal(id);
       });
     });
 
+    function getCoverImgStyle(album) {
+      const posX = typeof album?.coverPosX === 'number' ? album.coverPosX : 50;
+      const posY = typeof album?.coverPosY === 'number' ? album.coverPosY : 50;
+      const scale = typeof album?.coverScale === 'number' ? album.coverScale : 1;
+      return `object-position: ${posX}% ${posY}%; transform: scale(${scale}); transform-origin: ${posX}% ${posY}%;`;
+    }
+
+    function getVisibleAlbums() {
+      const realAdmin = isRealAdmin();
+      const effectiveAdmin = realAdmin && !state.visitorPreviewMode;
+      if (effectiveAdmin) return state.albums;
+
+      const viewerEmail = (state.visitorPreviewMode ? state.previewAsEmail : state.currentEmail || '').toLowerCase();
+      return state.albums.filter((album) => {
+        if (album.visibility !== 'custom') return true;
+        if (!viewerEmail) return false;
+        const viewers = Array.isArray(album.allowedViewers) ? album.allowedViewers : [];
+        return viewers.some((v) => v.toLowerCase() === viewerEmail);
+      });
+    }
+
+    function populatePreviewUserSelect() {
+      const sel = $('select-preview-user');
+      if (!sel) return;
+      const prev = state.previewAsEmail;
+      const emails = (state.settings.allowedEmails || []).filter(
+        (e) => !state.settings.adminEmail || e.toLowerCase() !== state.settings.adminEmail.toLowerCase()
+      );
+      sel.innerHTML = '<option value="">一般訪客（僅全員可見相簿）</option>';
+      emails.forEach((email) => {
+        const opt = document.createElement('option');
+        opt.value = email.toLowerCase();
+        opt.textContent = `以 ${email} 身分預覽`;
+        sel.appendChild(opt);
+      });
+      sel.value = emails.some((e) => e.toLowerCase() === prev) ? prev : '';
+      state.previewAsEmail = sel.value;
+    }
+
+    function populateFilterOptions(visibleAlbums) {
+      const years = Array.from(new Set(visibleAlbums.map((a) => String(a.year || '').trim()).filter(Boolean))).sort((a, b) => b.localeCompare(a));
+      const months = Array.from(new Set(visibleAlbums.map((a) => String(a.month || '').trim()).filter(Boolean))).sort();
+      const locations = Array.from(new Set(visibleAlbums.map((a) => String(a.location || '').trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+
+      const fillSelect = (el, defaultLabel, items, currentVal, formatFn = (v) => v) => {
+        el.innerHTML = `<option value="">${defaultLabel}</option>`;
+        items.forEach((item) => {
+          const opt = document.createElement('option');
+          opt.value = item;
+          opt.textContent = formatFn(item);
+          el.appendChild(opt);
+        });
+        el.value = items.includes(currentVal) ? currentVal : '';
+        return el.value;
+      };
+
+      state.filterYear = fillSelect($('filter-year'), '所有年份', years, state.filterYear, (y) => `${y} 年`);
+      state.filterMonth = fillSelect($('filter-month'), '所有月份', months, state.filterMonth, (m) => `${Number(m)} 月`);
+      state.filterLocation = fillSelect($('filter-location'), '所有地點', locations, state.filterLocation);
+
+      const hasFilter = Boolean(state.searchQuery.trim() || state.filterYear || state.filterMonth || state.filterLocation);
+      $('btn-clear-filters').classList.toggle('hidden', !hasFilter);
+    }
+
     // ==================== 3. 主題切換（日/夜模式） ====================
-    function initTheme() {
+    (function initTheme() {
       const saved = localStorage.getItem('happy_times_theme');
-      if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
         document.documentElement.classList.add('dark');
       }
       $('btn-theme-toggle').addEventListener('click', () => {
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('happy_times_theme', isDark ? 'dark' : 'light');
       });
-    }
-    initTheme();
+    })();
 
-    // ==================== 4. Firestore 路徑與本機備援 ====================
+    // ==================== 4. Firestore 參考路徑與本機備援 ====================
     function getSettingsDocRef() {
-      return doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'access');
+      return doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'main');
     }
 
     function getAlbumsColRef() {
       return collection(db, 'artifacts', appId, 'public', 'data', 'albums');
     }
 
+    function loadLocalFallback() {
+      try {
+        const s = JSON.parse(localStorage.getItem(LOCAL_SETTINGS_KEY) || 'null');
+        if (s) state.settings = s;
+        const a = JSON.parse(localStorage.getItem(LOCAL_ALBUMS_KEY) || '[]');
+        if (Array.isArray(a)) state.albums = a.sort((x, y) => (x.order ?? 0) - (y.order ?? 0));
+      } catch (e) {
+        console.warn('Local fallback load failed:', e);
+      }
+    }
+
     function saveLocalFallback() {
       try {
         localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(state.settings));
         localStorage.setItem(LOCAL_ALBUMS_KEY, JSON.stringify(state.albums));
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Local fallback save failed:', e);
+      }
     }
 
-    function loadLocalFallback() {
-      try {
-        const s = localStorage.getItem(LOCAL_SETTINGS_KEY);
-        const a = localStorage.getItem(LOCAL_ALBUMS_KEY);
-        if (s) state.settings = JSON.parse(s);
-        if (a) state.albums = JSON.parse(a);
-      } catch (e) {}
-    }
-
-    function startFirestoreListeners() {
-      if (!firebaseReady || state.listenersStarted) return;
+    function startRealtimeListeners() {
+      if (state.listenersStarted) return;
       state.listenersStarted = true;
+
+      if (!firebaseReady) {
+        loadLocalFallback();
+        evaluateAccessAndRender();
+        return;
+      }
 
       onSnapshot(
         getSettingsDocRef(),
@@ -781,14 +1028,15 @@
               adminEmail: data.adminEmail || null,
               allowedEmails: Array.isArray(data.allowedEmails) ? data.allowedEmails : []
             };
+          } else {
+            state.settings = { adminEmail: null, allowedEmails: [] };
           }
           evaluateAccessAndRender();
         },
         (err) => {
           console.error('Settings listener error:', err);
-          if (!state.currentEmail) {
-            switchView('login');
-          }
+          showToast('讀取設定失敗：請確認 Firebase 權限規則');
+          evaluateAccessAndRender();
         }
       );
 
@@ -797,82 +1045,96 @@
         (snap) => {
           const list = [];
           snap.forEach((d) => list.push({ id: d.id, ...d.data() }));
-          list.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+          list.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
           state.albums = list;
-          renderAlbums();
+          evaluateAccessAndRender();
         },
         (err) => {
           console.error('Albums listener error:', err);
+          showToast('讀取相簿失敗：請確認 Firebase 權限規則');
         }
       );
     }
 
-    // ==================== 5. 權限判斷與畫面渲染 ====================
+    // ==================== 5. 權限判斷與畫面切換 ====================
     function isRealAdmin() {
-      if (!state.currentEmail || !state.settings.adminEmail) return false;
+      if (!state.currentEmail) return false;
+      if (!state.settings.adminEmail) return true;
       return state.currentEmail.toLowerCase() === state.settings.adminEmail.toLowerCase();
     }
 
-    function isAuthorized() {
+    function isAuthorizedUser() {
       if (!state.currentEmail) return false;
-      if (isRealAdmin()) return true;
-      return state.settings.allowedEmails.some(
-        (e) => e.toLowerCase() === state.currentEmail.toLowerCase()
-      );
+      const lower = state.currentEmail.toLowerCase();
+      if (!state.settings.adminEmail) return true;
+      if (lower === state.settings.adminEmail.toLowerCase()) return true;
+      return (state.settings.allowedEmails || []).some((e) => e.toLowerCase() === lower);
     }
 
-    async function handleEmailLogin(email) {
-      const normalized = (email || '').trim().toLowerCase();
-      if (!normalized || !normalized.includes('@')) {
-        showToast('請輸入有效的 Gmail 地址');
-        return;
-      }
-
-      state.currentEmail = normalized;
-
-      // 若尚無管理者，首位登入者自動成為管理者
-      if (!state.settings.adminEmail) {
-        state.settings.adminEmail = normalized;
-        if (!state.settings.allowedEmails.includes(normalized)) {
-          state.settings.allowedEmails.push(normalized);
+    async function claimAdminIfNeeded(email) {
+      if (!email || state.settings.adminEmail) return;
+      const lower = email.toLowerCase();
+      state.settings = {
+        adminEmail: lower,
+        allowedEmails: [lower]
+      };
+      if (firebaseReady) {
+        try {
+          await setDoc(getSettingsDocRef(), state.settings, { merge: true });
+        } catch (err) {
+          console.warn('Claim admin error:', err);
         }
-        if (firebaseReady) {
-          try {
-            await setDoc(getSettingsDocRef(), state.settings, { merge: true });
-          } catch (err) {
-            console.warn('Set initial admin warning:', err);
-          }
-        } else {
-          saveLocalFallback();
-        }
+      } else {
+        saveLocalFallback();
       }
+    }
 
-      evaluateAccessAndRender();
+    function switchView(name) {
+      ['loading', 'login', 'unauthorized', 'gallery'].forEach((v) => {
+        $(`view-${v}`).classList.toggle('hidden', v !== name);
+      });
     }
 
     function evaluateAccessAndRender() {
+      const navControls = $('nav-user-controls');
+
       if (!state.currentEmail) {
-        $('nav-user-controls').classList.add('hidden');
+        navControls.classList.add('hidden');
         switchView('login');
+        lucide.createIcons();
         return;
       }
 
-      $('nav-user-controls').classList.remove('hidden');
+      navControls.classList.remove('hidden');
       $('nav-user-email').textContent = state.currentEmail;
 
-      if (!isAuthorized()) {
+      if (!state.settings.adminEmail) {
+        claimAdminIfNeeded(state.currentEmail);
+      }
+
+      if (!isAuthorizedUser()) {
         $('unauth-email').textContent = state.currentEmail;
-        $('btn-visitor-toggle').classList.add('hidden');
         switchView('unauthorized');
+        lucide.createIcons();
         return;
       }
 
       const realAdmin = isRealAdmin();
       const effectiveAdmin = realAdmin && !state.visitorPreviewMode;
 
+      if (!effectiveAdmin && state.selectMode) {
+        state.selectMode = false;
+        state.selectedAlbumIds.clear();
+      }
+
       $('btn-visitor-toggle').classList.toggle('hidden', !realAdmin);
       $('btn-visitor-toggle').classList.toggle('flex', realAdmin);
       $('visitor-toggle-label').textContent = state.visitorPreviewMode ? '回到管理' : '訪客視角';
+
+      $('visitor-preview-bar').classList.toggle('hidden', !(realAdmin && state.visitorPreviewMode));
+      if (realAdmin && state.visitorPreviewMode) {
+        populatePreviewUserSelect();
+      }
 
       $('admin-toolbar').classList.toggle('hidden', !effectiveAdmin);
       $('admin-toolbar').classList.toggle('flex', effectiveAdmin);
@@ -882,29 +1144,59 @@
         ? '<i data-lucide="sparkles" class="w-3 h-3"></i><span>管理者模式</span>'
         : '<i data-lucide="heart" class="w-3 h-3"></i><span>受邀親友模式</span>';
 
+      updateBatchBar();
       switchView('gallery');
       renderAlbums();
       renderAccessList();
       lucide.createIcons();
     }
 
-    // ==================== 6. 渲染相簿卡片牆（手機版 3 欄並排） ====================
+    function updateBatchBar() {
+      const effectiveAdmin = isRealAdmin() && !state.visitorPreviewMode;
+      const bar = $('batch-action-bar');
+      const show = effectiveAdmin && state.selectMode;
+      bar.classList.toggle('hidden', !show);
+
+      $('select-mode-label').textContent = state.selectMode ? '結束多選' : '多選管理';
+      const count = state.selectedAlbumIds.size;
+      $('batch-selected-count').textContent = count;
+
+      const disableActions = count === 0;
+      ['btn-batch-move-top', 'btn-batch-move-up', 'btn-batch-move-down', 'btn-batch-move-bottom', 'btn-batch-delete'].forEach((id) => {
+        $(id).disabled = disableActions;
+      });
+
+      const allSelected = state.albums.length > 0 && count === state.albums.length;
+      $('btn-batch-select-all').textContent = allSelected ? '取消全選' : '全選';
+    }
+
+    // ==================== 6. 渲染相簿卡片牆（正方形封面 + 手機版 3 欄並排） ====================
     function renderAlbums() {
       const grid = $('albums-grid');
       const emptyState = $('empty-albums-state');
       const effectiveAdmin = isRealAdmin() && !state.visitorPreviewMode;
 
+      const visibleAlbums = getVisibleAlbums();
+      populateFilterOptions(visibleAlbums);
+
       const q = state.searchQuery.trim().toLowerCase();
-      const filtered = state.albums.filter((a) => {
+      const filtered = visibleAlbums.filter((a) => {
+        if (state.filterYear && String(a.year || '').trim() !== state.filterYear) return false;
+        if (state.filterMonth && String(a.month || '').trim() !== state.filterMonth) return false;
+        if (state.filterLocation && String(a.location || '').trim() !== state.filterLocation) return false;
         if (!q) return true;
         return (
           (a.title || '').toLowerCase().includes(q) ||
           (a.subtitle || '').toLowerCase().includes(q) ||
+          (a.location || '').toLowerCase().includes(q) ||
           (a.note || '').toLowerCase().includes(q)
         );
       });
 
-      $('album-count-badge').textContent = `${state.albums.length} 本相簿`;
+      const hasAnyFilter = Boolean(q || state.filterYear || state.filterMonth || state.filterLocation);
+      $('album-count-badge').textContent = hasAnyFilter
+        ? `顯示 ${filtered.length} / ${visibleAlbums.length} 本相簿`
+        : `${visibleAlbums.length} 本相簿`;
 
       grid.innerHTML = '';
       if (filtered.length === 0) {
@@ -915,14 +1207,17 @@
 
       filtered.forEach((album, index) => {
         const tagBgClass = TAG_COLOR_MAP[album.color] || 'bg-nordic-yellow';
-        const coverSrc = album.coverUrl || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times';
+        const coverSrc = album.coverUrl || 'https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times';
         const featuredCount = Array.isArray(album.featuredPhotos) ? album.featuredPhotos.length : 0;
+        const isSelected = state.selectMode && state.selectedAlbumIds.has(album.id);
+        const isCustomVis = album.visibility === 'custom';
+        const customCount = Array.isArray(album.allowedViewers) ? album.allowedViewers.length : 0;
 
         const card = document.createElement('article');
-        card.className = 'group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow-sm sm:nordic-shadow nordic-card';
+        card.className = `group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow-sm sm:nordic-shadow nordic-card ${isSelected ? 'ring-4 ring-nordic-coral' : ''}`;
         card.dataset.id = album.id;
 
-        if (effectiveAdmin && !q) {
+        if (effectiveAdmin && !hasAnyFilter && !state.selectMode) {
           card.draggable = true;
           card.addEventListener('dragstart', () => {
             state.draggedAlbumId = album.id;
@@ -950,15 +1245,26 @@
         }
 
         const safeTitle = escapeHtml(album.title || '未命名相簿');
-        const safeSub = escapeHtml(album.subtitle || '快樂回憶');
+        const autoSub = [album.year && album.month ? `${album.year}.${album.month}` : (album.year || ''), album.location || ''].filter(Boolean).join(' · ');
+        const safeSub = escapeHtml(album.subtitle || autoSub || '快樂回憶');
         const safeNote = escapeHtml(album.note || '');
+        const coverStyle = getCoverImgStyle(album);
 
         card.innerHTML = `
-          <div class="relative aspect-square sm:aspect-[4/3] w-full overflow-hidden border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg cursor-pointer" data-action="view">
-            <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover object-center block group-hover:scale-105 transition-transform duration-500 ease-out" />
-            <span class="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-3 sm:py-1 rounded-full ${tagBgClass} text-nordic-navy border border-nordic-navy sm:border-2 text-[9px] sm:text-[11px] font-bold max-w-[85%] sm:max-w-[75%] truncate">
+          <div class="relative aspect-square w-full overflow-hidden border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg cursor-pointer" data-action="view">
+            <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" style="${coverStyle}" onerror="this.onerror=null;this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover block transition-transform duration-500 ease-out" />
+            <span class="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-3 sm:py-1 rounded-full ${tagBgClass} text-nordic-navy border border-nordic-navy sm:border-2 text-[9px] sm:text-[11px] font-bold max-w-[76%] truncate">
               ${safeSub}
             </span>
+            ${state.selectMode && effectiveAdmin ? `
+              <span class="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 w-6 h-6 sm:w-7 sm:h-7 rounded-lg border-2 border-nordic-navy flex items-center justify-center ${isSelected ? 'bg-nordic-coral text-nordic-navy' : 'bg-oat-light/90 text-transparent'}">
+                <i data-lucide="check" class="w-4 h-4"></i>
+              </span>
+            ` : (effectiveAdmin && isCustomVis ? `
+              <span class="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full bg-nordic-coral text-nordic-navy border border-nordic-navy text-[9px] sm:text-[10px] font-bold" title="僅限指定親友可見">
+                🔒 ${customCount}
+              </span>
+            ` : '')}
             ${featuredCount > 0 ? `
               <span class="hidden sm:inline-block absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-oat-light/95 text-nordic-navy border-2 border-nordic-navy text-[10px] font-bold">
                 📷 ${featuredCount} 張精選
@@ -972,14 +1278,14 @@
               ${safeNote ? `<p class="hidden sm:line-clamp-2 text-xs text-nordic-navySoft dark:text-oat-light/75">${safeNote}</p>` : ''}
             </div>
 
-            ${effectiveAdmin ? `
+            ${effectiveAdmin && !state.selectMode ? `
               <div class="pt-1.5 sm:pt-3 border-t border-dashed sm:border-t-2 border-nordic-navy/15 dark:border-nordic-darkBorder flex flex-wrap items-center justify-between gap-1">
                 <div class="flex items-center gap-0.5 sm:gap-1">
-                  <button data-action="move-up" ${index === 0 ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往前移動">
+                  <button data-action="move-up" ${index === 0 || hasAnyFilter ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往前移動">
                     <i data-lucide="arrow-left" class="w-3 h-3 sm:hidden"></i>
                     <i data-lucide="arrow-up" class="w-3.5 h-3.5 hidden sm:block"></i>
                   </button>
-                  <button data-action="move-down" ${index === filtered.length - 1 ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往後移動">
+                  <button data-action="move-down" ${index === filtered.length - 1 || hasAnyFilter ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往後移動">
                     <i data-lucide="arrow-right" class="w-3 h-3 sm:hidden"></i>
                     <i data-lucide="arrow-down" class="w-3.5 h-3.5 hidden sm:block"></i>
                   </button>
@@ -994,20 +1300,31 @@
                   </button>
                 </div>
               </div>
-            ` : `
+            ` : (!state.selectMode ? `
               <div class="hidden sm:flex pt-2 items-center justify-between text-xs font-bold text-nordic-navySoft dark:text-nordic-blue cursor-pointer" data-action="view">
                 <span>打開相簿看照片</span>
                 <span class="w-7 h-7 rounded-full ${tagBgClass} border-2 border-nordic-navy text-nordic-navy flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
                   <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                 </span>
               </div>
-            `}
+            ` : '')}
           </div>
         `;
 
-        // 綁定卡片點擊事件
         card.querySelectorAll('[data-action="view"]').forEach((el) => {
-          el.addEventListener('click', () => openAlbumViewer(album));
+          el.addEventListener('click', () => {
+            if (state.selectMode && effectiveAdmin) {
+              if (state.selectedAlbumIds.has(album.id)) {
+                state.selectedAlbumIds.delete(album.id);
+              } else {
+                state.selectedAlbumIds.add(album.id);
+              }
+              updateBatchBar();
+              renderAlbums();
+            } else {
+              openAlbumViewer(album);
+            }
+          });
         });
 
         const btnUp = card.querySelector('[data-action="move-up"]');
@@ -1015,8 +1332,8 @@
         const btnEdit = card.querySelector('[data-action="edit"]');
         const btnDel = card.querySelector('[data-action="delete"]');
 
-        if (btnUp) btnUp.addEventListener('click', () => moveAlbumByOffset(album.id, -1));
-        if (btnDown) btnDown.addEventListener('click', () => moveAlbumByOffset(album.id, 1));
+        if (btnUp) btnUp.addEventListener('click', () => moveAlbumStep(album.id, -1));
+        if (btnDown) btnDown.addEventListener('click', () => moveAlbumStep(album.id, 1));
         if (btnEdit) btnEdit.addEventListener('click', () => openAlbumEditor(album));
         if (btnDel) btnDel.addEventListener('click', () => promptDeleteAlbum(album));
 
@@ -1026,14 +1343,6 @@
       lucide.createIcons();
     }
 
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
     // ==================== 7. 相簿檢視燈箱與照片下載 ====================
     function openAlbumViewer(album) {
       const tagEl = $('viewer-tag');
@@ -1041,8 +1350,26 @@
       tagEl.className = `inline-block px-2.5 py-0.5 rounded-full ${TAG_COLOR_MAP[album.color] || 'bg-nordic-yellow'} text-nordic-navy border border-nordic-navy text-[11px] font-bold mb-1`;
 
       $('viewer-title').textContent = album.title || '未命名相簿';
-      const coverSrc = album.coverUrl || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Happy+Times';
-      $('viewer-cover').src = coverSrc;
+      const coverSrc = album.coverUrl || 'https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times';
+      const viewerCover = $('viewer-cover');
+      viewerCover.src = coverSrc;
+      viewerCover.setAttribute('style', getCoverImgStyle(album));
+
+      $('viewer-cover-box').onclick = () => openImageZoomModal(coverSrc, album.title || '相簿封面');
+
+      const pillsBox = $('viewer-meta-pills');
+      const pills = [];
+      if (album.year) pills.push(`📅 ${album.year} 年${album.month ? ` ${Number(album.month)} 月` : ''}`);
+      else if (album.month) pills.push(`📅 ${Number(album.month)} 月`);
+      if (album.location) pills.push(`📍 ${album.location}`);
+      if (pills.length > 0) {
+        pillsBox.innerHTML = pills
+          .map((p) => `<span class="px-3 py-1 rounded-full bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy/20 dark:border-nordic-darkBorder text-xs font-bold">${escapeHtml(p)}</span>`)
+          .join('');
+        pillsBox.classList.remove('hidden');
+      } else {
+        pillsBox.classList.add('hidden');
+      }
 
       const noteEl = $('viewer-note');
       if (album.note) {
@@ -1053,82 +1380,269 @@
       }
 
       $('viewer-gphotos-link').href = album.url || '#';
-      $('viewer-download-cover').onclick = () => downloadImage(coverSrc, `${album.title || 'happy-times'}-cover.jpg`);
+      $('viewer-download-cover').onclick = () => downloadImage(coverSrc, `${album.title || 'cover'}.jpg`);
 
       const featured = Array.isArray(album.featuredPhotos) ? album.featuredPhotos : [];
-      const sec = $('viewer-featured-section');
-      const grid = $('viewer-featured-grid');
-      grid.innerHTML = '';
+      const featuredSection = $('viewer-featured-section');
+      const featuredGrid = $('viewer-featured-grid');
+      featuredGrid.innerHTML = '';
 
       if (featured.length > 0) {
-        sec.classList.remove('hidden');
+        featuredSection.classList.remove('hidden');
         $('viewer-featured-count').textContent = `共 ${featured.length} 張`;
         featured.forEach((src, i) => {
           const item = document.createElement('div');
           item.className = 'group relative aspect-square rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg';
           item.innerHTML = `
-            <img src="${src}" alt="精選照片 ${i + 1}" class="w-full h-full object-cover object-center block" />
-            <button type="button" class="absolute bottom-2 right-2 p-2 rounded-full border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy nordic-shadow-sm hover:scale-105 transition-transform" title="下載照片">
+            <img src="${src}" alt="精選照片 ${i + 1}" class="w-full h-full object-cover block cursor-zoom-in" />
+            <button type="button" class="absolute bottom-2 right-2 p-2 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm hover:scale-105 transition-transform" title="直接下載照片">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
             </button>
           `;
-          item.querySelector('button').addEventListener('click', () => {
-            downloadImage(src, `${album.title || 'happy-times'}-photo-${i + 1}.jpg`);
+          item.querySelector('img').addEventListener('click', () => openImageZoomModal(src, `${album.title || '精選照片'} #${i + 1}`));
+          item.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation();
+            downloadImage(src, `${album.title || 'photo'}_${i + 1}.jpg`);
           });
-          grid.appendChild(item);
+          featuredGrid.appendChild(item);
         });
-        lucide.createIcons();
       } else {
-        sec.classList.add('hidden');
+        featuredSection.classList.add('hidden');
       }
 
       openModal('modal-viewer');
     }
 
+    // 封面照片互動放大縮小 / 左右橫移全螢幕檢視器
+    function applyZoomViewerTransform() {
+      const { x, y, scale } = state.zoomViewer;
+      $('zoom-target-img').style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+      $('input-zoom-slider').value = scale;
+      $('zoom-percent-label').textContent = `${Math.round(scale * 100)}%`;
+    }
+
+    function openImageZoomModal(src, title) {
+      $('zoom-target-img').src = src;
+      $('zoom-modal-title').textContent = `${title}（拖曳左右移動 / 縮放檢視）`;
+      state.zoomViewer = { x: 0, y: 0, scale: 1 };
+      applyZoomViewerTransform();
+      openModal('modal-image-zoom');
+      lucide.createIcons();
+    }
+
+    (function initImageZoomControls() {
+      const stage = $('zoom-stage');
+      let dragging = false;
+      let startX = 0;
+      let startY = 0;
+      let origX = 0;
+      let origY = 0;
+
+      stage.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origX = state.zoomViewer.x;
+        origY = state.zoomViewer.y;
+        stage.setPointerCapture(e.pointerId);
+      });
+      stage.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        state.zoomViewer.x = origX + (e.clientX - startX);
+        state.zoomViewer.y = origY + (e.clientY - startY);
+        applyZoomViewerTransform();
+      });
+      const stopDrag = () => { dragging = false; };
+      stage.addEventListener('pointerup', stopDrag);
+      stage.addEventListener('pointercancel', stopDrag);
+
+      stage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.15 : -0.15;
+        state.zoomViewer.scale = Math.min(4, Math.max(0.5, Number((state.zoomViewer.scale + delta).toFixed(2))));
+        applyZoomViewerTransform();
+      }, { passive: false });
+
+      $('input-zoom-slider').addEventListener('input', (e) => {
+        state.zoomViewer.scale = Number(e.target.value);
+        applyZoomViewerTransform();
+      });
+      $('btn-zoom-in').addEventListener('click', () => {
+        state.zoomViewer.scale = Math.min(4, Number((state.zoomViewer.scale + 0.25).toFixed(2)));
+        applyZoomViewerTransform();
+      });
+      $('btn-zoom-out').addEventListener('click', () => {
+        state.zoomViewer.scale = Math.max(0.5, Number((state.zoomViewer.scale - 0.25).toFixed(2)));
+        applyZoomViewerTransform();
+      });
+      $('btn-zoom-left').addEventListener('click', () => {
+        state.zoomViewer.x += 60;
+        applyZoomViewerTransform();
+      });
+      $('btn-zoom-right').addEventListener('click', () => {
+        state.zoomViewer.x -= 60;
+        applyZoomViewerTransform();
+      });
+      $('btn-zoom-reset').addEventListener('click', () => {
+        state.zoomViewer = { x: 0, y: 0, scale: 1 };
+        applyZoomViewerTransform();
+      });
+    })();
+
     async function downloadImage(url, filename) {
       try {
         if (url.startsWith('data:')) {
-          triggerDownload(url, filename);
-          showToast('開始下載照片');
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast('照片已開始下載！');
           return;
         }
-        const res = await fetch(url);
+        const res = await fetch(url, { mode: 'cors' });
+        if (!res.ok) throw new Error('Fetch failed');
         const blob = await res.blob();
         const blobUrl = URL.createObjectURL(blob);
-        triggerDownload(blobUrl, filename);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 3000);
-        showToast('開始下載照片');
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1500);
+        showToast('照片已開始下載！');
       } catch (err) {
         window.open(url, '_blank', 'noopener,noreferrer');
-        showToast('已在新分頁開啟原圖，可長按或右鍵儲存');
+        showToast('已在新分頁開啟圖片，長按或右鍵即可儲存');
       }
     }
 
-    function triggerDownload(href, filename) {
-      const a = document.createElement('a');
-      a.href = href;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    // ==================== 8. 新增與編輯相簿 + 自動抓取封面 ====================
+    function applyEditorCoverTransform() {
+      const { posX, posY, scale } = state.editorCover;
+      const img = $('album-cover-preview');
+      img.style.objectPosition = `${posX}% ${posY}%`;
+      img.style.transform = `scale(${scale})`;
+      img.style.transformOrigin = `${posX}% ${posY}%`;
+      $('input-cover-zoom').value = scale;
     }
 
-    // ==================== 8. 新增與編輯相簿 + 自動抓取封面 ====================
+    (function initEditorCoverCropper() {
+      const stage = $('cover-crop-stage');
+      let dragging = false;
+      let startX = 0;
+      let startY = 0;
+      let origPosX = 50;
+      let origPosY = 50;
+
+      stage.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        origPosX = state.editorCover.posX;
+        origPosY = state.editorCover.posY;
+        stage.setPointerCapture(e.pointerId);
+      });
+      stage.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const sensitivity = 0.65;
+        state.editorCover.posX = Math.min(100, Math.max(0, Math.round(origPosX - dx * sensitivity)));
+        state.editorCover.posY = Math.min(100, Math.max(0, Math.round(origPosY - dy * sensitivity)));
+        applyEditorCoverTransform();
+      });
+      const stopDrag = () => { dragging = false; };
+      stage.addEventListener('pointerup', stopDrag);
+      stage.addEventListener('pointercancel', stopDrag);
+
+      $('input-cover-zoom').addEventListener('input', (e) => {
+        state.editorCover.scale = Number(e.target.value);
+        applyEditorCoverTransform();
+      });
+      $('btn-cover-zoom-in').addEventListener('click', () => {
+        state.editorCover.scale = Math.min(3, Number((state.editorCover.scale + 0.15).toFixed(2)));
+        applyEditorCoverTransform();
+      });
+      $('btn-cover-zoom-out').addEventListener('click', () => {
+        state.editorCover.scale = Math.max(1, Number((state.editorCover.scale - 0.15).toFixed(2)));
+        applyEditorCoverTransform();
+      });
+      $('btn-cover-reset').addEventListener('click', () => {
+        state.editorCover = { posX: 50, posY: 50, scale: 1 };
+        applyEditorCoverTransform();
+      });
+      $('btn-editor-preview-zoom').addEventListener('click', () => {
+        const src = $('input-album-cover').value.trim() || $('album-cover-preview').src;
+        openImageZoomModal(src, $('input-album-title').value.trim() || '封面原圖預覽');
+      });
+    })();
+
+    function renderEditorViewerCheckboxes(selectedList = []) {
+      const box = $('editor-viewers-checkboxes');
+      const selectedSet = new Set(selectedList.map((e) => e.toLowerCase()));
+      const candidates = (state.settings.allowedEmails || []).filter(
+        (e) => !state.settings.adminEmail || e.toLowerCase() !== state.settings.adminEmail.toLowerCase()
+      );
+      box.innerHTML = '';
+
+      if (candidates.length === 0) {
+        box.innerHTML = '<span class="text-[11px] text-nordic-navySoft dark:text-oat-light/60">授權名單尚無其他親友，可直接在下方欄位輸入 Gmail。</span>';
+        return;
+      }
+
+      candidates.forEach((email) => {
+        const lower = email.toLowerCase();
+        const label = document.createElement('label');
+        label.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs font-semibold cursor-pointer';
+        label.innerHTML = `
+          <input type="checkbox" value="${escapeHtml(lower)}" ${selectedSet.has(lower) ? 'checked' : ''} class="accent-nordic-navy viewer-checkbox" />
+          <span>${escapeHtml(lower)}</span>
+        `;
+        box.appendChild(label);
+      });
+    }
+
+    document.querySelectorAll('input[name="album-visibility"]').forEach((radio) => {
+      radio.addEventListener('change', (e) => {
+        $('editor-viewers-box').classList.toggle('hidden', e.target.value !== 'custom');
+      });
+    });
+
     function openAlbumEditor(album = null) {
       $('edit-album-id').value = album ? album.id : '';
       $('editor-modal-title').textContent = album ? '編輯相簿資訊' : '新增 Google 相簿';
       $('input-album-url').value = album ? (album.url || '') : '';
       $('input-album-title').value = album ? (album.title || '') : '';
       $('input-album-subtitle').value = album ? (album.subtitle || '') : '';
+      $('input-album-year').value = album ? (album.year || '') : new Date().getFullYear();
+      $('input-album-month').value = album ? (album.month || '') : '';
+      $('input-album-location').value = album ? (album.location || '') : '';
       $('input-album-cover').value = album ? (album.coverUrl || '') : '';
       $('input-album-note').value = album ? (album.note || '') : '';
+      $('input-album-extra-viewers').value = '';
       $('fetch-status').textContent = '';
 
       const color = album?.color || 'yellow';
       const radio = document.querySelector(`input[name="album-color"][value="${color}"]`);
       if (radio) radio.checked = true;
 
+      const vis = album?.visibility === 'custom' ? 'custom' : 'all';
+      const visRadio = document.querySelector(`input[name="album-visibility"][value="${vis}"]`);
+      if (visRadio) visRadio.checked = true;
+      $('editor-viewers-box').classList.toggle('hidden', vis !== 'custom');
+      renderEditorViewerCheckboxes(Array.isArray(album?.allowedViewers) ? album.allowedViewers : []);
+
+      state.editorCover = {
+        posX: typeof album?.coverPosX === 'number' ? album.coverPosX : 50,
+        posY: typeof album?.coverPosY === 'number' ? album.coverPosY : 50,
+        scale: typeof album?.coverScale === 'number' ? album.coverScale : 1
+      };
       updateCoverPreview(album?.coverUrl || '');
+      applyEditorCoverTransform();
+
       state.editingFeatured = Array.isArray(album?.featuredPhotos) ? [...album.featuredPhotos] : [];
       renderEditorFeaturedList();
 
@@ -1136,70 +1650,29 @@
     }
 
     function updateCoverPreview(url) {
-      $('album-cover-preview').src = url || 'https://placehold.co/800x600/FAF6EE/1D3557?text=Cover+Preview';
+      $('album-cover-preview').src = url || 'https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview';
     }
 
     $('input-album-cover').addEventListener('input', (e) => {
       updateCoverPreview(e.target.value.trim());
     });
 
-    // 自動透過 Microlink API 抓取 Google 相簿標題與封面
-    $('btn-fetch-meta').addEventListener('click', async () => {
-      const url = $('input-album-url').value.trim();
-      if (!url) {
-        showToast('請先貼上 Google 相簿分享連結');
-        return;
-      }
-      const status = $('fetch-status');
-      status.textContent = '正在抓取相簿標題與封面...';
-
-      try {
-        const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}`;
-        const res = await fetch(apiUrl);
-        const json = await res.json();
-        if (json.status === 'success' && json.data) {
-          const { title, image } = json.data;
-          if (title && !$('input-album-title').value.trim()) {
-            $('input-album-title').value = title.replace(/\s*-\s*Google 相簿\s*$/i, '').replace(/\s*-\s*Google Photos\s*$/i, '').trim();
-          }
-          if (image && image.url) {
-            $('input-album-cover').value = image.url;
-            updateCoverPreview(image.url);
-            status.textContent = '已成功抓取封面圖片！';
-          } else {
-            status.textContent = '無法自動取得封面，請手動貼上網址或從裝置上傳。';
-          }
-        } else {
-          status.textContent = '無法自動抓取，請手動輸入名稱並上傳封面。';
-        }
-      } catch (err) {
-        console.warn('Microlink fetch error:', err);
-        status.textContent = '抓取失敗（可能受隱私設定限制），請手動上傳封面。';
-      }
-    });
-
-    // 圖片壓縮工具（確保符合 Firestore 單筆文件大小限制）
-    function compressImageFile(file, maxWidth = 720, quality = 0.72) {
+    function compressImageFile(file, maxSize = 900, quality = 0.78) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (ev) => {
+        reader.onload = () => {
           const img = new Image();
           img.onload = () => {
+            const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
             const canvas = document.createElement('canvas');
-            let w = img.width;
-            let h = img.height;
-            if (w > maxWidth) {
-              h = Math.round((h * maxWidth) / w);
-              w = maxWidth;
-            }
-            canvas.width = w;
-            canvas.height = h;
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, w, h);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             resolve(canvas.toDataURL('image/jpeg', quality));
           };
           img.onerror = reject;
-          img.src = ev.target.result;
+          img.src = reader.result;
         };
         reader.onerror = reject;
         reader.readAsDataURL(file);
@@ -1210,62 +1683,136 @@
       const file = e.target.files?.[0];
       if (!file) return;
       try {
-        const dataUrl = await compressImageFile(file, 720, 0.75);
+        const dataUrl = await compressImageFile(file, 900, 0.8);
         $('input-album-cover').value = dataUrl;
+        state.editorCover = { posX: 50, posY: 50, scale: 1 };
         updateCoverPreview(dataUrl);
-        showToast('已壓縮並套用封面圖片');
+        applyEditorCoverTransform();
+        showToast('封面照片已載入，可拖曳微調構圖');
       } catch (err) {
-        showToast('圖片處理失敗，請換一張試試');
+        console.error('Cover upload error:', err);
+        showToast('圖片處理失敗，請更換其他檔案');
+      } finally {
+        e.target.value = '';
       }
-      e.target.value = '';
-    });
-
-    $('input-featured-files').addEventListener('change', async (e) => {
-      const files = Array.from(e.target.files || []);
-      for (const f of files) {
-        if (state.editingFeatured.length >= 4) {
-          showToast('每本相簿最多上傳 4 張精選照片');
-          break;
-        }
-        try {
-          const dataUrl = await compressImageFile(f, 640, 0.7);
-          state.editingFeatured.push(dataUrl);
-        } catch (err) {
-          console.warn('Featured compress error:', err);
-        }
-      }
-      renderEditorFeaturedList();
-      e.target.value = '';
     });
 
     function renderEditorFeaturedList() {
       const box = $('editor-featured-list');
       box.innerHTML = '';
       state.editingFeatured.forEach((src, idx) => {
-        const div = document.createElement('div');
-        div.className = 'relative aspect-square rounded-xl overflow-hidden border-2 border-nordic-navy';
-        div.innerHTML = `
-          <img src="${src}" class="w-full h-full object-cover object-center block" />
-          <button type="button" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-nordic-coral text-nordic-navy border border-nordic-navy flex items-center justify-center text-xs font-bold">×</button>
+        const item = document.createElement('div');
+        item.className = 'relative aspect-square rounded-xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder';
+        item.innerHTML = `
+          <img src="${src}" alt="精選 ${idx + 1}" class="w-full h-full object-cover block" />
+          <button type="button" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-nordic-coral text-nordic-navy border border-nordic-navy flex items-center justify-center text-xs font-bold">×</button>
         `;
-        div.querySelector('button').addEventListener('click', () => {
+        item.querySelector('button').addEventListener('click', () => {
           state.editingFeatured.splice(idx, 1);
           renderEditorFeaturedList();
         });
-        box.appendChild(div);
+        box.appendChild(item);
       });
     }
+
+    $('input-featured-files').addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (files.length === 0) return;
+      const remain = 4 - state.editingFeatured.length;
+      if (remain <= 0) {
+        showToast('每本相簿最多可上傳 4 張精選照片');
+        e.target.value = '';
+        return;
+      }
+      for (const file of files.slice(0, remain)) {
+        try {
+          const dataUrl = await compressImageFile(file, 800, 0.72);
+          state.editingFeatured.push(dataUrl);
+        } catch (err) {
+          console.error('Featured photo compress error:', err);
+        }
+      }
+      renderEditorFeaturedList();
+      e.target.value = '';
+    });
+
+    $('btn-fetch-meta').addEventListener('click', async () => {
+      const url = $('input-album-url').value.trim();
+      const status = $('fetch-status');
+      if (!url) {
+        status.textContent = '請先貼上 Google 相簿分享連結。';
+        return;
+      }
+      status.textContent = '正在自動抓取相簿標題與封面...';
+      try {
+        const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(url)}`;
+        const res = await fetch(apiUrl);
+        const json = await res.json();
+        const data = json?.data || {};
+        if (data.title && !$('input-album-title').value.trim()) {
+          $('input-album-title').value = data.title.replace(/\s*[-–|]\s*Google\s*(Photos|相簿).*/i, '').trim();
+        }
+        const imgUrl = data.image?.url || data.logo?.url || '';
+        if (imgUrl) {
+          $('input-album-cover').value = imgUrl;
+          state.editorCover = { posX: 50, posY: 50, scale: 1 };
+          updateCoverPreview(imgUrl);
+          applyEditorCoverTransform();
+          status.textContent = '已成功抓取封面！可在下方正方形框拖曳微調構圖。';
+        } else {
+          status.textContent = '未能自動取得封面（可能受相簿隱私限制），請手動貼上圖片網址或從裝置上傳。';
+        }
+      } catch (err) {
+        console.warn('Meta fetch error:', err);
+        status.textContent = '抓取失敗，請改由下方從裝置上傳封面圖片。';
+      }
+    });
 
     $('form-album-editor').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = $('edit-album-id').value;
       const color = document.querySelector('input[name="album-color"]:checked')?.value || 'yellow';
+      const visibility = document.querySelector('input[name="album-visibility"]:checked')?.value || 'all';
+
+      let allowedViewers = [];
+      if (visibility === 'custom') {
+        const checked = Array.from(document.querySelectorAll('.viewer-checkbox:checked')).map((el) => el.value.toLowerCase());
+        const extra = $('input-album-extra-viewers').value
+          .split(/[\s,;]+/)
+          .map((s) => s.trim().toLowerCase())
+          .filter((s) => s && s.includes('@'));
+        allowedViewers = Array.from(new Set([...checked, ...extra]));
+
+        if (extra.length > 0) {
+          const mergedGlobal = Array.from(new Set([...(state.settings.allowedEmails || []), ...extra]));
+          if (mergedGlobal.length !== (state.settings.allowedEmails || []).length) {
+            state.settings.allowedEmails = mergedGlobal;
+            if (firebaseReady) {
+              try {
+                await setDoc(getSettingsDocRef(), state.settings, { merge: true });
+              } catch (err) {
+                console.warn('Auto add allowed email warning:', err);
+              }
+            } else {
+              saveLocalFallback();
+            }
+          }
+        }
+      }
 
       const payload = {
         url: $('input-album-url').value.trim(),
         title: $('input-album-title').value.trim(),
         subtitle: $('input-album-subtitle').value.trim(),
+        year: $('input-album-year').value.trim(),
+        month: $('input-album-month').value.trim(),
+        location: $('input-album-location').value.trim(),
         coverUrl: $('input-album-cover').value.trim(),
+        coverPosX: state.editorCover.posX,
+        coverPosY: state.editorCover.posY,
+        coverScale: state.editorCover.scale,
+        visibility,
+        allowedViewers,
         note: $('input-album-note').value.trim(),
         color,
         featuredPhotos: state.editingFeatured,
@@ -1274,93 +1821,125 @@
 
       const btn = $('btn-save-album');
       btn.disabled = true;
-
       try {
-        if (firebaseReady) {
-          if (id) {
+        if (id) {
+          if (firebaseReady) {
             await updateDoc(doc(getAlbumsColRef(), id), payload);
-            showToast('已更新相簿資訊');
           } else {
-            payload.order = state.albums.length;
-            payload.createdAt = Date.now();
-            await addDoc(getAlbumsColRef(), payload);
-            showToast('已新增相簿！');
-          }
-        } else {
-          if (id) {
             const idx = state.albums.findIndex((a) => a.id === id);
-            if (idx >= 0) state.albums[idx] = { ...state.albums[idx], ...payload };
-          } else {
-            state.albums.push({ id: `local-${Date.now()}`, order: state.albums.length, ...payload });
+            if (idx !== -1) state.albums[idx] = { ...state.albums[idx], ...payload };
+            saveLocalFallback();
+            renderAlbums();
           }
-          saveLocalFallback();
-          renderAlbums();
-          showToast('已儲存至本機預覽');
+          showToast('相簿已更新！');
+        } else {
+          const maxOrder = state.albums.reduce((m, a) => Math.max(m, a.order ?? 0), -1);
+          const newDoc = { ...payload, order: maxOrder + 1, createdAt: Date.now() };
+          if (firebaseReady) {
+            await addDoc(getAlbumsColRef(), newDoc);
+          } else {
+            state.albums.push({ id: `local_${Date.now()}`, ...newDoc });
+            saveLocalFallback();
+            renderAlbums();
+          }
+          showToast('已新增相簿！');
         }
         closeModal('modal-album-editor');
       } catch (err) {
         console.error('Save album error:', err);
-        showToast('儲存失敗：請確認已用管理者 Google 帳號登入且規則正確');
+        showToast('儲存失敗：請確認已用管理者 Google 帳號登入');
       } finally {
         btn.disabled = false;
       }
     });
 
     // ==================== 9. 排序與刪除相簿 ====================
-    async function moveAlbumByOffset(albumId, offset) {
-      const idx = state.albums.findIndex((a) => a.id === albumId);
-      const targetIdx = idx + offset;
-      if (idx < 0 || targetIdx < 0 || targetIdx >= state.albums.length) return;
-
-      const updated = [...state.albums];
-      const [moved] = updated.splice(idx, 1);
-      updated.splice(targetIdx, 0, moved);
-      await persistAlbumOrder(updated);
-    }
-
-    async function reorderAlbumsById(sourceId, targetId) {
-      const srcIdx = state.albums.findIndex((a) => a.id === sourceId);
-      const tgtIdx = state.albums.findIndex((a) => a.id === targetId);
-      if (srcIdx < 0 || tgtIdx < 0) return;
-
-      const updated = [...state.albums];
-      const [moved] = updated.splice(srcIdx, 1);
-      updated.splice(tgtIdx, 0, moved);
-      await persistAlbumOrder(updated);
-    }
-
     async function persistAlbumOrder(orderedList) {
-      state.albums = orderedList.map((a, i) => ({ ...a, order: i }));
-      renderAlbums();
-
+      state.albums = orderedList.map((a, idx) => ({ ...a, order: idx }));
       if (firebaseReady) {
         try {
           await Promise.all(
-            state.albums.map((a, i) => updateDoc(doc(getAlbumsColRef(), a.id), { order: i }))
+            state.albums.map((a) => updateDoc(doc(getAlbumsColRef(), a.id), { order: a.order }))
           );
-          showToast('已更新相簿順序');
+          showToast('相簿順序已更新');
         } catch (err) {
-          console.error('Reorder error:', err);
-          showToast('排序同步失敗，請檢查管理者權限');
+          console.error('Persist order error:', err);
+          showToast('排序更新失敗：請確認管理者權限');
         }
       } else {
         saveLocalFallback();
-        showToast('已更新相簿順序');
+        renderAlbums();
+        showToast('相簿順序已更新');
       }
     }
 
+    async function moveAlbumStep(albumId, delta) {
+      const list = [...state.albums];
+      const idx = list.findIndex((a) => a.id === albumId);
+      const target = idx + delta;
+      if (idx === -1 || target < 0 || target >= list.length) return;
+      [list[idx], list[target]] = [list[target], list[idx]];
+      await persistAlbumOrder(list);
+    }
+
+    async function reorderAlbumsById(fromId, toId) {
+      const list = [...state.albums];
+      const fromIdx = list.findIndex((a) => a.id === fromId);
+      const toIdx = list.findIndex((a) => a.id === toId);
+      if (fromIdx === -1 || toIdx === -1) return;
+      const [moved] = list.splice(fromIdx, 1);
+      list.splice(toIdx, 0, moved);
+      await persistAlbumOrder(list);
+    }
+
     function promptDeleteAlbum(album) {
+      state.pendingBatchDelete = false;
       state.pendingDeleteId = album.id;
+      $('confirm-modal-title').textContent = '確定要刪除這本相簿嗎？';
       $('confirm-album-name').textContent = `「${album.title || '未命名相簿'}」刪除後無法復原喔！`;
+      openModal('modal-confirm');
+    }
+
+    function promptBatchDeleteAlbums() {
+      const count = state.selectedAlbumIds.size;
+      if (count === 0) return;
+      state.pendingBatchDelete = true;
+      state.pendingDeleteId = null;
+      $('confirm-modal-title').textContent = `確定要刪除所選的 ${count} 本相簿嗎？`;
+      $('confirm-album-name').textContent = '批次刪除後將無法復原，請再次確認。';
       openModal('modal-confirm');
     }
 
     $('btn-confirm-cancel').addEventListener('click', () => {
       state.pendingDeleteId = null;
+      state.pendingBatchDelete = false;
       closeModal('modal-confirm');
     });
 
     $('btn-confirm-delete').addEventListener('click', async () => {
+      if (state.pendingBatchDelete) {
+        const ids = Array.from(state.selectedAlbumIds);
+        try {
+          if (firebaseReady) {
+            await Promise.all(ids.map((id) => deleteDoc(doc(getAlbumsColRef(), id))));
+          } else {
+            state.albums = state.albums.filter((a) => !state.selectedAlbumIds.has(a.id));
+            saveLocalFallback();
+            renderAlbums();
+          }
+          state.selectedAlbumIds.clear();
+          updateBatchBar();
+          showToast(`已刪除 ${ids.length} 本相簿`);
+        } catch (err) {
+          console.error('Batch delete error:', err);
+          showToast('批次刪除失敗：請確認已用管理者 Google 帳號登入');
+        } finally {
+          state.pendingBatchDelete = false;
+          closeModal('modal-confirm');
+        }
+        return;
+      }
+
       const id = state.pendingDeleteId;
       if (!id) return;
       try {
@@ -1383,39 +1962,52 @@
 
     // ==================== 10. Gmail 授權名單管理 ====================
     function renderAccessList() {
-      $('access-admin-email').textContent = state.settings.adminEmail || '尚未設定';
-      const listEl = $('allowed-emails-list');
-      const emails = state.settings.allowedEmails || [];
-      $('allowed-count').textContent = emails.length;
-      listEl.innerHTML = '';
+      $('access-admin-email').textContent = state.settings.adminEmail || state.currentEmail || '尚未設定';
+      const list = state.settings.allowedEmails || [];
+      $('allowed-count').textContent = list.length;
 
-      if (emails.length === 0) {
-        listEl.innerHTML = '<li class="text-xs text-nordic-navySoft dark:text-oat-light/60 py-2">尚無授權名單</li>';
-        return;
-      }
-
-      emails.forEach((email) => {
+      const ul = $('allowed-emails-list');
+      ul.innerHTML = '';
+      list.forEach((email) => {
         const isAdminItem = state.settings.adminEmail && email.toLowerCase() === state.settings.adminEmail.toLowerCase();
         const li = document.createElement('li');
-        li.className = 'flex items-center justify-between gap-2 px-3.5 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-xs sm:text-sm';
+        li.className = 'flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-xs font-semibold';
         li.innerHTML = `
           <div class="flex items-center gap-2 min-w-0">
-            <span class="truncate font-semibold">${escapeHtml(email)}</span>
+            <span class="truncate">${escapeHtml(email)}</span>
             ${isAdminItem ? '<span class="px-2 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border border-nordic-navy text-[10px] font-bold shrink-0">管理者</span>' : ''}
           </div>
-          ${!isAdminItem ? `
-            <button type="button" class="p-1.5 rounded-xl hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="移除授權">
-              <i data-lucide="x" class="w-3.5 h-3.5"></i>
-            </button>
-          ` : ''}
+          ${isAdminItem ? '' : '<button type="button" class="p-1.5 rounded-xl hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="移除授權"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>'}
         `;
-        const delBtn = li.querySelector('button');
-        if (delBtn) {
-          delBtn.addEventListener('click', () => removeAllowedEmail(email));
+        const btnRemove = li.querySelector('button');
+        if (btnRemove) {
+          btnRemove.addEventListener('click', () => removeAllowedEmail(email));
         }
-        listEl.appendChild(li);
+        ul.appendChild(li);
       });
       lucide.createIcons();
+    }
+
+    async function saveAllowedEmails(nextEmails) {
+      state.settings.allowedEmails = nextEmails;
+      if (firebaseReady) {
+        try {
+          await setDoc(getSettingsDocRef(), state.settings, { merge: true });
+          showToast('授權名單已更新');
+        } catch (err) {
+          console.error('Save allowed emails error:', err);
+          showToast('更新名單失敗：請確認管理者權限');
+        }
+      } else {
+        saveLocalFallback();
+        renderAccessList();
+        showToast('授權名單已更新');
+      }
+    }
+
+    async function removeAllowedEmail(email) {
+      const next = (state.settings.allowedEmails || []).filter((e) => e.toLowerCase() !== email.toLowerCase());
+      await saveAllowedEmails(next);
     }
 
     $('form-add-emails').addEventListener('submit', async (e) => {
@@ -1425,51 +2017,102 @@
         .split(/[\s,;]+/)
         .map((s) => s.trim().toLowerCase())
         .filter((s) => s && s.includes('@'));
-
       if (parsed.length === 0) {
         showToast('請輸入有效的 Gmail 地址');
         return;
       }
-
       const merged = Array.from(new Set([...(state.settings.allowedEmails || []), ...parsed]));
-      state.settings.allowedEmails = merged;
-
-      try {
-        if (firebaseReady) {
-          await setDoc(getSettingsDocRef(), state.settings, { merge: true });
-        } else {
-          saveLocalFallback();
-        }
-        $('input-new-emails').value = '';
-        renderAccessList();
-        showToast(`已新增 ${parsed.length} 筆授權信箱`);
-      } catch (err) {
-        console.error('Update access error:', err);
-        showToast('更新名單失敗：請檢查管理者權限');
-      }
+      await saveAllowedEmails(merged);
+      $('input-new-emails').value = '';
     });
 
-    async function removeAllowedEmail(targetEmail) {
-      state.settings.allowedEmails = (state.settings.allowedEmails || []).filter(
-        (e) => e.toLowerCase() !== targetEmail.toLowerCase()
-      );
-      try {
-        if (firebaseReady) {
-          await setDoc(getSettingsDocRef(), state.settings, { merge: true });
-        } else {
-          saveLocalFallback();
-        }
-        renderAccessList();
-        showToast('已移除授權');
-      } catch (err) {
-        console.error('Remove access error:', err);
-        showToast('移除失敗：請檢查管理者權限');
-      }
-    }
-
-    // ==================== 11. 互動事件（搜尋、分享、訪客視角） ====================
+    // ==================== 11. 互動事件（搜尋、篩選、多選批次、分享、訪客視角） ====================
     $('input-search').addEventListener('input', (e) => {
       state.searchQuery = e.target.value;
+      renderAlbums();
+    });
+
+    $('filter-year').addEventListener('change', (e) => {
+      state.filterYear = e.target.value;
+      renderAlbums();
+    });
+    $('filter-month').addEventListener('change', (e) => {
+      state.filterMonth = e.target.value;
+      renderAlbums();
+    });
+    $('filter-location').addEventListener('change', (e) => {
+      state.filterLocation = e.target.value;
+      renderAlbums();
+    });
+    $('btn-clear-filters').addEventListener('click', () => {
+      state.searchQuery = '';
+      state.filterYear = '';
+      state.filterMonth = '';
+      state.filterLocation = '';
+      $('input-search').value = '';
+      renderAlbums();
+    });
+
+    function toggleSelectMode(forceVal = null) {
+      state.selectMode = forceVal !== null ? forceVal : !state.selectMode;
+      if (!state.selectMode) state.selectedAlbumIds.clear();
+      updateBatchBar();
+      renderAlbums();
+    }
+
+    $('btn-toggle-select-mode').addEventListener('click', () => toggleSelectMode());
+    $('btn-batch-exit').addEventListener('click', () => toggleSelectMode(false));
+
+    $('btn-batch-select-all').addEventListener('click', () => {
+      if (state.selectedAlbumIds.size === state.albums.length) {
+        state.selectedAlbumIds.clear();
+      } else {
+        state.albums.forEach((a) => state.selectedAlbumIds.add(a.id));
+      }
+      updateBatchBar();
+      renderAlbums();
+    });
+
+    $('btn-batch-move-up').addEventListener('click', async () => {
+      const list = [...state.albums];
+      let moved = false;
+      for (let i = 1; i < list.length; i++) {
+        if (state.selectedAlbumIds.has(list[i].id) && !state.selectedAlbumIds.has(list[i - 1].id)) {
+          [list[i - 1], list[i]] = [list[i], list[i - 1]];
+          moved = true;
+        }
+      }
+      if (moved) await persistAlbumOrder(list);
+    });
+
+    $('btn-batch-move-down').addEventListener('click', async () => {
+      const list = [...state.albums];
+      let moved = false;
+      for (let i = list.length - 2; i >= 0; i--) {
+        if (state.selectedAlbumIds.has(list[i].id) && !state.selectedAlbumIds.has(list[i + 1].id)) {
+          [list[i + 1], list[i]] = [list[i], list[i + 1]];
+          moved = true;
+        }
+      }
+      if (moved) await persistAlbumOrder(list);
+    });
+
+    $('btn-batch-move-top').addEventListener('click', async () => {
+      const selected = state.albums.filter((a) => state.selectedAlbumIds.has(a.id));
+      const rest = state.albums.filter((a) => !state.selectedAlbumIds.has(a.id));
+      await persistAlbumOrder([...selected, ...rest]);
+    });
+
+    $('btn-batch-move-bottom').addEventListener('click', async () => {
+      const selected = state.albums.filter((a) => state.selectedAlbumIds.has(a.id));
+      const rest = state.albums.filter((a) => !state.selectedAlbumIds.has(a.id));
+      await persistAlbumOrder([...rest, ...selected]);
+    });
+
+    $('btn-batch-delete').addEventListener('click', promptBatchDeleteAlbums);
+
+    $('select-preview-user').addEventListener('change', (e) => {
+      state.previewAsEmail = e.target.value;
       renderAlbums();
     });
 
@@ -1481,152 +2124,139 @@
 
     $('btn-visitor-toggle').addEventListener('click', () => {
       state.visitorPreviewMode = !state.visitorPreviewMode;
+      if (!state.visitorPreviewMode) state.previewAsEmail = '';
       evaluateAccessAndRender();
-      showToast(state.visitorPreviewMode ? '已切換為訪客視角' : '已回到管理者模式');
+      showToast(state.visitorPreviewMode ? '已切換為訪客視角預覽' : '已回到管理者模式');
     });
 
     $('btn-share-page').addEventListener('click', () => {
-      const shareUrl = window.location.href;
-      const tempInput = document.createElement('input');
-      tempInput.value = shareUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
+      const url = window.location.href;
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
       try {
         document.execCommand('copy');
-        showToast('已複製網頁分享連結！');
+        showToast('已複製相簿網頁連結，快分享給親友吧！');
       } catch (err) {
-        showToast('請從瀏覽器網址列複製連結');
+        showToast('請從瀏覽器網址列複製連結分享');
+      } finally {
+        document.body.removeChild(textarea);
       }
-      document.body.removeChild(tempInput);
     });
 
-    // ==================== 12. 登出與登入事件 ====================
-    async function logoutUser() {
+    // ==================== 12. 登入與登出流程（含狀態持久化） ====================
+    $('btn-google-login').addEventListener('click', async () => {
+      if (!firebaseReady || !auth) {
+        $('google-auth-hint').classList.remove('hidden');
+        showToast('目前為離線預覽模式，請使用下方測試用 Gmail 登入');
+        return;
+      }
       try {
-        localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
-      } catch (e) {}
-      if (firebaseReady && auth && auth.currentUser && !auth.currentUser.isAnonymous) {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        const result = await signInWithPopup(auth, provider);
+        if (result.user?.email) {
+          localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
+          state.currentEmail = result.user.email.toLowerCase();
+          state.visitorPreviewMode = false;
+          startRealtimeListeners();
+          evaluateAccessAndRender();
+          showToast(`歡迎回來，${state.currentEmail}`);
+        }
+      } catch (err) {
+        console.warn('Google popup sign-in error:', err);
+        $('google-auth-hint').classList.remove('hidden');
+        showToast('無法開啟 Google 登入視窗，可改用下方測試用 Gmail');
+      }
+    });
+
+    $('form-sim-login').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = $('input-sim-email').value.trim().toLowerCase();
+      if (!email || !email.includes('@')) {
+        showToast('請輸入有效的 Gmail 地址');
+        return;
+      }
+      localStorage.setItem(SIM_EMAIL_STORAGE_KEY, email);
+      state.currentEmail = email;
+      state.visitorPreviewMode = false;
+      startRealtimeListeners();
+      evaluateAccessAndRender();
+      showToast(`已以 ${email} 登入`);
+    });
+
+    async function handleLogout() {
+      localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
+      state.currentEmail = null;
+      state.visitorPreviewMode = false;
+      state.previewAsEmail = '';
+      state.selectMode = false;
+      state.selectedAlbumIds.clear();
+      if (firebaseReady && auth) {
         try {
           await signOut(auth);
         } catch (err) {
           console.warn('Sign out warning:', err);
         }
       }
-      state.currentEmail = null;
-      state.visitorPreviewMode = false;
       evaluateAccessAndRender();
-      showToast('已登出帳號');
+      showToast('已安全登出');
     }
 
-    $('btn-logout').addEventListener('click', logoutUser);
-    $('btn-unauth-switch').addEventListener('click', logoutUser);
+    $('btn-logout').addEventListener('click', handleLogout);
+    $('btn-unauth-switch').addEventListener('click', handleLogout);
 
-    $('btn-google-login').addEventListener('click', async () => {
-      if (!firebaseReady) {
-        $('google-auth-hint').classList.remove('hidden');
-        return;
-      }
-      try {
-        await setPersistence(auth, browserLocalPersistence);
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        if (result.user && result.user.email) {
-          try {
-            localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
-          } catch (e) {}
-          state.firebaseUser = result.user;
-          startFirestoreListeners();
-          await handleEmailLogin(result.user.email);
-        }
-      } catch (err) {
-        console.warn('Google popup blocked:', err);
-        $('google-auth-hint').classList.remove('hidden');
-        showToast('預覽環境彈窗受限，請使用下方測試用 Gmail 登入');
-      }
-    });
-
-    $('form-sim-login').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = $('input-sim-email').value.trim().toLowerCase();
-      if (email && email.includes('@')) {
-        try {
-          localStorage.setItem(SIM_EMAIL_STORAGE_KEY, email);
-        } catch (err) {}
-      }
-      await handleEmailLogin(email);
-      $('input-sim-email').value = '';
-    });
-
-    // ==================== 13. 啟動流程（優先還原持久登入狀態） ====================
+    // ==================== 13. 啟動初始化 ====================
     async function bootstrap() {
       lucide.createIcons();
 
-      let savedSimEmail = null;
-      try {
-        savedSimEmail = localStorage.getItem(SIM_EMAIL_STORAGE_KEY);
-      } catch (e) {}
-
-      if (!firebaseReady) {
-        loadLocalFallback();
-        if (savedSimEmail) {
-          await handleEmailLogin(savedSimEmail);
-        } else {
-          switchView('login');
-        }
+      if (!firebaseReady || !auth) {
+        const savedSim = localStorage.getItem(SIM_EMAIL_STORAGE_KEY);
+        if (savedSim) state.currentEmail = savedSim;
+        startRealtimeListeners();
         return;
       }
 
       try {
         await setPersistence(auth, browserLocalPersistence);
       } catch (err) {
-        console.warn('Set persistence warning:', err);
+        console.warn('Persistence setup skipped:', err);
       }
 
-      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-        try {
-          const cred = await signInWithCustomToken(auth, __initial_auth_token);
-          state.firebaseUser = cred.user;
-          startFirestoreListeners();
-          if (savedSimEmail) {
-            await handleEmailLogin(savedSimEmail);
-          }
-          return;
-        } catch (err) {
-          console.error('Custom token init error:', err);
-        }
-      }
+      let initialResolved = false;
 
-      let initialized = false;
       onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          state.firebaseUser = user;
-          startFirestoreListeners();
+        state.firebaseUser = user;
 
-          if (user.email) {
-            await handleEmailLogin(user.email);
-          } else if (savedSimEmail && !state.currentEmail) {
-            await handleEmailLogin(savedSimEmail);
-          } else if (!state.currentEmail) {
-            evaluateAccessAndRender();
-          }
-          initialized = true;
-        } else if (!initialized) {
-          initialized = true;
-          try {
-            const cred = await signInAnonymously(auth);
-            state.firebaseUser = cred.user;
-            startFirestoreListeners();
-            if (savedSimEmail) {
-              await handleEmailLogin(savedSimEmail);
+        if (user && user.email) {
+          state.currentEmail = user.email.toLowerCase();
+          startRealtimeListeners();
+          evaluateAccessAndRender();
+          initialResolved = true;
+          return;
+        }
+
+        if (!initialResolved) {
+          initialResolved = true;
+          const savedSim = localStorage.getItem(SIM_EMAIL_STORAGE_KEY);
+          if (savedSim) state.currentEmail = savedSim;
+
+          if (!user) {
+            try {
+              if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+              } else {
+                await signInAnonymously(auth);
+              }
+            } catch (err) {
+              console.warn('Anonymous init skipped:', err);
             }
-          } catch (err) {
-            console.warn('Anonymous sign-in skipped or disabled:', err);
-            if (savedSimEmail) {
-              await handleEmailLogin(savedSimEmail);
-            } else {
-              switchView('login');
-            }
           }
+          startRealtimeListeners();
+          evaluateAccessAndRender();
         }
       });
     }

@@ -2,7 +2,7 @@
 <html lang="zh-Hant" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>快樂時光 — Google 相簿分享牆</title>
 
   <!-- iOS / 行動裝置 Web App 主畫面設定與圖示 -->
@@ -110,13 +110,17 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
+    html, body {
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
+    }
     body {
       font-family: 'Inter', 'Noto Sans TC', sans-serif;
       background-image: radial-gradient(rgba(29, 53, 87, 0.08) 1.2px, transparent 1.2px);
       background-size: 24px 24px;
     }
     .dark body {
-      background-image: radial-gradient(rgba(142, 202, 230, 0.08) 1.2px, transparent 1.2px);
+      background-image: radial-gradient(rgba(253, 251, 247, 0.07) 1.2px, transparent 1.2px);
     }
     .nordic-shadow {
       box-shadow: 4px 4px 0px #1D3557;
@@ -125,23 +129,27 @@
       box-shadow: 2.5px 2.5px 0px #1D3557;
     }
     .dark .nordic-shadow {
-      box-shadow: 4px 4px 0px #0B1320;
+      box-shadow: 4px 4px 0px #0B121E;
     }
     .dark .nordic-shadow-sm {
-      box-shadow: 2.5px 2.5px 0px #0B1320;
+      box-shadow: 2.5px 2.5px 0px #0B121E;
     }
     .nordic-btn {
-      transition: transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.14s ease;
+      transition: transform 0.14s ease, box-shadow 0.14s ease;
     }
     .nordic-btn:hover:not(:disabled) {
       transform: translate(-1.5px, -1.5px);
+      box-shadow: 4px 4px 0px #1D3557;
     }
     .nordic-btn:active:not(:disabled) {
-      transform: translate(2px, 2px);
+      transform: translate(1.5px, 1.5px);
       box-shadow: 1px 1px 0px #1D3557;
     }
+    .dark .nordic-btn:hover:not(:disabled) {
+      box-shadow: 4px 4px 0px #0B121E;
+    }
     .nordic-card {
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
     .nordic-card:hover {
       transform: translateY(-3px);
@@ -150,412 +158,379 @@
       outline: 3px dashed #FF8FA3;
       outline-offset: 4px;
     }
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(3deg); }
     }
-    ::-webkit-scrollbar-track {
-      background: transparent;
+    .animate-float {
+      animation: floatSlow 4.5s ease-in-out infinite;
     }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(29, 53, 87, 0.25);
-      border-radius: 999px;
-    }
-    .dark ::-webkit-scrollbar-thumb {
-      background: rgba(142, 202, 230, 0.25);
+    /* 防止 iPhone Safari 點擊輸入框或下拉選單時自動放大畫面 */
+    @media (max-width: 767px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
     }
   </style>
 </head>
-<body class="bg-oat-light dark:bg-nordic-darkBg text-nordic-navy dark:text-oat-light min-h-screen flex flex-col selection:bg-nordic-yellow selection:text-nordic-navy overflow-x-hidden">
+<body class="bg-oat-light dark:bg-nordic-darkBg text-nordic-navy dark:text-oat-light min-h-screen flex flex-col overflow-x-hidden transition-colors duration-200">
 
-  <!-- ==================== 頂部導覽列 ==================== -->
+  <!-- 頂部導覽列 -->
   <header class="sticky top-0 z-30 bg-oat-light/95 dark:bg-nordic-darkBg/95 backdrop-blur-md border-b-2 border-nordic-navy dark:border-nordic-darkBorder">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3">
-      <!-- 品牌 Logo：瑞典小太陽 -->
-      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-nordic-yellow border-2 border-nordic-navy flex items-center justify-center shrink-0 nordic-shadow-sm">
-          <svg viewBox="0 0 36 36" class="w-6 h-6 text-nordic-navy" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-            <circle cx="18" cy="18" r="6" fill="#FDFBF7"/>
-            <line x1="18" y1="4" x2="18" y2="8"/>
-            <line x1="18" y1="28" x2="18" y2="32"/>
-            <line x1="4" y1="18" x2="8" y2="18"/>
-            <line x1="28" y1="18" x2="32" y2="18"/>
-            <line x1="8.1" y1="8.1" x2="11" y2="11"/>
-            <line x1="25" y1="25" x2="27.9" y2="27.9"/>
-            <line x1="27.9" y1="8.1" x2="25" y2="11"/>
-            <line x1="11" y1="25" x2="8.1" y2="27.9"/>
+    <div class="max-w-6xl mx-auto px-3.5 sm:px-6 h-16 flex items-center justify-between gap-2">
+      <!-- 品牌 Logo -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-10 h-10 rounded-2xl bg-nordic-yellow border-2 border-nordic-navy nordic-shadow-sm flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6 text-nordic-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" fill="#FDFBF7"></circle>
+            <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77"></path>
           </svg>
         </div>
         <div class="min-w-0">
-          <h1 class="font-display text-lg sm:text-xl font-bold tracking-tight leading-none truncate">快樂時光</h1>
+          <h1 class="font-display text-lg sm:text-xl font-bold tracking-wide leading-tight truncate">快樂時光</h1>
         </div>
       </div>
 
-      <!-- 右側控制區 -->
-      <div class="flex items-center gap-2 sm:gap-2.5">
-        <button id="btn-theme-toggle" class="p-2.5 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard hover:bg-nordic-yellow hover:text-nordic-navy nordic-btn" title="切換日/夜模式">
-          <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
-        </button>
+      <!-- 右側操作列 -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div id="nav-user-controls" class="hidden flex items-center gap-1.5 sm:gap-2">
+          <span id="nav-user-email" class="hidden md:inline-block max-w-[180px] truncate px-3 py-1 rounded-full bg-oat-warm dark:bg-nordic-darkCard border-2 border-nordic-navy/20 dark:border-nordic-darkBorder text-xs font-semibold"></span>
 
-        <div id="nav-user-controls" class="hidden flex items-center gap-2">
-          <button id="btn-visitor-toggle" class="hidden items-center gap-1.5 px-3 py-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard text-xs font-bold hover:bg-nordic-sage hover:text-nordic-navy nordic-btn" title="切換訪客視角">
+          <button id="btn-visitor-toggle" type="button" class="hidden items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-nordic-blue text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs font-bold">
             <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-            <span id="visitor-toggle-label" class="hidden md:inline">訪客視角</span>
+            <span id="visitor-toggle-label">訪客視角</span>
           </button>
 
-          <button id="btn-share-page" class="flex items-center gap-1.5 px-3 py-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy text-xs font-bold nordic-shadow-sm nordic-btn" title="複製分享連結">
-            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">分享網頁</span>
+          <button id="btn-logout" type="button" class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-oat-warm dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-sm nordic-btn text-xs font-bold" title="登出">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">登出</span>
           </button>
-
-          <div class="flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard">
-            <span id="nav-user-email" class="text-xs font-semibold max-w-[90px] sm:max-w-[150px] truncate"></span>
-            <button id="btn-logout" class="p-1.5 rounded-full hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="登出">
-              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
         </div>
+
+        <button id="btn-theme-toggle" type="button" class="w-9 h-9 rounded-full bg-oat-warm dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-sm nordic-btn flex items-center justify-center" title="切換日/夜模式">
+          <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-nordic-yellow"></i>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- ==================== 主內容容器 ==================== -->
-  <main class="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
+  <!-- 主內容區 -->
+  <main class="flex-1 w-full max-w-6xl mx-auto px-3.5 sm:px-6 py-6 sm:py-8">
 
-    <!-- 視圖 1：載入中 -->
-    <section id="view-loading" class="min-h-[60vh] flex flex-col items-center justify-center text-center gap-4">
-      <div class="w-16 h-16 rounded-3xl bg-nordic-yellow border-2 border-nordic-navy nordic-shadow flex items-center justify-center animate-bounce">
-        <i data-lucide="sun" class="w-8 h-8 text-nordic-navy"></i>
+    <!-- 1. 載入中畫面 -->
+    <section id="view-loading" class="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center">
+      <div class="w-16 h-16 rounded-3xl bg-nordic-yellow border-2 border-nordic-navy nordic-shadow flex items-center justify-center animate-float">
+        <svg class="w-9 h-9 text-nordic-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4" fill="#FDFBF7"></circle>
+          <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77"></path>
+        </svg>
       </div>
-      <p class="font-display text-lg font-bold tracking-wide">正在開啟快樂時光...</p>
+      <p class="font-display text-base font-bold tracking-wide">正在開啟快樂時光...</p>
     </section>
 
-    <!-- 視圖 2：Gmail 授權登入閘道 -->
+    <!-- 2. 登入閘道畫面（親友快速登入為主入口，管理者 Google 登入折疊收納） -->
     <section id="view-login" class="hidden min-h-[68vh] flex items-center justify-center py-4">
-      <div class="w-full max-w-md rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-6 sm:p-8 relative overflow-hidden">
-        <svg viewBox="0 0 60 60" class="w-14 h-14 text-nordic-coral/80 absolute -top-3 -right-3 rotate-12 pointer-events-none" fill="currentColor">
-          <circle cx="30" cy="14" r="10"/><circle cx="46" cy="30" r="10"/><circle cx="30" cy="46" r="10"/><circle cx="14" cy="30" r="10"/>
-          <circle cx="30" cy="30" r="9" fill="#FFD166"/>
-        </svg>
+      <div class="w-full max-w-md rounded-[2rem] bg-oat-warm dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-6 sm:p-8 relative overflow-hidden">
+        <!-- 北歐裝飾色塊 -->
+        <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-nordic-yellow/40 pointer-events-none"></div>
+        <div class="absolute -bottom-8 -left-8 w-28 h-28 rounded-full bg-nordic-blue/30 pointer-events-none"></div>
 
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold mb-4">
-          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-          <span>受邀親友限定相簿牆</span>
+        <div class="relative z-10 text-center space-y-3 mb-6">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-nordic-yellow border-2 border-nordic-navy nordic-shadow-sm flex items-center justify-center animate-float">
+            <svg class="w-9 h-9 text-nordic-navy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" fill="#FDFBF7"></circle>
+              <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77"></path>
+            </svg>
+          </div>
+          <h2 class="font-display text-2xl sm:text-3xl font-bold">歡迎來到快樂時光</h2>
+          <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/80 leading-relaxed">
+            這是專屬受邀親友的 Google 相簿回憶牆。<br />請輸入獲得授權的 Gmail 即可瀏覽與收藏照片。
+          </p>
         </div>
 
-        <h2 class="font-display text-2xl sm:text-3xl font-bold leading-snug mb-2">歡迎來到快樂時光</h2>
-        <p class="text-sm text-nordic-navySoft dark:text-oat-light/80 mb-6 leading-relaxed">
-          這裡收藏了我們珍貴的 Google 相簿回憶。請輸入受授權的 Gmail 快速進入瀏覽與收藏照片。
-        </p>
-
-        <!-- 主要入口：親友快速登入 -->
-        <form id="form-sim-login" class="space-y-3">
-          <div>
-            <label for="input-sim-email" class="block text-xs font-bold mb-1.5">親友快速登入（授權 Gmail）</label>
-            <input id="input-sim-email" type="email" autocomplete="email" required placeholder="yourname@gmail.com" class="w-full px-4 py-3 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+        <!-- 主入口：親友快速登入 -->
+        <div class="relative z-10 rounded-2xl bg-oat-light dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder p-4 sm:p-5 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full bg-nordic-sage text-nordic-navy border border-nordic-navy text-[11px] font-bold">受邀親友</span>
+            <h3 class="font-display text-sm sm:text-base font-bold">親友快速登入</h3>
           </div>
-          <button type="submit" class="w-full py-3.5 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm sm:text-base flex items-center justify-center gap-2 nordic-shadow-sm nordic-btn">
-            <i data-lucide="sparkles" class="w-4 h-4"></i>
-            <span>親友快速登入</span>
-          </button>
-          <p class="text-[11px] text-center text-nordic-navySoft dark:text-oat-light/65">
-            登入後會自動記住帳號，下次開啟不用重複輸入喔！
+          <form id="form-sim-login" class="space-y-3">
+            <input id="input-sim-email" type="email" required placeholder="請輸入您的 Gmail（例如 name@gmail.com）" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/60 dark:bg-nordic-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-nordic-yellow" />
+            <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn font-bold text-sm flex items-center justify-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>進入快樂時光相簿</span>
+            </button>
+          </form>
+          <p class="text-[11px] text-nordic-navySoft dark:text-oat-light/70 text-center">
+            登入後會自動記住您的帳號，下次開啟不用重新輸入
           </p>
-        </form>
+        </div>
 
-        <!-- 折疊區塊：管理者專用 Google 登入（點開才顯示，避免親友誤觸） -->
-        <div class="mt-6 pt-5 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder">
-          <button type="button" id="btn-toggle-admin-login" class="w-full flex items-center justify-center gap-1.5 text-xs font-bold text-nordic-navySoft dark:text-oat-light/70 hover:text-nordic-navy dark:hover:text-nordic-yellow transition-colors py-1">
-            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-            <span>管理者專用 Google 登入</span>
-            <i id="admin-login-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform"></i>
+        <!-- 折疊收納：管理者專用 Google 登入 -->
+        <div class="relative z-10 mt-5 pt-4 border-t-2 border-dashed border-nordic-navy/20 dark:border-nordic-darkBorder">
+          <button id="btn-toggle-admin-login" type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-nordic-navySoft dark:text-oat-light/75 hover:bg-oat-light/70 dark:hover:bg-nordic-darkBg/70 transition-colors">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+              <span>管理者專用 Google 登入</span>
+            </span>
+            <i id="admin-login-chevron" data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200"></i>
           </button>
 
           <div id="admin-login-panel" class="hidden mt-3 space-y-2.5">
-            <button type="button" id="btn-google-login" class="w-full py-3 px-4 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy font-bold text-sm flex items-center justify-center gap-2.5 transition-colors">
+            <button id="btn-google-login" type="button" class="w-full py-2.5 px-4 rounded-xl bg-oat-light dark:bg-nordic-darkBg text-nordic-navy dark:text-oat-light border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-sm nordic-btn font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
               <svg class="w-4 h-4" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M21.35 11.1H12v2.98h5.35c-.23 1.48-1.69 4.35-5.35 4.35-3.22 0-5.85-2.67-5.85-5.93S8.78 6.57 12 6.57c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.68 4.02 14.55 3 12 3 7.03 3 3 7.03 3 12s4.03 9 9 9c5.19 0 8.63-3.65 8.63-8.79 0-.59-.06-1.04-.15-1.11z"/>
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              <span>使用管理者 Google 帳號登入</span>
+              <span>使用 Google 帳號登入（編輯相簿）</span>
             </button>
-            <p id="google-auth-hint" class="hidden text-xs font-semibold text-nordic-coral bg-oat-light dark:bg-nordic-darkBg p-2.5 rounded-xl border border-nordic-coral">
-              若無法彈出 Google 登入視窗，請確認瀏覽器未封鎖彈出視窗或改用 Chrome 開啟。
+            <p id="google-auth-hint" class="hidden text-[11px] text-nordic-coral font-semibold text-center">
+              若無法彈出 Google 登入視窗，請確認已設定 Firebase 授權網域或改用 Chrome 開啟。
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 視圖 3：未授權提示頁 -->
-    <section id="view-unauthorized" class="hidden min-h-[65vh] flex items-center justify-center py-4">
-      <div class="w-full max-w-md rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-7 text-center">
-        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-nordic-coral border-2 border-nordic-navy flex items-center justify-center nordic-shadow-sm">
-          <i data-lucide="shield-alert" class="w-8 h-8 text-nordic-navy"></i>
+    <!-- 3. 未授權提示畫面 -->
+    <section id="view-unauthorized" class="hidden min-h-[62vh] flex items-center justify-center py-4">
+      <div class="w-full max-w-md rounded-[2rem] bg-oat-warm dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-6 sm:p-8 text-center space-y-4">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-nordic-coral border-2 border-nordic-navy nordic-shadow-sm flex items-center justify-center">
+          <i data-lucide="lock" class="w-7 h-7 text-nordic-navy"></i>
         </div>
-        <h2 class="font-display text-2xl font-bold mb-2">此帳號尚未獲得授權</h2>
-        <p class="text-sm text-nordic-navySoft dark:text-oat-light/80 mb-2">
-          目前登入信箱：<span id="unauth-email" class="font-bold text-nordic-navy dark:text-nordic-yellow"></span>
+        <h2 class="font-display text-xl font-bold">這個信箱尚未獲得瀏覽授權</h2>
+        <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/80 leading-relaxed">
+          您目前輸入的帳號為：<br />
+          <span id="unauth-email" class="inline-block mt-1 px-3 py-1 rounded-full bg-oat-light dark:bg-nordic-darkBg border border-nordic-navy/30 font-bold text-nordic-navy dark:text-oat-light"></span>
         </p>
-        <p class="text-xs text-nordic-navySoft dark:text-oat-light/70 mb-6 leading-relaxed">
-          請聯繫相簿管理者將您的 Gmail 加入「授權親友名單」，或切換其他已授權的 Google 帳號。
+        <p class="text-xs text-nordic-navySoft dark:text-oat-light/70">
+          請確認是否打錯 Gmail，或聯繫相簿管理者將您的信箱加入授權名單。
         </p>
-        <button id="btn-unauth-switch" class="w-full py-3 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
+        <button id="btn-unauth-switch" type="button" class="w-full py-2.5 px-4 rounded-xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn font-bold text-sm">
           切換其他 Gmail 帳號
         </button>
       </div>
     </section>
 
-    <!-- 視圖 4：主相簿牆 -->
-    <section id="view-gallery" class="hidden space-y-6 sm:space-y-8">
-      <!-- 管理者專用：指定親友視角預覽條 -->
-      <div id="visitor-preview-bar" class="hidden rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage/90 text-nordic-navy px-4 py-3 flex flex-wrap items-center justify-between gap-3 nordic-shadow-sm">
+    <!-- 4. 相簿主牆畫面 -->
+    <section id="view-gallery" class="hidden space-y-5 sm:space-y-6">
+
+      <!-- 訪客視角預覽橫幅（管理者專用） -->
+      <div id="visitor-preview-bar" class="hidden rounded-2xl bg-nordic-blue/30 dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder p-3 sm:p-4 flex flex-wrap items-center justify-between gap-2.5">
         <div class="flex items-center gap-2 text-xs sm:text-sm font-bold">
           <i data-lucide="eye" class="w-4 h-4 shrink-0"></i>
-          <span>訪客視角預覽中 — 模擬查看特定親友看到的內容：</span>
+          <span>目前為訪客預覽模式</span>
         </div>
-        <select id="select-preview-user" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-nordic-navy text-xs font-bold focus:outline-none">
+        <select id="select-preview-user" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-xs font-bold focus:outline-none">
           <option value="">一般訪客（僅全員可見相簿）</option>
         </select>
       </div>
 
-      <!-- 歡迎橫幅 -->
-      <div class="rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow p-5 sm:p-7 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
-        <svg viewBox="0 0 200 24" class="w-40 h-5 text-nordic-blue/40 absolute bottom-2 right-6 pointer-events-none hidden sm:block" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
-          <path d="M2 14 Q 20 2, 38 14 T 74 14 T 110 14 T 146 14 T 182 14"/>
-        </svg>
-
-        <div class="space-y-1.5 relative z-10">
-          <div class="flex flex-wrap items-center gap-2">
-            <span id="role-badge" class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold">
-              <i data-lucide="sparkles" class="w-3 h-3"></i>
-              <span>管理者模式</span>
-            </span>
-            <span id="album-count-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-oat-light dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder text-xs font-bold">
-              0 本相簿
-            </span>
+      <!-- 頂部資訊與管理者工具列 -->
+      <div class="rounded-3xl bg-oat-warm dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-4 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="role-badge" class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold">受邀親友</span>
+              <span id="album-count-badge" class="px-3 py-0.5 rounded-full bg-oat-light dark:bg-nordic-darkBg border-2 border-nordic-navy/20 dark:border-nordic-darkBorder text-xs font-bold">0 本相簿</span>
+            </div>
+            <p id="drag-hint" class="hidden text-xs text-nordic-navySoft dark:text-oat-light/70">
+              小提示：桌面可直接拖曳相簿排序，手機可用卡片下方箭頭或「多選管理」一次調整多本相簿。
+            </p>
           </div>
-          <h2 class="font-display text-2xl sm:text-3xl font-bold">我們的快樂時光相簿集</h2>
-          <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/80">
-            點選任意相簿即可預覽精選照片、直接下載保存，或一鍵跳轉 Google 相簿 App 瀏覽全部原圖。
-          </p>
+
+          <!-- 管理者動作按鈕 -->
+          <div id="admin-toolbar" class="hidden flex flex-wrap items-center gap-2">
+            <button id="btn-open-add-album" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>新增相簿</span>
+            </button>
+            <button id="btn-toggle-select-mode" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-oat-light dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
+              <i data-lucide="check-square" class="w-4 h-4"></i>
+              <span id="select-mode-label">多選管理</span>
+            </button>
+            <button id="btn-open-access" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-nordic-sage text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
+              <i data-lucide="users" class="w-4 h-4"></i>
+              <span>授權名單</span>
+            </button>
+            <button id="btn-share-page" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-nordic-coral text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs sm:text-sm font-bold">
+              <i data-lucide="share-2" class="w-4 h-4"></i>
+              <span>分享網頁</span>
+            </button>
+          </div>
         </div>
 
-        <!-- 管理者快捷操作列 -->
-        <div id="admin-toolbar" class="hidden flex flex-wrap items-center gap-2.5 relative z-10">
-          <button id="btn-open-add-album" class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm nordic-btn">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span>新增 Google 相簿</span>
-          </button>
-          <button id="btn-toggle-select-mode" class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm nordic-btn">
-            <i data-lucide="check-square" class="w-4 h-4"></i>
-            <span id="select-mode-label">多選管理</span>
-          </button>
-          <button id="btn-open-access" class="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm nordic-btn">
-            <i data-lucide="users" class="w-4 h-4"></i>
-            <span>授權名單</span>
+        <!-- 搜尋、年份/月份/地點篩選與排序列 -->
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
+          <div class="col-span-2 relative">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-nordic-navySoft"></i>
+            <input id="input-search" type="search" placeholder="搜尋相簿名稱、地點或備註..." class="w-full pl-9 pr-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-nordic-yellow" />
+          </div>
+          <select id="filter-year" class="px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-xs font-bold focus:outline-none">
+            <option value="">所有年份</option>
+          </select>
+          <select id="filter-month" class="px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-xs font-bold focus:outline-none">
+            <option value="">所有月份</option>
+          </select>
+          <select id="filter-location" class="px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-xs font-bold focus:outline-none">
+            <option value="">所有地點</option>
+          </select>
+          <select id="select-sort-by" class="px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-xs font-bold focus:outline-none">
+            <option value="custom">排序：預設順序</option>
+            <option value="date-desc">排序：日期新到舊</option>
+            <option value="date-asc">排序：日期舊到新</option>
+            <option value="location-asc">排序：依地點</option>
+          </select>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <select id="select-group-mode" class="hidden px-3 py-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue/25 dark:bg-nordic-darkBg text-xs font-bold focus:outline-none">
+            <option value="none">檢視：全部相簿牆</option>
+            <option value="recipient">檢視：依被分享者分群組</option>
+          </select>
+
+          <button id="btn-clear-filters" type="button" class="hidden inline-flex items-center gap-1 px-3 py-1 rounded-full bg-nordic-coral/30 border border-nordic-navy text-xs font-bold">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            <span>清除篩選條件</span>
           </button>
         </div>
       </div>
 
       <!-- 管理者多選批次操作列 -->
-      <div id="batch-action-bar" class="hidden rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-yellow/95 text-nordic-navy p-3 sm:p-4 flex flex-wrap items-center justify-between gap-2.5 nordic-shadow-sm">
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-oat-light border-2 border-nordic-navy text-xs font-bold">
-            已選取 <span id="batch-selected-count">0</span> 本
-          </span>
-          <button id="btn-batch-select-all" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue transition-colors">
-            全選
-          </button>
+      <div id="batch-action-bar" class="hidden sticky top-20 z-20 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow p-3 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2 text-xs sm:text-sm font-bold">
+          <span>已勾選 <strong id="batch-selected-count">0</strong> 本相簿</span>
+          <button id="btn-batch-select-all" type="button" class="px-2.5 py-1 rounded-lg bg-oat-light border-2 border-nordic-navy text-xs font-bold">全選</button>
         </div>
-        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-          <button id="btn-batch-move-top" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors" title="移到最前面">
-            移至最前
-          </button>
-          <button id="btn-batch-move-up" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors flex items-center gap-1" title="往前移動">
-            <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
-            <span>前移</span>
-          </button>
-          <button id="btn-batch-move-down" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors flex items-center gap-1" title="往後移動">
-            <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
-            <span>後移</span>
-          </button>
-          <button id="btn-batch-move-bottom" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors" title="移到最後面">
-            移至最後
-          </button>
-          <button id="btn-batch-permissions" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-sage text-nordic-navy text-xs font-bold disabled:opacity-40 flex items-center gap-1 nordic-btn" title="批次設定觀看親友權限">
-            <i data-lucide="users" class="w-3.5 h-3.5"></i>
-            <span>設定觀看親友</span>
-          </button>
-          <button id="btn-batch-delete" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-coral text-nordic-navy text-xs font-bold disabled:opacity-40 flex items-center gap-1 nordic-btn">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>刪除所選</span>
-          </button>
-          <button id="btn-batch-exit" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-navy text-oat-light text-xs font-bold">
-            完成
-          </button>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button id="btn-batch-move-top" type="button" class="px-2.5 py-1 rounded-lg bg-oat-light border-2 border-nordic-navy text-xs font-bold disabled:opacity-40">移至最前</button>
+          <button id="btn-batch-move-up" type="button" class="px-2.5 py-1 rounded-lg bg-oat-light border-2 border-nordic-navy text-xs font-bold disabled:opacity-40">前移</button>
+          <button id="btn-batch-move-down" type="button" class="px-2.5 py-1 rounded-lg bg-oat-light border-2 border-nordic-navy text-xs font-bold disabled:opacity-40">後移</button>
+          <button id="btn-batch-move-bottom" type="button" class="px-2.5 py-1 rounded-lg bg-oat-light border-2 border-nordic-navy text-xs font-bold disabled:opacity-40">移至最後</button>
+          <button id="btn-batch-permissions" type="button" class="px-2.5 py-1 rounded-lg bg-nordic-blue border-2 border-nordic-navy text-xs font-bold disabled:opacity-40">設定觀看親友</button>
+          <button id="btn-batch-delete" type="button" class="px-2.5 py-1 rounded-lg bg-nordic-coral border-2 border-nordic-navy text-xs font-bold disabled:opacity-40">批次刪除</button>
+          <button id="btn-batch-exit" type="button" class="px-2.5 py-1 rounded-lg bg-nordic-navy text-oat-light border-2 border-nordic-navy text-xs font-bold">完成</button>
         </div>
       </div>
 
-      <!-- 搜尋與年份 / 月份 / 地點篩選列 -->
-      <div class="space-y-3">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-          <div class="relative w-full lg:w-72 shrink-0">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-nordic-navySoft dark:text-oat-light/60"></i>
-            <input id="input-search" type="text" placeholder="搜尋相簿名稱、地點或備註..." class="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-nordic-yellow" />
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2">
-            <select id="filter-year" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow">
-              <option value="">所有年份</option>
-            </select>
-            <select id="filter-month" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow">
-              <option value="">所有月份</option>
-            </select>
-            <select id="filter-location" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow">
-              <option value="">所有地點</option>
-            </select>
-            <select id="select-sort-by" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-yellow/60 dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow" title="相簿排序方式">
-              <option value="custom">預設順序</option>
-              <option value="date-desc">日期：新到舊</option>
-              <option value="date-asc">日期：舊到新</option>
-              <option value="location-asc">依地點排序</option>
-            </select>
-            <select id="select-group-mode" class="hidden px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage/75 dark:bg-nordic-darkCard text-nordic-navy dark:text-oat-light text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-sage" title="管理者分群檢視">
-              <option value="none">全部顯示</option>
-              <option value="recipient">依被分享者分群組</option>
-            </select>
-            <button id="btn-clear-filters" type="button" class="hidden px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-coral/90 text-nordic-navy text-xs font-bold nordic-btn">
-              清除篩選
-            </button>
-          </div>
-        </div>
-
-        <p id="drag-hint" class="hidden text-xs font-semibold text-nordic-navySoft dark:text-oat-light/70 flex items-center gap-1.5">
-          <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
-          <span>電腦版可拖曳卡片排序，手機版可用箭頭調整順序，或點「多選管理」批次移動與刪除</span>
-        </p>
-      </div>
-
-      <!-- 空狀態提示 -->
-      <div id="empty-albums-state" class="hidden rounded-3xl border-2 border-dashed border-nordic-navy/40 dark:border-nordic-darkBorder bg-oat-warm/60 dark:bg-nordic-darkCard/50 p-10 text-center space-y-3">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-nordic-blue border-2 border-nordic-navy flex items-center justify-center nordic-shadow-sm">
-          <i data-lucide="images" class="w-7 h-7 text-nordic-navy"></i>
-        </div>
-        <h3 class="font-display text-lg font-bold">目前還沒有符合條件的相簿喔！</h3>
-        <p class="text-xs sm:text-sm text-nordic-navySoft dark:text-oat-light/75">點擊上方「新增 Google 相簿」貼上分享連結，或調整目前的篩選條件。</p>
-      </div>
-
-      <!-- 相簿卡片牆（手機版 3 欄並排，桌面 4 欄） -->
+      <!-- 相簿牆（手機版固定 3 欄並排，桌面 4 欄） -->
       <div id="albums-grid" class="grid grid-cols-3 gap-2.5 sm:gap-5 md:gap-6 lg:grid-cols-4"></div>
 
-      <!-- 管理者專用：依被分享者分群組容器 -->
-      <div id="albums-grouped-container" class="hidden space-y-6"></div>
+      <!-- 管理者依被分享者分群組容器 -->
+      <div id="albums-grouped-container" class="hidden space-y-5"></div>
+
+      <!-- 空狀態 -->
+      <div id="empty-albums-state" class="hidden rounded-3xl border-2 border-dashed border-nordic-navy/30 dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkCard/50 p-10 text-center space-y-2">
+        <div class="text-3xl">☀️</div>
+        <p class="font-display text-base font-bold">目前還沒有符合條件的相簿</p>
+        <p class="text-xs text-nordic-navySoft dark:text-oat-light/70">可以調整篩選條件，或由管理者新增第一本 Google 相簿！</p>
+      </div>
     </section>
   </main>
 
-  <!-- ==================== 頁尾 ==================== -->
-  <footer class="mt-auto py-6 text-center text-xs font-semibold text-nordic-navySoft dark:text-oat-light/60 space-y-1">
-    <p>快樂時光 — 專屬親友的 Google 相簿收藏牆</p>
-    <p class="text-[11px] opacity-80">Designed by Tzu Yin Wang (Sarah)</p>
+  <!-- 頁尾 -->
+  <footer class="mt-auto border-t-2 border-nordic-navy/15 dark:border-nordic-darkBorder py-5 px-4 text-center text-xs text-nordic-navySoft dark:text-oat-light/70 space-y-1">
+    <p class="font-display font-bold text-nordic-navy dark:text-oat-light">快樂時光 — 專屬親友相簿收藏牆</p>
+    <p>Designed by Tzu Yin Wang (Sarah)</p>
   </footer>
 
   <!-- ==================== 彈窗 1：相簿檢視燈箱 ==================== -->
-  <div id="modal-viewer" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-    <div class="w-full max-w-2xl max-h-[90vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
-      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between gap-3">
+  <div id="modal-viewer" class="hidden fixed inset-0 z-40 bg-nordic-navy/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[2rem] bg-oat-light dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-4 sm:p-6 space-y-4">
+      <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <span id="viewer-tag" class="inline-block px-2.5 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border border-nordic-navy text-[11px] font-bold mb-1"></span>
-          <h3 id="viewer-title" class="font-display text-lg sm:text-xl font-bold truncate"></h3>
+          <span id="viewer-tag" class="inline-block px-2.5 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border border-nordic-navy text-[11px] font-bold mb-1">快樂回憶</span>
+          <h3 id="viewer-title" class="font-display text-xl sm:text-2xl font-bold leading-snug break-words">相簿名稱</h3>
         </div>
-        <button data-close-modal="modal-viewer" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors shrink-0">
+        <button type="button" data-close-modal="modal-viewer" class="w-9 h-9 rounded-full bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder flex items-center justify-center shrink-0 hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
-        <!-- 正方形封面大圖 -->
-        <div id="viewer-cover-box" class="relative aspect-square max-w-md mx-auto w-full rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg">
-          <img id="viewer-cover" src="" alt="相簿封面" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-contain block" />
+      <!-- 正方形相簿封面（無點擊放大功能） -->
+      <div class="relative aspect-square w-full max-w-md mx-auto rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg">
+        <img id="viewer-cover" src="" alt="相簿封面" class="w-full h-full object-contain block" />
+      </div>
+
+      <!-- 日期 / 地點標籤與備註 -->
+      <div id="viewer-meta-pills" class="hidden flex flex-wrap items-center justify-center gap-2"></div>
+      <p id="viewer-note" class="hidden text-sm text-nordic-navySoft dark:text-oat-light/85 bg-oat-warm dark:bg-nordic-darkBg rounded-2xl p-3.5 border-2 border-nordic-navy/15 dark:border-nordic-darkBorder whitespace-pre-line"></p>
+
+      <!-- 前往 Google 相簿 & 下載封面 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <a id="viewer-gphotos-link" href="#" target="_blank" rel="noopener noreferrer" class="py-3 px-4 rounded-2xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn font-bold text-sm flex items-center justify-center gap-2">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+          <span>開啟 Google 相簿看全部照片</span>
+        </a>
+        <button id="viewer-download-cover" type="button" class="py-3 px-4 rounded-2xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow-sm nordic-btn font-bold text-sm flex items-center justify-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>儲存相簿封面照片</span>
+        </button>
+      </div>
+
+      <!-- 精選照片直下區 -->
+      <div id="viewer-featured-section" class="hidden pt-3 border-t-2 border-dashed border-nordic-navy/20 dark:border-nordic-darkBorder space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-display text-sm sm:text-base font-bold flex items-center gap-1.5">
+            <span>📷 精選搶先看（可直接下載）</span>
+          </h4>
+          <span id="viewer-featured-count" class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/70"></span>
         </div>
-
-        <div id="viewer-meta-pills" class="hidden flex flex-wrap items-center justify-center gap-2"></div>
-
-        <p id="viewer-note" class="hidden text-sm text-nordic-navySoft dark:text-oat-light/85 bg-oat-warm dark:bg-nordic-darkBg p-3.5 rounded-2xl border-2 border-nordic-navy/15 dark:border-nordic-darkBorder leading-relaxed"></p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <a id="viewer-gphotos-link" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
-            <i data-lucide="external-link" class="w-4 h-4"></i>
-            <span>開啟 Google 相簿看全部</span>
-          </a>
-          <button id="viewer-download-cover" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
-            <i data-lucide="download" class="w-4 h-4"></i>
-            <span>直接儲存封面照片</span>
-          </button>
-        </div>
-
-        <div id="viewer-featured-section" class="hidden space-y-3 pt-2 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder">
-          <div class="flex items-center justify-between">
-            <h4 class="font-display text-sm font-bold flex items-center gap-1.5">
-              <i data-lucide="camera" class="w-4 h-4 text-nordic-coral"></i>
-              <span>精選照片（可直接下載儲存）</span>
-            </h4>
-            <span id="viewer-featured-count" class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/70"></span>
-          </div>
-          <div id="viewer-featured-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-        </div>
+        <div id="viewer-featured-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
       </div>
     </div>
   </div>
 
-  <!-- ==================== 彈窗 2：新增 / 編輯相簿 ==================== -->
-  <div id="modal-album-editor" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-    <div class="w-full max-w-xl max-h-[92vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
-      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between">
-        <h3 id="editor-modal-title" class="font-display text-lg font-bold">新增 Google 相簿</h3>
-        <button data-close-modal="modal-album-editor" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
+  <!-- ==================== 彈窗 2：新增 / 編輯相簿（防點空白處誤關） ==================== -->
+  <div id="modal-album-editor" class="hidden fixed inset-0 z-40 bg-nordic-navy/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-[2rem] bg-oat-light dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-4 sm:p-6 space-y-4">
+      <div class="flex items-center justify-between gap-2 pb-2 border-b-2 border-nordic-navy/15 dark:border-nordic-darkBorder">
+        <h3 id="editor-modal-title" class="font-display text-xl font-bold">新增 Google 相簿</h3>
+        <button type="button" data-close-modal="modal-album-editor" class="w-9 h-9 rounded-full bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder flex items-center justify-center hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <form id="form-album-editor" class="flex-1 overflow-y-auto p-5 space-y-4">
+      <form id="form-album-editor" class="space-y-4">
         <input type="hidden" id="edit-album-id" />
 
         <!-- Google 相簿連結 + 自動抓取 -->
-        <div>
-          <label class="block text-xs font-bold mb-1.5">Google 相簿分享連結 *</label>
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold">Google 相簿分享連結 *</label>
           <div class="flex gap-2">
-            <input id="input-album-url" type="url" required placeholder="https://photos.app.goo.gl/..." class="flex-1 px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
-            <button type="button" id="btn-fetch-meta" class="px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-blue text-nordic-navy font-bold text-xs whitespace-nowrap nordic-shadow-sm nordic-btn flex items-center gap-1.5">
-              <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
-              <span>抓取封面</span>
+            <input id="input-album-url" type="url" required placeholder="貼上 https://photos.app.goo.gl/..." class="flex-1 min-w-0 px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-yellow" />
+            <button id="btn-fetch-meta" type="button" class="px-3.5 py-2 rounded-xl bg-nordic-blue text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-xs font-bold shrink-0">
+              自動抓封面
             </button>
           </div>
-          <p id="fetch-status" class="mt-1 text-[11px] font-semibold text-nordic-navySoft dark:text-oat-light/70"></p>
+          <p id="fetch-status" class="text-[11px] font-semibold text-nordic-navySoft dark:text-nordic-blue"></p>
         </div>
 
-        <!-- 相簿名稱與小標籤 -->
+        <!-- 名稱與副標 -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold mb-1.5">相簿名稱 *</label>
-            <input id="input-album-title" type="text" required placeholder="例如：2026 北海道冬日旅行" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+          <div class="space-y-1">
+            <label class="block text-xs font-bold">相簿名稱 *</label>
+            <input id="input-album-title" type="text" required placeholder="例如：沖繩夏日小旅行" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
           </div>
-          <div>
-            <label class="block text-xs font-bold mb-1.5">小標籤（選填，顯示於封面左上）</label>
-            <input id="input-album-subtitle" type="text" placeholder="例如：家族出遊" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+          <div class="space-y-1">
+            <label class="block text-xs font-bold">小標籤（選填，留空會自動帶日期地點）</label>
+            <input id="input-album-subtitle" type="text" placeholder="例如：2026.07 · 沖繩" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
           </div>
         </div>
 
         <!-- 年份 / 月份 / 地點 -->
         <div class="grid grid-cols-3 gap-2.5">
-          <div>
-            <label class="block text-xs font-bold mb-1.5">年份</label>
-            <input id="input-album-year" type="number" min="1990" max="2100" placeholder="2026" class="w-full px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+          <div class="space-y-1">
+            <label class="block text-xs font-bold">年份</label>
+            <input id="input-album-year" type="number" min="1990" max="2099" placeholder="2026" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
           </div>
-          <div>
-            <label class="block text-xs font-bold mb-1.5">月份</label>
-            <select id="input-album-month" class="w-full px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue">
-              <option value="">未指定</option>
+          <div class="space-y-1">
+            <label class="block text-xs font-bold">月份</label>
+            <select id="input-album-month" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none">
+              <option value="">未設定</option>
               <option value="01">1 月</option>
               <option value="02">2 月</option>
               <option value="03">3 月</option>
@@ -570,285 +545,242 @@
               <option value="12">12 月</option>
             </select>
           </div>
-          <div>
-            <label class="block text-xs font-bold mb-1.5">地點</label>
-            <input id="input-album-location" type="text" placeholder="例如：北海道" class="w-full px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+          <div class="space-y-1">
+            <label class="block text-xs font-bold">地點</label>
+            <input id="input-album-location" type="text" placeholder="例如：台北、東京" class="w-full px-2.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none" />
           </div>
         </div>
 
-        <!-- 卡片標籤色系 -->
-        <div>
-          <label class="block text-xs font-bold mb-1.5">北歐標籤色系</label>
-          <div class="flex flex-wrap gap-2">
-            <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="yellow" checked class="sr-only peer" />
-              <span class="inline-block px-3 py-1 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">☀️ 陽光黃</span>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="blue" class="sr-only peer" />
-              <span class="inline-block px-3 py-1 rounded-full bg-nordic-blue text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌊 峽灣藍</span>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="coral" class="sr-only peer" />
-              <span class="inline-block px-3 py-1 rounded-full bg-nordic-coral text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🍓 莓果粉</span>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="album-color" value="sage" class="sr-only peer" />
-              <span class="inline-block px-3 py-1 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold opacity-60 peer-checked:opacity-100 peer-checked:ring-2 peer-checked:ring-offset-2 peer-checked:ring-nordic-navy">🌿 森林綠</span>
+        <!-- 封面圖片與正方形互動縮放平移 -->
+        <div class="rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm/40 dark:bg-nordic-darkBg/60 p-3.5 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label class="text-xs font-bold">相簿封面（1:1 正方形，可拖曳上下左右移動並縮放）</label>
+            <label class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold cursor-pointer">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>從裝置上傳封面</span>
+              <input id="input-cover-file" type="file" accept="image/*" class="hidden" />
             </label>
           </div>
-        </div>
 
-        <!-- 正方形封面圖片預覽 + 互動縮放平移構圖 -->
-        <div>
-          <label class="block text-xs font-bold mb-1.5">正方形封面圖片（預設完整顯示不放大裁切，可自由縮小放大與上下左右移動）</label>
-          <div class="flex flex-col sm:flex-row gap-3.5 items-start">
-            <div class="space-y-2 shrink-0 w-full sm:w-48">
-              <div id="cover-crop-stage" class="relative w-48 h-48 mx-auto sm:mx-0 aspect-square rounded-2xl overflow-hidden bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder cursor-grab active:cursor-grabbing select-none touch-none">
-                <img id="album-cover-preview" src="https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" draggable="false" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview'" class="w-full h-full object-contain block pointer-events-none" />
-                <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-nordic-navy/75 text-oat-light text-[10px] font-bold pointer-events-none whitespace-nowrap">
-                  按住拖曳移動位置
-                </span>
-              </div>
-              <div class="flex items-center gap-1.5 w-48 mx-auto sm:mx-0">
-                <button type="button" id="btn-cover-zoom-out" class="w-7 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-xs flex items-center justify-center hover:bg-nordic-yellow hover:text-nordic-navy">-</button>
-                <input id="input-cover-zoom" type="range" min="0.5" max="3" step="0.05" value="1" class="flex-1 accent-nordic-navy" />
-                <button type="button" id="btn-cover-zoom-in" class="w-7 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-xs flex items-center justify-center hover:bg-nordic-yellow hover:text-nordic-navy">+</button>
-                <span id="editor-cover-zoom-label" class="text-[10px] font-bold w-9 text-center">100%</span>
-              </div>
-              <div class="flex items-center gap-1.5 w-48 mx-auto sm:mx-0">
-                <button type="button" id="btn-cover-fit-contain" class="flex-1 py-1 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder text-[11px] font-bold transition-colors">完整不裁切</button>
-                <button type="button" id="btn-cover-fit-cover" class="flex-1 py-1 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder text-[11px] font-bold transition-colors">填滿正方</button>
-                <button type="button" id="btn-cover-reset" class="px-2 py-1 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-[11px] hover:bg-nordic-blue hover:text-nordic-navy" title="重設封面位置與縮放">重設</button>
-              </div>
+          <input id="input-album-cover" type="text" placeholder="自動抓取或手動貼上封面圖片網址" class="w-full px-3 py-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs focus:outline-none" />
+
+          <div class="flex flex-col sm:flex-row items-center gap-4">
+            <div id="cover-crop-stage" class="relative w-44 h-44 shrink-0 rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard cursor-grab active:cursor-grabbing touch-none select-none">
+              <img id="album-cover-preview" src="https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" class="w-full h-full object-contain block pointer-events-none" />
             </div>
 
-            <div class="flex-1 w-full space-y-2">
-              <input id="input-album-cover" type="text" placeholder="貼上圖片網址，或由下方上傳" class="w-full px-3.5 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-xs focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
-              <div class="flex flex-wrap gap-2">
-                <label class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy text-xs font-bold cursor-pointer transition-colors">
-                  <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                  <span>從裝置上傳封面</span>
-                  <input id="input-cover-file" type="file" accept="image/*" class="hidden" />
-                </label>
+            <div class="flex-1 w-full space-y-2.5">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button id="btn-cover-fit-contain" type="button" class="px-2.5 py-1 rounded-xl border-2 border-nordic-navy text-xs font-bold bg-nordic-yellow text-nordic-navy">完整不裁切</button>
+                <button id="btn-cover-fit-cover" type="button" class="px-2.5 py-1 rounded-xl border-2 border-nordic-navy text-xs font-bold bg-oat-warm dark:bg-nordic-darkBg">填滿正方</button>
+                <button id="btn-cover-reset" type="button" class="px-2.5 py-1 rounded-xl border-2 border-nordic-navy text-xs font-bold bg-oat-light dark:bg-nordic-darkCard">重設構圖</button>
               </div>
-              <p class="text-[11px] text-nordic-navySoft dark:text-oat-light/70 leading-relaxed">
-                提示：預設為「完整不裁切」模式，不會自動把臉部放大卡掉；您也可以切換「填滿正方」、拖曳調整上下左右位置，或拉動滑桿自由縮小/放大（50%～300%）。
-              </p>
+              <div class="space-y-1">
+                <div class="flex items-center justify-between text-xs font-bold">
+                  <span>縮放大小</span>
+                  <span id="editor-cover-zoom-label">100%</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="btn-cover-zoom-out" type="button" class="w-7 h-7 rounded-lg border-2 border-nordic-navy bg-oat-light dark:bg-nordic-darkCard font-bold">-</button>
+                  <input id="input-cover-zoom" type="range" min="0.5" max="3" step="0.05" value="1" class="flex-1 accent-nordic-navy" />
+                  <button id="btn-cover-zoom-in" type="button" class="w-7 h-7 rounded-lg border-2 border-nordic-navy bg-oat-light dark:bg-nordic-darkCard font-bold">+</button>
+                </div>
+              </div>
+              <p class="text-[11px] text-nordic-navySoft dark:text-oat-light/70">按住左側正方形照片拖曳即可微調上下左右位置。</p>
             </div>
           </div>
         </div>
 
-        <!-- 個人化可見權限 -->
-        <div class="pt-2 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder space-y-2.5">
-          <label class="block text-xs font-bold">誰可以看到這本相簿？（個人化分享權限）</label>
+        <!-- 標籤顏色 -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-bold">北歐標籤色系</label>
           <div class="flex flex-wrap gap-2">
-            <label class="cursor-pointer">
-              <input type="radio" name="album-visibility" value="all" checked class="sr-only peer" />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-sage peer-checked:text-nordic-navy">
-                🌍 所有授權親友皆可見
-              </span>
+            <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy text-xs font-bold cursor-pointer">
+              <input type="radio" name="album-color" value="yellow" checked class="accent-nordic-navy" /> 陽光黃
             </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="album-visibility" value="custom" class="sr-only peer" />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-coral peer-checked:text-nordic-navy">
-                🔒 僅限指定個人可見
-              </span>
+            <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-blue text-nordic-navy text-xs font-bold cursor-pointer">
+              <input type="radio" name="album-color" value="blue" class="accent-nordic-navy" /> 峽灣藍
             </label>
-          </div>
-          <div id="editor-viewers-box" class="hidden p-3 rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg space-y-2.5">
-            <p class="text-[11px] font-semibold text-nordic-navySoft dark:text-oat-light/75">勾選可觀看此相簿的親友（管理者永遠可見）：</p>
-            <div id="editor-viewers-checkboxes" class="flex flex-wrap gap-2"></div>
-            <input id="input-album-extra-viewers" type="text" placeholder="或直接輸入新的 Gmail（多筆請用逗號分隔，會自動加入授權名單）" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs focus:outline-none focus:ring-2 focus:ring-nordic-coral" />
+            <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-coral text-nordic-navy text-xs font-bold cursor-pointer">
+              <input type="radio" name="album-color" value="coral" class="accent-nordic-navy" /> 莓果粉
+            </label>
+            <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-sage text-nordic-navy text-xs font-bold cursor-pointer">
+              <input type="radio" name="album-color" value="sage" class="accent-nordic-navy" /> 鼠尾草綠
+            </label>
           </div>
         </div>
 
-        <!-- 備註 -->
-        <div>
-          <label class="block text-xs font-bold mb-1.5">相簿備註（選填）</label>
-          <textarea id="input-album-note" rows="2" placeholder="寫一段關於這趟旅程或活動的小故事..." class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue"></textarea>
+        <!-- 可見對象權限（不同親友看到不同內容） -->
+        <div class="rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm/40 dark:bg-nordic-darkBg/60 p-3.5 space-y-2.5">
+          <label class="block text-xs font-bold">誰可以看到這本相簿？</label>
+          <div class="flex flex-wrap gap-3 text-xs font-bold">
+            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="album-visibility" value="all" checked class="accent-nordic-navy" />
+              <span>🌍 所有授權親友皆可見</span>
+            </label>
+            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="album-visibility" value="custom" class="accent-nordic-navy" />
+              <span>🔒 僅限指定個人可見</span>
+            </label>
+          </div>
+
+          <div id="editor-viewers-box" class="hidden pt-2 space-y-2 border-t border-dashed border-nordic-navy/20">
+            <div id="editor-viewers-checkboxes" class="flex flex-wrap gap-1.5"></div>
+            <input id="input-album-extra-viewers" type="text" placeholder="或直接輸入新的 Gmail（多位可用逗號或空白分隔，將自動加入授權名單）" class="w-full px-3 py-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs focus:outline-none" />
+          </div>
         </div>
 
-        <!-- 精選照片上傳（選填，最多 4 張） -->
-        <div class="pt-2 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder">
-          <div class="flex items-center justify-between mb-2">
-            <label class="text-xs font-bold">上傳精選照片（選填，最多 4 張供網頁直接下載）</label>
-            <label class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage text-nordic-navy text-xs font-bold cursor-pointer">
+        <!-- 簡短備註 -->
+        <div class="space-y-1">
+          <label class="block text-xs font-bold">相簿備註 / 故事（選填）</label>
+          <textarea id="input-album-note" rows="2" placeholder="寫下這趟旅程或聚會的小記錄..." class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none"></textarea>
+        </div>
+
+        <!-- 精選照片上傳 -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold">精選搶先看照片（選填，最多 4 張，親友可直接在網頁下載）</label>
+            <label class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder text-xs font-bold cursor-pointer">
               <i data-lucide="image-plus" class="w-3.5 h-3.5"></i>
-              <span>加入照片</span>
+              <span>上傳精選照</span>
               <input id="input-featured-files" type="file" accept="image/*" multiple class="hidden" />
             </label>
           </div>
           <div id="editor-featured-list" class="grid grid-cols-4 gap-2"></div>
         </div>
 
-        <div class="pt-3 flex justify-end gap-2.5">
-          <button type="button" data-close-modal="modal-album-editor" class="px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">
-            取消
-          </button>
-          <button type="submit" id="btn-save-album" class="px-5 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
-            儲存相簿
-          </button>
+        <div class="pt-2 flex items-center justify-end gap-2">
+          <button type="button" data-close-modal="modal-album-editor" class="px-4 py-2 rounded-xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder text-sm font-bold">取消</button>
+          <button id="btn-save-album" type="submit" class="px-5 py-2 rounded-xl bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold">儲存相簿</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ==================== 彈窗 3：授權 Gmail 名單管理 ==================== -->
-  <div id="modal-access" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-    <div class="w-full max-w-lg max-h-[88vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
-      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between">
-        <h3 class="font-display text-lg font-bold flex items-center gap-2">
-          <i data-lucide="shield-check" class="w-5 h-5 text-nordic-sage"></i>
-          <span>Gmail 授權名單管理</span>
-        </h3>
-        <button data-close-modal="modal-access" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
+  <!-- ==================== 彈窗 3：Gmail 授權名單管理 ==================== -->
+  <div id="modal-access" class="hidden fixed inset-0 z-40 bg-nordic-navy/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2rem] bg-oat-light dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-5 sm:p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-xl font-bold">授權親友 Gmail 名單</h3>
+        <button type="button" data-close-modal="modal-access" class="w-9 h-9 rounded-full bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-5 space-y-5">
-        <div class="p-3.5 rounded-2xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy/15 dark:border-nordic-darkBorder text-xs space-y-1">
-          <p class="font-bold">管理者帳號：<span id="access-admin-email" class="text-nordic-navySoft dark:text-nordic-yellow"></span></p>
-          <p class="text-nordic-navySoft dark:text-oat-light/70">只有在下方名單中的 Gmail 帳號才能檢視相簿牆（支援批次貼上，以逗號或換行分隔）。</p>
-        </div>
+      <div class="p-3 rounded-2xl bg-nordic-yellow/30 border-2 border-nordic-navy/20 text-xs">
+        <span class="font-bold">管理者信箱：</span>
+        <span id="access-admin-email" class="font-semibold"></span>
+      </div>
 
-        <form id="form-add-emails" class="space-y-2.5">
-          <label class="block text-xs font-bold">新增授權 Gmail</label>
-          <textarea id="input-new-emails" rows="2" placeholder="friend1@gmail.com, friend2@gmail.com" class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-sage"></textarea>
-          <button type="submit" class="w-full py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-sage text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
-            加入授權名單
-          </button>
-        </form>
+      <form id="form-add-emails" class="space-y-2">
+        <label class="block text-xs font-bold">批次新增授權 Gmail（可用逗號、空白或換行分隔）</label>
+        <textarea id="input-new-emails" rows="2" placeholder="friend1@gmail.com, friend2@gmail.com" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/50 dark:bg-nordic-darkBg text-sm focus:outline-none"></textarea>
+        <button type="submit" class="w-full py-2 rounded-xl bg-nordic-sage text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold">
+          加入授權名單
+        </button>
+      </form>
 
-        <div>
-          <h4 class="text-xs font-bold mb-2">已授權的親友名單（<span id="allowed-count">0</span>）</h4>
-          <ul id="allowed-emails-list" class="space-y-2"></ul>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs font-bold">
+          <span>已授權帳號列表</span>
+          <span>共 <strong id="allowed-count">0</strong> 位</span>
         </div>
+        <ul id="allowed-emails-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></ul>
       </div>
     </div>
   </div>
 
-  <!-- ==================== 彈窗 4：確認刪除對話框 ==================== -->
-  <div id="modal-confirm" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow p-6 text-center space-y-4">
+  <!-- ==================== 彈窗 4：批次設定觀看親友 ==================== -->
+  <div id="modal-batch-permissions" class="hidden fixed inset-0 z-40 bg-nordic-navy/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+    <div class="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2rem] bg-oat-light dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-5 sm:p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-lg sm:text-xl font-bold">設定 <span id="batch-perm-count">0</span> 本相簿的觀看親友</h3>
+        <button type="button" data-close-modal="modal-batch-permissions" class="w-9 h-9 rounded-full bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="form-batch-permissions" class="space-y-4">
+        <div class="flex flex-wrap gap-3 text-xs font-bold">
+          <label class="inline-flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="batch-visibility" value="all" class="accent-nordic-navy" />
+            <span>🌍 設為所有授權親友皆可見</span>
+          </label>
+          <label class="inline-flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="batch-visibility" value="custom" checked class="accent-nordic-navy" />
+            <span>🔒 僅限指定個人可見</span>
+          </label>
+        </div>
+
+        <div id="batch-viewers-box" class="space-y-3 p-3.5 rounded-2xl border-2 border-nordic-navy/20 bg-oat-warm/40 dark:bg-nordic-darkBg/60">
+          <div class="flex flex-wrap gap-3 text-xs font-bold pb-2 border-b border-dashed border-nordic-navy/20">
+            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="batch-apply-mode" value="replace" checked class="accent-nordic-navy" />
+              <span>覆蓋原本觀看名單</span>
+            </label>
+            <label class="inline-flex items-center gap-1.5 cursor-pointer">
+              <input type="radio" name="batch-apply-mode" value="append" class="accent-nordic-navy" />
+              <span>在原有名單中追加親友</span>
+            </label>
+          </div>
+          <div id="batch-viewers-checkboxes" class="flex flex-wrap gap-1.5"></div>
+          <input id="input-batch-extra-viewers" type="text" placeholder="或輸入新的 Gmail（多位可用逗號或空白分隔）" class="w-full px-3 py-1.5 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs focus:outline-none" />
+        </div>
+
+        <div class="flex items-center justify-end gap-2">
+          <button type="button" data-close-modal="modal-batch-permissions" class="px-4 py-2 rounded-xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder text-sm font-bold">取消</button>
+          <button id="btn-save-batch-permissions" type="submit" class="px-5 py-2 rounded-xl bg-nordic-blue text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold">套用權限</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 彈窗 5：刪除確認 ==================== -->
+  <div id="modal-confirm" class="hidden fixed inset-0 z-50 bg-nordic-navy/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-sm rounded-[2rem] bg-oat-light dark:bg-nordic-darkCard border-2 border-nordic-navy dark:border-nordic-darkBorder nordic-shadow p-6 text-center space-y-4">
       <div class="w-12 h-12 mx-auto rounded-2xl bg-nordic-coral border-2 border-nordic-navy flex items-center justify-center">
         <i data-lucide="trash-2" class="w-6 h-6 text-nordic-navy"></i>
       </div>
-      <div>
-        <h3 id="confirm-modal-title" class="font-display text-lg font-bold mb-1">確定要刪除這本相簿嗎？</h3>
-        <p id="confirm-album-name" class="text-xs text-nordic-navySoft dark:text-oat-light/75"></p>
-      </div>
-      <div class="flex gap-2.5 pt-1">
-        <button id="btn-confirm-cancel" class="flex-1 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">取消</button>
-        <button id="btn-confirm-delete" class="flex-1 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-coral text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">確認刪除</button>
+      <h3 id="confirm-modal-title" class="font-display text-lg font-bold">確定要刪除這本相簿嗎？</h3>
+      <p id="confirm-album-name" class="text-xs text-nordic-navySoft dark:text-oat-light/75"></p>
+      <div class="flex items-center justify-center gap-2.5 pt-1">
+        <button id="btn-confirm-cancel" type="button" class="flex-1 py-2 rounded-xl bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder text-sm font-bold">取消</button>
+        <button id="btn-confirm-delete" type="button" class="flex-1 py-2 rounded-xl bg-nordic-coral text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm nordic-btn text-sm font-bold">確認刪除</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== 彈窗 4.5：批次設定觀看親友權限 ==================== -->
-  <div id="modal-batch-permissions" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
-    <div class="w-full max-w-lg max-h-[88vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
-      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between">
-        <h3 class="font-display text-lg font-bold flex items-center gap-2">
-          <i data-lucide="users" class="w-5 h-5 text-nordic-sage"></i>
-          <span>批次設定觀看親友（已選 <span id="batch-perm-count">0</span> 本）</span>
-        </h3>
-        <button data-close-modal="modal-batch-permissions" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <form id="form-batch-permissions" class="flex-1 overflow-y-auto p-5 space-y-4">
-        <div class="space-y-2">
-          <label class="block text-xs font-bold">設定所選相簿的可見範圍</label>
-          <div class="flex flex-wrap gap-2">
-            <label class="cursor-pointer">
-              <input type="radio" name="batch-visibility" value="custom" checked class="sr-only peer" />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-coral peer-checked:text-nordic-navy">
-                🔒 僅限指定個人可見
-              </span>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="batch-visibility" value="all" class="sr-only peer" />
-              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-sage peer-checked:text-nordic-navy">
-                🌍 所有授權親友皆可見
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <div id="batch-viewers-box" class="p-3.5 rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg space-y-3">
-          <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold text-nordic-navySoft dark:text-oat-light/80">套用方式：</label>
-            <div class="flex flex-wrap gap-3 text-xs font-bold">
-              <label class="inline-flex items-center gap-1.5 cursor-pointer">
-                <input type="radio" name="batch-apply-mode" value="replace" checked class="accent-nordic-navy" />
-                <span>覆蓋原本觀看名單</span>
-              </label>
-              <label class="inline-flex items-center gap-1.5 cursor-pointer">
-                <input type="radio" name="batch-apply-mode" value="append" class="accent-nordic-navy" />
-                <span>在原有名單中追加親友</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <p class="text-[11px] font-semibold text-nordic-navySoft dark:text-oat-light/75">勾選可觀看所選相簿的親友（管理者永遠可見）：</p>
-            <div id="batch-viewers-checkboxes" class="flex flex-wrap gap-2"></div>
-          </div>
-
-          <input id="input-batch-extra-viewers" type="text" placeholder="或直接輸入新的 Gmail（多筆請用逗號分隔，會自動加入授權名單）" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs focus:outline-none focus:ring-2 focus:ring-nordic-coral" />
-        </div>
-
-        <div class="pt-2 flex justify-end gap-2.5">
-          <button type="button" data-close-modal="modal-batch-permissions" class="px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">
-            取消
-          </button>
-          <button type="submit" id="btn-save-batch-permissions" class="px-5 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
-            套用至所選相簿
-          </button>
-        </div>
-      </form>
-    </div>
+  <!-- 輕提示 Toast -->
+  <div id="toast" class="pointer-events-none fixed bottom-5 left-1/2 -translate-x-1/2 z-50 opacity-0 translate-y-4 transition-all duration-200 px-4 py-2.5 rounded-2xl bg-nordic-navy text-oat-light border-2 border-nordic-yellow nordic-shadow-sm text-xs sm:text-sm font-bold max-w-[90vw] text-center">
+    <span id="toast-message"></span>
   </div>
 
-  <!-- ==================== Toast 提示條 ==================== -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
-    <div class="px-5 py-2.5 rounded-full border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-xs sm:text-sm nordic-shadow-sm flex items-center gap-2 whitespace-nowrap">
-      <i data-lucide="sparkles" class="w-4 h-4"></i>
-      <span id="toast-message"></span>
-    </div>
-  </div>
-
-  <!-- ==================== JavaScript & Firebase 邏輯 ==================== -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
     import {
       getAuth,
-      signInAnonymously,
-      signInWithCustomToken,
       GoogleAuthProvider,
       signInWithPopup,
+      signInAnonymously,
+      signInWithCustomToken,
+      signOut,
       onAuthStateChanged,
       setPersistence,
-      browserLocalPersistence,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      browserLocalPersistence
+    } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
     import {
       getFirestore,
+      collection,
       doc,
       getDoc,
       setDoc,
       addDoc,
       updateDoc,
       deleteDoc,
-      onSnapshot,
-      collection
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+      onSnapshot
+    } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     // ==================== 1. Firebase 初始化 ====================
-    // 部署至 GitHub Pages / Vercel 時，請將下方 firebaseConfig 替換為您的 Firebase 專案設定碼
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'happy-times-archive';
     const firebaseConfig = {
   apiKey: "AIzaSyCEPIQ7ziVpGgdUlYMk4982djktit9Kouk",
@@ -860,24 +792,18 @@
   measurementId: "G-RGW6QSYY5L"
 };
 
-    const SIM_EMAIL_STORAGE_KEY = 'happy_times_sim_email';
-    const LOCAL_ALBUMS_KEY = 'happy_times_local_albums';
-    const LOCAL_SETTINGS_KEY = 'happy_times_local_settings';
+    const LOCAL_SETTINGS_KEY = `happy_times_settings_${appId}`;
+    const LOCAL_ALBUMS_KEY = `happy_times_albums_${appId}`;
+    const SIM_EMAIL_STORAGE_KEY = `happy_times_sim_email_${appId}`;
 
-    let app = null;
-    let auth = null;
-    let db = null;
+    let app, auth, db;
     let firebaseReady = false;
 
     if (firebaseConfig) {
-      try {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-        firebaseReady = true;
-      } catch (err) {
-        console.error('Firebase init failed:', err);
-      }
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      firebaseReady = true;
     }
 
     // ==================== 2. 狀態管理與工具函式 ====================
@@ -907,7 +833,6 @@
       settingsDocExists: false,
       editingFeatured: [],
       editorCover: { fit: 'contain', offsetX: 0, offsetY: 0, scale: 1 },
-      zoomViewer: { x: 0, y: 0, scale: 1 },
       pendingDeleteId: null,
       pendingBatchDelete: false,
       draggedAlbumId: null
@@ -979,7 +904,6 @@
         const oy = typeof album?.coverOffsetY === 'number' ? album.coverOffsetY : 0;
         return `transform: translate(${ox}%, ${oy}%) scale(${scale}); transform-origin: center center;`;
       }
-      // 相容舊版資料
       const posX = typeof album?.coverPosX === 'number' ? album.coverPosX : 50;
       const posY = typeof album?.coverPosY === 'number' ? album.coverPosY : 50;
       return `object-position: ${posX}% ${posY}%; transform: scale(${scale}); transform-origin: center center;`;
@@ -1247,7 +1171,6 @@
         return;
       }
 
-      // 等待雲端設定讀取完成後再判斷權限，避免在讀取前誤判為新資料庫而覆蓋名單
       if (firebaseReady && !state.settingsLoaded) {
         switchView('loading');
         return;
@@ -1503,7 +1426,6 @@
       }
       emptyState.classList.add('hidden');
 
-      // 管理者「依被分享者分群組」檢視
       if (effectiveAdmin && state.groupBy === 'recipient') {
         grid.classList.add('hidden');
         groupedContainer.classList.remove('hidden');
@@ -1604,7 +1526,6 @@
         return;
       }
 
-      // 一般平面牆檢視（套用全域排序）
       groupedContainer.classList.add('hidden');
       grid.classList.remove('hidden');
 
@@ -2337,7 +2258,6 @@
 
     $('btn-batch-delete').addEventListener('click', promptBatchDeleteAlbums);
 
-    // 批次設定所選相簿的可觀看親友
     function openBatchPermissionsModal() {
       const count = state.selectedAlbumIds.size;
       if (count === 0) return;
@@ -2614,6 +2534,9 @@
     $('btn-unauth-switch').addEventListener('click', handleLogout);
 
     // ==================== 13. 啟動初始化 ====================
+    document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+    document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+
     async function bootstrap() {
       lucide.createIcons();
 

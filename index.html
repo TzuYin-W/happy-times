@@ -374,6 +374,10 @@
           <button id="btn-batch-move-bottom" type="button" class="px-2.5 py-1.5 rounded-xl border-2 border-nordic-navy bg-oat-light text-xs font-bold hover:bg-nordic-blue disabled:opacity-40 transition-colors" title="移到最後面">
             移至最後
           </button>
+          <button id="btn-batch-permissions" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-sage text-nordic-navy text-xs font-bold disabled:opacity-40 flex items-center gap-1 nordic-btn" title="批次設定觀看親友權限">
+            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+            <span>設定觀看親友</span>
+          </button>
           <button id="btn-batch-delete" type="button" class="px-3 py-1.5 rounded-xl border-2 border-nordic-navy bg-nordic-coral text-nordic-navy text-xs font-bold disabled:opacity-40 flex items-center gap-1 nordic-btn">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             <span>刪除所選</span>
@@ -402,6 +406,16 @@
             <select id="filter-location" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow">
               <option value="">所有地點</option>
             </select>
+            <select id="select-sort-by" class="px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-yellow/60 dark:bg-nordic-darkCard text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-yellow" title="相簿排序方式">
+              <option value="custom">預設順序</option>
+              <option value="date-desc">日期：新到舊</option>
+              <option value="date-asc">日期：舊到新</option>
+              <option value="location-asc">依地點排序</option>
+            </select>
+            <select id="select-group-mode" class="hidden px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-sage/75 dark:bg-nordic-darkCard text-nordic-navy dark:text-oat-light text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-nordic-sage" title="管理者分群檢視">
+              <option value="none">全部顯示</option>
+              <option value="recipient">依被分享者分群組</option>
+            </select>
             <button id="btn-clear-filters" type="button" class="hidden px-3 py-2 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-coral/90 text-nordic-navy text-xs font-bold nordic-btn">
               清除篩選
             </button>
@@ -425,12 +439,16 @@
 
       <!-- 相簿卡片牆（手機版 3 欄並排，桌面 4 欄） -->
       <div id="albums-grid" class="grid grid-cols-3 gap-2.5 sm:gap-5 md:gap-6 lg:grid-cols-4"></div>
+
+      <!-- 管理者專用：依被分享者分群組容器 -->
+      <div id="albums-grouped-container" class="hidden space-y-6"></div>
     </section>
   </main>
 
   <!-- ==================== 頁尾 ==================== -->
-  <footer class="mt-auto py-6 text-center text-xs font-semibold text-nordic-navySoft dark:text-oat-light/60">
+  <footer class="mt-auto py-6 text-center text-xs font-semibold text-nordic-navySoft dark:text-oat-light/60 space-y-1">
     <p>快樂時光 — 專屬親友的 Google 相簿收藏牆</p>
+    <p class="text-[11px] opacity-80">Designed by Tzu Yin Wang (Sarah)</p>
   </footer>
 
   <!-- ==================== 彈窗 1：相簿檢視燈箱 ==================== -->
@@ -447,13 +465,9 @@
       </div>
 
       <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
-        <!-- 正方形封面大圖（點擊可放大縮小左右橫移檢視） -->
-        <div id="viewer-cover-box" class="group relative aspect-square max-w-md mx-auto w-full rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg cursor-zoom-in">
-          <img id="viewer-cover" src="" alt="相簿封面" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover block" />
-          <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-oat-light/95 text-nordic-navy border-2 border-nordic-navy text-xs font-bold flex items-center gap-1.5 nordic-shadow-sm group-hover:scale-105 transition-transform">
-            <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
-            <span>點擊放大 / 左右移動</span>
-          </div>
+        <!-- 正方形封面大圖 -->
+        <div id="viewer-cover-box" class="relative aspect-square max-w-md mx-auto w-full rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg">
+          <img id="viewer-cover" src="" alt="相簿封面" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-contain block" />
         </div>
 
         <div id="viewer-meta-pills" class="hidden flex flex-wrap items-center justify-center gap-2"></div>
@@ -578,20 +592,25 @@
 
         <!-- 正方形封面圖片預覽 + 互動縮放平移構圖 -->
         <div>
-          <label class="block text-xs font-bold mb-1.5">正方形封面圖片（可直接拖曳調整位置、放大縮小，或本機上傳）</label>
+          <label class="block text-xs font-bold mb-1.5">正方形封面圖片（預設完整顯示不放大裁切，可自由縮小放大與上下左右移動）</label>
           <div class="flex flex-col sm:flex-row gap-3.5 items-start">
-            <div class="space-y-2 shrink-0 w-full sm:w-44">
-              <div id="cover-crop-stage" class="relative w-44 h-44 mx-auto sm:mx-0 aspect-square rounded-2xl overflow-hidden bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder cursor-grab active:cursor-grabbing select-none touch-none">
-                <img id="album-cover-preview" src="https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" draggable="false" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview'" class="w-full h-full object-cover block pointer-events-none" />
+            <div class="space-y-2 shrink-0 w-full sm:w-48">
+              <div id="cover-crop-stage" class="relative w-48 h-48 mx-auto sm:mx-0 aspect-square rounded-2xl overflow-hidden bg-oat-warm dark:bg-nordic-darkBg border-2 border-nordic-navy dark:border-nordic-darkBorder cursor-grab active:cursor-grabbing select-none touch-none">
+                <img id="album-cover-preview" src="https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview" alt="封面預覽" draggable="false" onerror="this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Cover+Preview'" class="w-full h-full object-contain block pointer-events-none" />
                 <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-nordic-navy/75 text-oat-light text-[10px] font-bold pointer-events-none whitespace-nowrap">
-                  按住拖曳調整構圖
+                  按住拖曳移動位置
                 </span>
               </div>
-              <div class="flex items-center gap-1.5 w-44 mx-auto sm:mx-0">
+              <div class="flex items-center gap-1.5 w-48 mx-auto sm:mx-0">
                 <button type="button" id="btn-cover-zoom-out" class="w-7 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-xs flex items-center justify-center hover:bg-nordic-yellow hover:text-nordic-navy">-</button>
-                <input id="input-cover-zoom" type="range" min="1" max="3" step="0.05" value="1" class="flex-1 accent-nordic-navy" />
+                <input id="input-cover-zoom" type="range" min="0.5" max="3" step="0.05" value="1" class="flex-1 accent-nordic-navy" />
                 <button type="button" id="btn-cover-zoom-in" class="w-7 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-xs flex items-center justify-center hover:bg-nordic-yellow hover:text-nordic-navy">+</button>
-                <button type="button" id="btn-cover-reset" class="px-2 h-7 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-[10px] hover:bg-nordic-blue hover:text-nordic-navy" title="重設封面位置與縮放">重設</button>
+                <span id="editor-cover-zoom-label" class="text-[10px] font-bold w-9 text-center">100%</span>
+              </div>
+              <div class="flex items-center gap-1.5 w-48 mx-auto sm:mx-0">
+                <button type="button" id="btn-cover-fit-contain" class="flex-1 py-1 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder text-[11px] font-bold transition-colors">完整不裁切</button>
+                <button type="button" id="btn-cover-fit-cover" class="flex-1 py-1 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder text-[11px] font-bold transition-colors">填滿正方</button>
+                <button type="button" id="btn-cover-reset" class="px-2 py-1 rounded-lg border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-[11px] hover:bg-nordic-blue hover:text-nordic-navy" title="重設封面位置與縮放">重設</button>
               </div>
             </div>
 
@@ -603,13 +622,9 @@
                   <span>從裝置上傳封面</span>
                   <input id="input-cover-file" type="file" accept="image/*" class="hidden" />
                 </label>
-                <button type="button" id="btn-editor-preview-zoom" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-nordic-blue text-nordic-navy text-xs font-bold hover:opacity-90 transition-opacity">
-                  <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
-                  <span>全螢幕檢視原圖</span>
-                </button>
               </div>
               <p class="text-[11px] text-nordic-navySoft dark:text-oat-light/70 leading-relaxed">
-                提示：在左側正方形框內拖曳即可左右/上下平移構圖，拉動滑桿可放大縮小，儲存後首頁卡片會完全依照您的構圖顯示。
+                提示：預設為「完整不裁切」模式，不會自動把臉部放大卡掉；您也可以切換「填滿正方」、拖曳調整上下左右位置，或拉動滑桿自由縮小/放大（50%～300%）。
               </p>
             </div>
           </div>
@@ -722,38 +737,70 @@
     </div>
   </div>
 
-  <!-- ==================== 彈窗 5：封面照片互動放大縮小 / 左右平移檢視器 ==================== -->
-  <div id="modal-image-zoom" class="hidden fixed inset-0 z-[55] bg-nordic-navy/90 backdrop-blur-md flex flex-col">
-    <div class="px-4 py-3 flex items-center justify-between gap-3 text-oat-light border-b border-oat-light/15">
-      <div class="flex items-center gap-2 text-xs sm:text-sm font-bold min-w-0">
-        <i data-lucide="move" class="w-4 h-4 text-nordic-yellow shrink-0"></i>
-        <span id="zoom-modal-title" class="truncate">封面照片檢視（可拖曳左右移動與縮放）</span>
+  <!-- ==================== 彈窗 4.5：批次設定觀看親友權限 ==================== -->
+  <div id="modal-batch-permissions" class="hidden fixed inset-0 z-50 bg-nordic-navy/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+    <div class="w-full max-w-lg max-h-[88vh] rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard nordic-shadow flex flex-col overflow-hidden">
+      <div class="px-5 py-4 border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg flex items-center justify-between">
+        <h3 class="font-display text-lg font-bold flex items-center gap-2">
+          <i data-lucide="users" class="w-5 h-5 text-nordic-sage"></i>
+          <span>批次設定觀看親友（已選 <span id="batch-perm-count">0</span> 本）</span>
+        </h3>
+        <button data-close-modal="modal-batch-permissions" class="p-2 rounded-full border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard hover:bg-nordic-coral hover:text-nordic-navy transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
       </div>
-      <button data-close-modal="modal-image-zoom" class="p-2 rounded-full border-2 border-oat-light/40 hover:bg-nordic-coral hover:text-nordic-navy hover:border-nordic-navy transition-colors shrink-0">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-    </div>
 
-    <div id="zoom-stage" class="flex-1 relative overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none">
-      <img id="zoom-target-img" src="" alt="放大檢視封面" draggable="false" class="max-w-[92vw] max-h-[75vh] object-contain pointer-events-none select-none transition-transform duration-75" />
-    </div>
+      <form id="form-batch-permissions" class="flex-1 overflow-y-auto p-5 space-y-4">
+        <div class="space-y-2">
+          <label class="block text-xs font-bold">設定所選相簿的可見範圍</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="batch-visibility" value="custom" checked class="sr-only peer" />
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-coral peer-checked:text-nordic-navy">
+                🔒 僅限指定個人可見
+              </span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="batch-visibility" value="all" class="sr-only peer" />
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-nordic-navy bg-oat-warm dark:bg-nordic-darkBg text-xs font-bold opacity-65 peer-checked:opacity-100 peer-checked:bg-nordic-sage peer-checked:text-nordic-navy">
+                🌍 所有授權親友皆可見
+              </span>
+            </label>
+          </div>
+        </div>
 
-    <div class="px-4 py-3.5 bg-nordic-navy/80 border-t border-oat-light/15 flex flex-wrap items-center justify-center gap-2.5">
-      <button type="button" id="btn-zoom-left" class="p-2 rounded-xl border-2 border-oat-light/30 text-oat-light hover:bg-nordic-yellow hover:text-nordic-navy transition-colors" title="向左平移">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-      </button>
-      <button type="button" id="btn-zoom-right" class="p-2 rounded-xl border-2 border-oat-light/30 text-oat-light hover:bg-nordic-yellow hover:text-nordic-navy transition-colors" title="向右平移">
-        <i data-lucide="arrow-right" class="w-4 h-4"></i>
-      </button>
-      <div class="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-oat-light/10 border border-oat-light/25">
-        <button type="button" id="btn-zoom-out" class="w-7 h-7 rounded-lg bg-oat-light/20 text-oat-light font-bold hover:bg-nordic-yellow hover:text-nordic-navy">-</button>
-        <input id="input-zoom-slider" type="range" min="0.5" max="4" step="0.1" value="1" class="w-28 sm:w-40 accent-nordic-yellow" />
-        <button type="button" id="btn-zoom-in" class="w-7 h-7 rounded-lg bg-oat-light/20 text-oat-light font-bold hover:bg-nordic-yellow hover:text-nordic-navy">+</button>
-        <span id="zoom-percent-label" class="text-xs font-bold text-nordic-yellow w-11 text-center">100%</span>
-      </div>
-      <button type="button" id="btn-zoom-reset" class="px-3 py-2 rounded-xl border-2 border-oat-light/30 text-oat-light text-xs font-bold hover:bg-nordic-blue hover:text-nordic-navy transition-colors">
-        重設視角
-      </button>
+        <div id="batch-viewers-box" class="p-3.5 rounded-2xl border-2 border-nordic-navy/20 dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg space-y-3">
+          <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold text-nordic-navySoft dark:text-oat-light/80">套用方式：</label>
+            <div class="flex flex-wrap gap-3 text-xs font-bold">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" name="batch-apply-mode" value="replace" checked class="accent-nordic-navy" />
+                <span>覆蓋原本觀看名單</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" name="batch-apply-mode" value="append" class="accent-nordic-navy" />
+                <span>在原有名單中追加親友</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <p class="text-[11px] font-semibold text-nordic-navySoft dark:text-oat-light/75">勾選可觀看所選相簿的親友（管理者永遠可見）：</p>
+            <div id="batch-viewers-checkboxes" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <input id="input-batch-extra-viewers" type="text" placeholder="或直接輸入新的 Gmail（多筆請用逗號分隔，會自動加入授權名單）" class="w-full px-3 py-2 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs focus:outline-none focus:ring-2 focus:ring-nordic-coral" />
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2.5">
+          <button type="button" data-close-modal="modal-batch-permissions" class="px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg font-bold text-sm">
+            取消
+          </button>
+          <button type="submit" id="btn-save-batch-permissions" class="px-5 py-2.5 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm nordic-shadow-sm nordic-btn">
+            套用至所選相簿
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -840,11 +887,14 @@
       filterYear: '',
       filterMonth: '',
       filterLocation: '',
+      sortBy: 'custom',
+      groupBy: 'none',
+      groupSortMap: {},
       selectMode: false,
       selectedAlbumIds: new Set(),
       listenersStarted: false,
       editingFeatured: [],
-      editorCover: { posX: 50, posY: 50, scale: 1 },
+      editorCover: { fit: 'contain', offsetX: 0, offsetY: 0, scale: 1 },
       zoomViewer: { x: 0, y: 0, scale: 1 },
       pendingDeleteId: null,
       pendingBatchDelete: false,
@@ -887,9 +937,10 @@
     }
 
     function closeModal(id) {
-      $(id).classList.add('hidden');
-      const anyOpen = ['modal-viewer', 'modal-album-editor', 'modal-access', 'modal-confirm', 'modal-image-zoom']
-        .some((m) => !$(m).classList.contains('hidden'));
+      const target = $(id);
+      if (target) target.classList.add('hidden');
+      const anyOpen = ['modal-viewer', 'modal-album-editor', 'modal-access', 'modal-confirm', 'modal-batch-permissions']
+        .some((m) => $(m) && !$(m).classList.contains('hidden'));
       if (!anyOpen) document.body.classList.remove('overflow-hidden');
     }
 
@@ -897,17 +948,63 @@
       btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
     });
 
-    ['modal-viewer', 'modal-album-editor', 'modal-access', 'modal-confirm'].forEach((id) => {
+    // 新增/編輯相簿視窗不允許點擊外部空白處關閉，避免誤觸遺失填寫內容
+    ['modal-viewer', 'modal-access', 'modal-confirm'].forEach((id) => {
       $(id).addEventListener('click', (e) => {
         if (e.target.id === id) closeModal(id);
       });
     });
 
+    function getCoverImgClass(album) {
+      const fit = album?.coverFit === 'cover' ? 'object-cover' : 'object-contain';
+      return `w-full h-full ${fit} block`;
+    }
+
     function getCoverImgStyle(album) {
+      const scale = typeof album?.coverScale === 'number' ? album.coverScale : 1;
+      if (typeof album?.coverOffsetX === 'number' || typeof album?.coverOffsetY === 'number') {
+        const ox = typeof album?.coverOffsetX === 'number' ? album.coverOffsetX : 0;
+        const oy = typeof album?.coverOffsetY === 'number' ? album.coverOffsetY : 0;
+        return `transform: translate(${ox}%, ${oy}%) scale(${scale}); transform-origin: center center;`;
+      }
+      // 相容舊版資料
       const posX = typeof album?.coverPosX === 'number' ? album.coverPosX : 50;
       const posY = typeof album?.coverPosY === 'number' ? album.coverPosY : 50;
-      const scale = typeof album?.coverScale === 'number' ? album.coverScale : 1;
-      return `object-position: ${posX}% ${posY}%; transform: scale(${scale}); transform-origin: ${posX}% ${posY}%;`;
+      return `object-position: ${posX}% ${posY}%; transform: scale(${scale}); transform-origin: center center;`;
+    }
+
+    function sortAlbumsList(list, sortMode) {
+      const arr = [...list];
+      if (sortMode === 'date-desc' || sortMode === 'date-asc') {
+        const getDateNum = (a) => {
+          const y = parseInt(a.year, 10);
+          if (Number.isNaN(y)) return null;
+          const m = parseInt(a.month, 10);
+          return y * 100 + (Number.isNaN(m) ? 0 : m);
+        };
+        arr.sort((a, b) => {
+          const da = getDateNum(a);
+          const db = getDateNum(b);
+          if (da === null && db === null) return (a.order ?? 0) - (b.order ?? 0);
+          if (da === null) return 1;
+          if (db === null) return -1;
+          if (da !== db) return sortMode === 'date-desc' ? db - da : da - db;
+          return (a.order ?? 0) - (b.order ?? 0);
+        });
+      } else if (sortMode === 'location-asc') {
+        arr.sort((a, b) => {
+          const la = String(a.location || '').trim();
+          const lb = String(b.location || '').trim();
+          if (!la && !lb) return (a.order ?? 0) - (b.order ?? 0);
+          if (!la) return 1;
+          if (!lb) return -1;
+          const cmp = la.localeCompare(lb, 'zh-Hant');
+          return cmp !== 0 ? cmp : (a.order ?? 0) - (b.order ?? 0);
+        });
+      } else {
+        arr.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      }
+      return arr;
     }
 
     function getVisibleAlbums() {
@@ -1126,23 +1223,33 @@
         state.selectMode = false;
         state.selectedAlbumIds.clear();
       }
+      if (!effectiveAdmin && state.groupBy !== 'none') {
+        state.groupBy = 'none';
+        $('select-group-mode').value = 'none';
+      }
+
+      $('select-group-mode').classList.toggle('hidden', !effectiveAdmin);
 
       $('btn-visitor-toggle').classList.toggle('hidden', !realAdmin);
       $('btn-visitor-toggle').classList.toggle('flex', realAdmin);
-      $('visitor-toggle-label').textContent = state.visitorPreviewMode ? '回到管理' : '訪客視角';
+      $('visitor-toggle-label').textContent = state.visitorPreviewMode ? '回管理者' : '訪客視角';
 
       $('visitor-preview-bar').classList.toggle('hidden', !(realAdmin && state.visitorPreviewMode));
       if (realAdmin && state.visitorPreviewMode) {
         populatePreviewUserSelect();
       }
 
-      $('admin-toolbar').classList.toggle('hidden', !effectiveAdmin);
-      $('admin-toolbar').classList.toggle('flex', effectiveAdmin);
-      $('drag-hint').classList.toggle('hidden', !effectiveAdmin);
+      const roleBadge = $('role-badge');
+      if (effectiveAdmin) {
+        roleBadge.innerHTML = '<i data-lucide="sparkles" class="w-3 h-3"></i><span>管理者模式</span>';
+        roleBadge.className = 'inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy text-xs font-bold';
+      } else {
+        roleBadge.innerHTML = '<i data-lucide="heart" class="w-3 h-3"></i><span>受邀親友</span>';
+        roleBadge.className = 'inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-nordic-sage text-nordic-navy border-2 border-nordic-navy text-xs font-bold';
+      }
 
-      $('role-badge').innerHTML = effectiveAdmin
-        ? '<i data-lucide="sparkles" class="w-3 h-3"></i><span>管理者模式</span>'
-        : '<i data-lucide="heart" class="w-3 h-3"></i><span>受邀親友模式</span>';
+      $('admin-toolbar').classList.toggle('hidden', !effectiveAdmin);
+      $('drag-hint').classList.toggle('hidden', !effectiveAdmin);
 
       updateBatchBar();
       switchView('gallery');
@@ -1153,26 +1260,162 @@
 
     function updateBatchBar() {
       const effectiveAdmin = isRealAdmin() && !state.visitorPreviewMode;
-      const bar = $('batch-action-bar');
-      const show = effectiveAdmin && state.selectMode;
-      bar.classList.toggle('hidden', !show);
+      const showBar = effectiveAdmin && state.selectMode;
+      $('batch-action-bar').classList.toggle('hidden', !showBar);
+      $('select-mode-label').textContent = state.selectMode ? '退出多選' : '多選管理';
 
-      $('select-mode-label').textContent = state.selectMode ? '結束多選' : '多選管理';
       const count = state.selectedAlbumIds.size;
       $('batch-selected-count').textContent = count;
+      $('btn-batch-select-all').textContent =
+        state.albums.length > 0 && count === state.albums.length ? '取消全選' : '全選';
 
-      const disableActions = count === 0;
-      ['btn-batch-move-top', 'btn-batch-move-up', 'btn-batch-move-down', 'btn-batch-move-bottom', 'btn-batch-delete'].forEach((id) => {
-        $(id).disabled = disableActions;
-      });
-
-      const allSelected = state.albums.length > 0 && count === state.albums.length;
-      $('btn-batch-select-all').textContent = allSelected ? '取消全選' : '全選';
+      const disabled = count === 0;
+      ['btn-batch-move-top', 'btn-batch-move-up', 'btn-batch-move-down', 'btn-batch-move-bottom', 'btn-batch-permissions', 'btn-batch-delete']
+        .forEach((id) => {
+          $(id).disabled = disabled;
+        });
     }
 
-    // ==================== 6. 渲染相簿卡片牆（正方形封面 + 手機版 3 欄並排） ====================
+    // ==================== 6. 渲染相簿卡片牆（正方形封面 + 手機版 3 欄並排 + 分群排序） ====================
+    function createAlbumCard(album, index, totalCount, effectiveAdmin, disableManualReorder) {
+      const tagBgClass = TAG_COLOR_MAP[album.color] || 'bg-nordic-yellow';
+      const coverSrc = album.coverUrl || 'https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times';
+      const featuredCount = Array.isArray(album.featuredPhotos) ? album.featuredPhotos.length : 0;
+      const isSelected = state.selectMode && state.selectedAlbumIds.has(album.id);
+      const isCustomVis = album.visibility === 'custom';
+      const customCount = Array.isArray(album.allowedViewers) ? album.allowedViewers.length : 0;
+
+      const card = document.createElement('article');
+      card.className = `group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow-sm sm:nordic-shadow nordic-card ${isSelected ? 'ring-4 ring-nordic-coral' : ''}`;
+      card.dataset.id = album.id;
+
+      if (effectiveAdmin && !disableManualReorder && !state.selectMode) {
+        card.draggable = true;
+        card.addEventListener('dragstart', () => {
+          state.draggedAlbumId = album.id;
+          card.classList.add('opacity-50');
+        });
+        card.addEventListener('dragend', () => {
+          state.draggedAlbumId = null;
+          card.classList.remove('opacity-50');
+          document.querySelectorAll('.drag-over').forEach((el) => el.classList.remove('drag-over'));
+        });
+        card.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          if (state.draggedAlbumId && state.draggedAlbumId !== album.id) {
+            card.classList.add('drag-over');
+          }
+        });
+        card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+        card.addEventListener('drop', async (e) => {
+          e.preventDefault();
+          card.classList.remove('drag-over');
+          if (state.draggedAlbumId && state.draggedAlbumId !== album.id) {
+            await reorderAlbumsById(state.draggedAlbumId, album.id);
+          }
+        });
+      }
+
+      const safeTitle = escapeHtml(album.title || '未命名相簿');
+      const autoSub = [album.year && album.month ? `${album.year}.${album.month}` : (album.year || ''), album.location || ''].filter(Boolean).join(' · ');
+      const safeSub = escapeHtml(album.subtitle || autoSub || '快樂回憶');
+      const safeNote = escapeHtml(album.note || '');
+      const coverClass = getCoverImgClass(album);
+      const coverStyle = getCoverImgStyle(album);
+
+      card.innerHTML = `
+        <div class="relative aspect-square w-full overflow-hidden border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg cursor-pointer" data-action="view">
+          <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" style="${coverStyle}" onerror="this.onerror=null;this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times'" class="${coverClass}" />
+          <span class="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-3 sm:py-1 rounded-full ${tagBgClass} text-nordic-navy border border-nordic-navy sm:border-2 text-[9px] sm:text-[11px] font-bold max-w-[76%] truncate">
+            ${safeSub}
+          </span>
+          ${state.selectMode && effectiveAdmin ? `
+            <span class="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 w-6 h-6 sm:w-7 sm:h-7 rounded-lg border-2 border-nordic-navy flex items-center justify-center ${isSelected ? 'bg-nordic-coral text-nordic-navy' : 'bg-oat-light/90 text-transparent'}">
+              <i data-lucide="check" class="w-4 h-4"></i>
+            </span>
+          ` : (effectiveAdmin && isCustomVis ? `
+            <span class="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full bg-nordic-coral text-nordic-navy border border-nordic-navy text-[9px] sm:text-[10px] font-bold" title="僅限指定親友可見">
+              🔒 ${customCount}
+            </span>
+          ` : '')}
+          ${featuredCount > 0 ? `
+            <span class="hidden sm:inline-block absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-oat-light/95 text-nordic-navy border-2 border-nordic-navy text-[10px] font-bold">
+              📷 ${featuredCount} 張精選
+            </span>
+          ` : ''}
+        </div>
+
+        <div class="p-1.5 sm:p-4 flex-1 flex flex-col justify-between gap-1.5 sm:gap-3">
+          <div class="cursor-pointer" data-action="view">
+            <h2 class="font-display text-xs sm:text-base font-bold leading-snug line-clamp-2 mb-0.5 sm:mb-1">${safeTitle}</h2>
+            ${safeNote ? `<p class="hidden sm:line-clamp-2 text-xs text-nordic-navySoft dark:text-oat-light/75">${safeNote}</p>` : ''}
+          </div>
+
+          ${effectiveAdmin && !state.selectMode ? `
+            <div class="pt-1.5 sm:pt-3 border-t border-dashed sm:border-t-2 border-nordic-navy/15 dark:border-nordic-darkBorder flex flex-wrap items-center justify-between gap-1">
+              <div class="flex items-center gap-0.5 sm:gap-1">
+                <button data-action="move-up" ${index === 0 || disableManualReorder ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往前移動">
+                  <i data-lucide="arrow-left" class="w-3 h-3 sm:hidden"></i>
+                  <i data-lucide="arrow-up" class="w-3.5 h-3.5 hidden sm:block"></i>
+                </button>
+                <button data-action="move-down" ${index === totalCount - 1 || disableManualReorder ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往後移動">
+                  <i data-lucide="arrow-right" class="w-3 h-3 sm:hidden"></i>
+                  <i data-lucide="arrow-down" class="w-3.5 h-3.5 hidden sm:block"></i>
+                </button>
+              </div>
+              <div class="flex items-center gap-0.5 sm:gap-1.5">
+                <button data-action="edit" class="p-1 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy text-xs font-bold transition-colors" title="編輯">
+                  <i data-lucide="pencil" class="w-3 h-3 sm:hidden"></i>
+                  <span class="hidden sm:inline">編輯</span>
+                </button>
+                <button data-action="delete" class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="刪除">
+                  <i data-lucide="trash-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          ` : (!state.selectMode ? `
+            <div class="hidden sm:flex pt-2 items-center justify-between text-xs font-bold text-nordic-navySoft dark:text-nordic-blue cursor-pointer" data-action="view">
+              <span>打開相簿看照片</span>
+              <span class="w-7 h-7 rounded-full ${tagBgClass} border-2 border-nordic-navy text-nordic-navy flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+              </span>
+            </div>
+          ` : '')}
+        </div>
+      `;
+
+      card.querySelectorAll('[data-action="view"]').forEach((el) => {
+        el.addEventListener('click', () => {
+          if (state.selectMode && effectiveAdmin) {
+            if (state.selectedAlbumIds.has(album.id)) {
+              state.selectedAlbumIds.delete(album.id);
+            } else {
+              state.selectedAlbumIds.add(album.id);
+            }
+            updateBatchBar();
+            renderAlbums();
+          } else {
+            openAlbumViewer(album);
+          }
+        });
+      });
+
+      const btnUp = card.querySelector('[data-action="move-up"]');
+      const btnDown = card.querySelector('[data-action="move-down"]');
+      const btnEdit = card.querySelector('[data-action="edit"]');
+      const btnDel = card.querySelector('[data-action="delete"]');
+
+      if (btnUp) btnUp.addEventListener('click', () => moveAlbumStep(album.id, -1));
+      if (btnDown) btnDown.addEventListener('click', () => moveAlbumStep(album.id, 1));
+      if (btnEdit) btnEdit.addEventListener('click', () => openAlbumEditor(album));
+      if (btnDel) btnDel.addEventListener('click', () => promptDeleteAlbum(album));
+
+      return card;
+    }
+
     function renderAlbums() {
       const grid = $('albums-grid');
+      const groupedContainer = $('albums-grouped-container');
       const emptyState = $('empty-albums-state');
       const effectiveAdmin = isRealAdmin() && !state.visitorPreviewMode;
 
@@ -1199,145 +1442,125 @@
         : `${visibleAlbums.length} 本相簿`;
 
       grid.innerHTML = '';
+      groupedContainer.innerHTML = '';
+
       if (filtered.length === 0) {
+        grid.classList.add('hidden');
+        groupedContainer.classList.add('hidden');
         emptyState.classList.remove('hidden');
         return;
       }
       emptyState.classList.add('hidden');
 
-      filtered.forEach((album, index) => {
-        const tagBgClass = TAG_COLOR_MAP[album.color] || 'bg-nordic-yellow';
-        const coverSrc = album.coverUrl || 'https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times';
-        const featuredCount = Array.isArray(album.featuredPhotos) ? album.featuredPhotos.length : 0;
-        const isSelected = state.selectMode && state.selectedAlbumIds.has(album.id);
-        const isCustomVis = album.visibility === 'custom';
-        const customCount = Array.isArray(album.allowedViewers) ? album.allowedViewers.length : 0;
+      // 管理者「依被分享者分群組」檢視
+      if (effectiveAdmin && state.groupBy === 'recipient') {
+        grid.classList.add('hidden');
+        groupedContainer.classList.remove('hidden');
 
-        const card = document.createElement('article');
-        card.className = `group relative flex flex-col rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkCard nordic-shadow-sm sm:nordic-shadow nordic-card ${isSelected ? 'ring-4 ring-nordic-coral' : ''}`;
-        card.dataset.id = album.id;
-
-        if (effectiveAdmin && !hasAnyFilter && !state.selectMode) {
-          card.draggable = true;
-          card.addEventListener('dragstart', () => {
-            state.draggedAlbumId = album.id;
-            card.classList.add('opacity-50');
-          });
-          card.addEventListener('dragend', () => {
-            state.draggedAlbumId = null;
-            card.classList.remove('opacity-50');
-            document.querySelectorAll('.drag-over').forEach((el) => el.classList.remove('drag-over'));
-          });
-          card.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            if (state.draggedAlbumId && state.draggedAlbumId !== album.id) {
-              card.classList.add('drag-over');
-            }
-          });
-          card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
-          card.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            card.classList.remove('drag-over');
-            if (state.draggedAlbumId && state.draggedAlbumId !== album.id) {
-              await reorderAlbumsById(state.draggedAlbumId, album.id);
-            }
+        const groups = [];
+        const allShared = filtered.filter((a) => a.visibility !== 'custom');
+        if (allShared.length > 0) {
+          groups.push({
+            key: '__all__',
+            title: '🌍 所有授權親友皆可見',
+            badgeClass: 'bg-nordic-sage',
+            albums: allShared
           });
         }
 
-        const safeTitle = escapeHtml(album.title || '未命名相簿');
-        const autoSub = [album.year && album.month ? `${album.year}.${album.month}` : (album.year || ''), album.location || ''].filter(Boolean).join(' · ');
-        const safeSub = escapeHtml(album.subtitle || autoSub || '快樂回憶');
-        const safeNote = escapeHtml(album.note || '');
-        const coverStyle = getCoverImgStyle(album);
-
-        card.innerHTML = `
-          <div class="relative aspect-square w-full overflow-hidden border-b-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg cursor-pointer" data-action="view">
-            <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" style="${coverStyle}" onerror="this.onerror=null;this.src='https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times'" class="w-full h-full object-cover block transition-transform duration-500 ease-out" />
-            <span class="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 px-1.5 py-0.5 sm:px-3 sm:py-1 rounded-full ${tagBgClass} text-nordic-navy border border-nordic-navy sm:border-2 text-[9px] sm:text-[11px] font-bold max-w-[76%] truncate">
-              ${safeSub}
-            </span>
-            ${state.selectMode && effectiveAdmin ? `
-              <span class="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 w-6 h-6 sm:w-7 sm:h-7 rounded-lg border-2 border-nordic-navy flex items-center justify-center ${isSelected ? 'bg-nordic-coral text-nordic-navy' : 'bg-oat-light/90 text-transparent'}">
-                <i data-lucide="check" class="w-4 h-4"></i>
-              </span>
-            ` : (effectiveAdmin && isCustomVis ? `
-              <span class="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 px-1.5 py-0.5 sm:px-2 sm:py-0.5 rounded-full bg-nordic-coral text-nordic-navy border border-nordic-navy text-[9px] sm:text-[10px] font-bold" title="僅限指定親友可見">
-                🔒 ${customCount}
-              </span>
-            ` : '')}
-            ${featuredCount > 0 ? `
-              <span class="hidden sm:inline-block absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-oat-light/95 text-nordic-navy border-2 border-nordic-navy text-[10px] font-bold">
-                📷 ${featuredCount} 張精選
-              </span>
-            ` : ''}
-          </div>
-
-          <div class="p-1.5 sm:p-4 flex-1 flex flex-col justify-between gap-1.5 sm:gap-3">
-            <div class="cursor-pointer" data-action="view">
-              <h2 class="font-display text-xs sm:text-base font-bold leading-snug line-clamp-2 mb-0.5 sm:mb-1">${safeTitle}</h2>
-              ${safeNote ? `<p class="hidden sm:line-clamp-2 text-xs text-nordic-navySoft dark:text-oat-light/75">${safeNote}</p>` : ''}
-            </div>
-
-            ${effectiveAdmin && !state.selectMode ? `
-              <div class="pt-1.5 sm:pt-3 border-t border-dashed sm:border-t-2 border-nordic-navy/15 dark:border-nordic-darkBorder flex flex-wrap items-center justify-between gap-1">
-                <div class="flex items-center gap-0.5 sm:gap-1">
-                  <button data-action="move-up" ${index === 0 || hasAnyFilter ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往前移動">
-                    <i data-lucide="arrow-left" class="w-3 h-3 sm:hidden"></i>
-                    <i data-lucide="arrow-up" class="w-3.5 h-3.5 hidden sm:block"></i>
-                  </button>
-                  <button data-action="move-down" ${index === filtered.length - 1 || hasAnyFilter ? 'disabled' : ''} class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-yellow hover:text-nordic-navy disabled:opacity-30 transition-colors" title="往後移動">
-                    <i data-lucide="arrow-right" class="w-3 h-3 sm:hidden"></i>
-                    <i data-lucide="arrow-down" class="w-3.5 h-3.5 hidden sm:block"></i>
-                  </button>
-                </div>
-                <div class="flex items-center gap-0.5 sm:gap-1.5">
-                  <button data-action="edit" class="p-1 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy text-xs font-bold transition-colors" title="編輯">
-                    <i data-lucide="pencil" class="w-3 h-3 sm:hidden"></i>
-                    <span class="hidden sm:inline">編輯</span>
-                  </button>
-                  <button data-action="delete" class="p-1 sm:p-1.5 rounded-lg sm:rounded-xl border border-nordic-navy sm:border-2 dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-coral hover:text-nordic-navy transition-colors" title="刪除">
-                    <i data-lucide="trash-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5"></i>
-                  </button>
-                </div>
-              </div>
-            ` : (!state.selectMode ? `
-              <div class="hidden sm:flex pt-2 items-center justify-between text-xs font-bold text-nordic-navySoft dark:text-nordic-blue cursor-pointer" data-action="view">
-                <span>打開相簿看照片</span>
-                <span class="w-7 h-7 rounded-full ${tagBgClass} border-2 border-nordic-navy text-nordic-navy flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
-                  <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
-                </span>
-              </div>
-            ` : '')}
-          </div>
-        `;
-
-        card.querySelectorAll('[data-action="view"]').forEach((el) => {
-          el.addEventListener('click', () => {
-            if (state.selectMode && effectiveAdmin) {
-              if (state.selectedAlbumIds.has(album.id)) {
-                state.selectedAlbumIds.delete(album.id);
-              } else {
-                state.selectedAlbumIds.add(album.id);
-              }
-              updateBatchBar();
-              renderAlbums();
-            } else {
-              openAlbumViewer(album);
-            }
-          });
+        const recipientSet = new Set();
+        (state.settings.allowedEmails || []).forEach((e) => {
+          const lower = e.toLowerCase();
+          if (!state.settings.adminEmail || lower !== state.settings.adminEmail.toLowerCase()) {
+            recipientSet.add(lower);
+          }
+        });
+        filtered.forEach((a) => {
+          if (a.visibility === 'custom' && Array.isArray(a.allowedViewers)) {
+            a.allowedViewers.forEach((v) => recipientSet.add(v.toLowerCase()));
+          }
         });
 
-        const btnUp = card.querySelector('[data-action="move-up"]');
-        const btnDown = card.querySelector('[data-action="move-down"]');
-        const btnEdit = card.querySelector('[data-action="edit"]');
-        const btnDel = card.querySelector('[data-action="delete"]');
+        Array.from(recipientSet).sort().forEach((email) => {
+          const list = filtered.filter(
+            (a) => a.visibility === 'custom' && Array.isArray(a.allowedViewers) && a.allowedViewers.some((v) => v.toLowerCase() === email)
+          );
+          if (list.length > 0) {
+            groups.push({
+              key: email,
+              title: `👤 ${email}`,
+              badgeClass: 'bg-nordic-blue',
+              albums: list
+            });
+          }
+        });
 
-        if (btnUp) btnUp.addEventListener('click', () => moveAlbumStep(album.id, -1));
-        if (btnDown) btnDown.addEventListener('click', () => moveAlbumStep(album.id, 1));
-        if (btnEdit) btnEdit.addEventListener('click', () => openAlbumEditor(album));
-        if (btnDel) btnDel.addEventListener('click', () => promptDeleteAlbum(album));
+        const adminOnly = filtered.filter(
+          (a) => a.visibility === 'custom' && (!Array.isArray(a.allowedViewers) || a.allowedViewers.length === 0)
+        );
+        if (adminOnly.length > 0) {
+          groups.push({
+            key: '__admin_only__',
+            title: '🔒 僅管理者可見（未指定親友）',
+            badgeClass: 'bg-nordic-coral',
+            albums: adminOnly
+          });
+        }
 
-        grid.appendChild(card);
+        groups.forEach((grp) => {
+          const groupSort = state.groupSortMap[grp.key] || state.sortBy || 'custom';
+          const sortedGroupAlbums = sortAlbumsList(grp.albums, groupSort);
+
+          const section = document.createElement('div');
+          section.className = 'rounded-3xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm/60 dark:bg-nordic-darkCard/60 p-3.5 sm:p-5 space-y-4';
+
+          const header = document.createElement('div');
+          header.className = 'flex flex-wrap items-center justify-between gap-2 pb-3 border-b-2 border-dashed border-nordic-navy/20 dark:border-nordic-darkBorder';
+          header.innerHTML = `
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="px-3 py-1 rounded-full ${grp.badgeClass} text-nordic-navy border-2 border-nordic-navy text-xs sm:text-sm font-bold truncate">${escapeHtml(grp.title)}</span>
+              <span class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/70 shrink-0">${sortedGroupAlbums.length} 本相簿</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-bold text-nordic-navySoft dark:text-oat-light/70">群組內排序：</span>
+              <select class="group-sort-select px-2.5 py-1 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-xs font-bold focus:outline-none">
+                <option value="custom">預設順序</option>
+                <option value="date-desc">日期：新到舊</option>
+                <option value="date-asc">日期：舊到新</option>
+                <option value="location-asc">依地點排序</option>
+              </select>
+            </div>
+          `;
+          const sel = header.querySelector('.group-sort-select');
+          sel.value = groupSort;
+          sel.addEventListener('change', (e) => {
+            state.groupSortMap[grp.key] = e.target.value;
+            renderAlbums();
+          });
+
+          const subGrid = document.createElement('div');
+          subGrid.className = 'grid grid-cols-3 gap-2.5 sm:gap-5 md:gap-6 lg:grid-cols-4';
+          sortedGroupAlbums.forEach((album, idx) => {
+            subGrid.appendChild(createAlbumCard(album, idx, sortedGroupAlbums.length, effectiveAdmin, true));
+          });
+
+          section.appendChild(header);
+          section.appendChild(subGrid);
+          groupedContainer.appendChild(section);
+        });
+
+        lucide.createIcons();
+        return;
+      }
+
+      // 一般平面牆檢視（套用全域排序）
+      groupedContainer.classList.add('hidden');
+      grid.classList.remove('hidden');
+
+      const sorted = sortAlbumsList(filtered, state.sortBy);
+      const disableManualReorder = hasAnyFilter || state.sortBy !== 'custom';
+      sorted.forEach((album, index) => {
+        grid.appendChild(createAlbumCard(album, index, sorted.length, effectiveAdmin, disableManualReorder));
       });
 
       lucide.createIcons();
@@ -1353,9 +1576,8 @@
       const coverSrc = album.coverUrl || 'https://placehold.co/800x800/FAF6EE/1D3557?text=Happy+Times';
       const viewerCover = $('viewer-cover');
       viewerCover.src = coverSrc;
+      viewerCover.className = getCoverImgClass(album);
       viewerCover.setAttribute('style', getCoverImgStyle(album));
-
-      $('viewer-cover-box').onclick = () => openImageZoomModal(coverSrc, album.title || '相簿封面');
 
       const pillsBox = $('viewer-meta-pills');
       const pills = [];
@@ -1394,12 +1616,11 @@
           const item = document.createElement('div');
           item.className = 'group relative aspect-square rounded-2xl overflow-hidden border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-warm dark:bg-nordic-darkBg';
           item.innerHTML = `
-            <img src="${src}" alt="精選照片 ${i + 1}" class="w-full h-full object-cover block cursor-zoom-in" />
+            <img src="${src}" alt="精選照片 ${i + 1}" class="w-full h-full object-cover block" />
             <button type="button" class="absolute bottom-2 right-2 p-2 rounded-full bg-nordic-yellow text-nordic-navy border-2 border-nordic-navy nordic-shadow-sm hover:scale-105 transition-transform" title="直接下載照片">
               <i data-lucide="download" class="w-3.5 h-3.5"></i>
             </button>
           `;
-          item.querySelector('img').addEventListener('click', () => openImageZoomModal(src, `${album.title || '精選照片'} #${i + 1}`));
           item.querySelector('button').addEventListener('click', (e) => {
             e.stopPropagation();
             downloadImage(src, `${album.title || 'photo'}_${i + 1}.jpg`);
@@ -1412,82 +1633,6 @@
 
       openModal('modal-viewer');
     }
-
-    // 封面照片互動放大縮小 / 左右橫移全螢幕檢視器
-    function applyZoomViewerTransform() {
-      const { x, y, scale } = state.zoomViewer;
-      $('zoom-target-img').style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-      $('input-zoom-slider').value = scale;
-      $('zoom-percent-label').textContent = `${Math.round(scale * 100)}%`;
-    }
-
-    function openImageZoomModal(src, title) {
-      $('zoom-target-img').src = src;
-      $('zoom-modal-title').textContent = `${title}（拖曳左右移動 / 縮放檢視）`;
-      state.zoomViewer = { x: 0, y: 0, scale: 1 };
-      applyZoomViewerTransform();
-      openModal('modal-image-zoom');
-      lucide.createIcons();
-    }
-
-    (function initImageZoomControls() {
-      const stage = $('zoom-stage');
-      let dragging = false;
-      let startX = 0;
-      let startY = 0;
-      let origX = 0;
-      let origY = 0;
-
-      stage.addEventListener('pointerdown', (e) => {
-        dragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        origX = state.zoomViewer.x;
-        origY = state.zoomViewer.y;
-        stage.setPointerCapture(e.pointerId);
-      });
-      stage.addEventListener('pointermove', (e) => {
-        if (!dragging) return;
-        state.zoomViewer.x = origX + (e.clientX - startX);
-        state.zoomViewer.y = origY + (e.clientY - startY);
-        applyZoomViewerTransform();
-      });
-      const stopDrag = () => { dragging = false; };
-      stage.addEventListener('pointerup', stopDrag);
-      stage.addEventListener('pointercancel', stopDrag);
-
-      stage.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 0.15 : -0.15;
-        state.zoomViewer.scale = Math.min(4, Math.max(0.5, Number((state.zoomViewer.scale + delta).toFixed(2))));
-        applyZoomViewerTransform();
-      }, { passive: false });
-
-      $('input-zoom-slider').addEventListener('input', (e) => {
-        state.zoomViewer.scale = Number(e.target.value);
-        applyZoomViewerTransform();
-      });
-      $('btn-zoom-in').addEventListener('click', () => {
-        state.zoomViewer.scale = Math.min(4, Number((state.zoomViewer.scale + 0.25).toFixed(2)));
-        applyZoomViewerTransform();
-      });
-      $('btn-zoom-out').addEventListener('click', () => {
-        state.zoomViewer.scale = Math.max(0.5, Number((state.zoomViewer.scale - 0.25).toFixed(2)));
-        applyZoomViewerTransform();
-      });
-      $('btn-zoom-left').addEventListener('click', () => {
-        state.zoomViewer.x += 60;
-        applyZoomViewerTransform();
-      });
-      $('btn-zoom-right').addEventListener('click', () => {
-        state.zoomViewer.x -= 60;
-        applyZoomViewerTransform();
-      });
-      $('btn-zoom-reset').addEventListener('click', () => {
-        state.zoomViewer = { x: 0, y: 0, scale: 1 };
-        applyZoomViewerTransform();
-      });
-    })();
 
     async function downloadImage(url, filename) {
       try {
@@ -1521,12 +1666,28 @@
 
     // ==================== 8. 新增與編輯相簿 + 自動抓取封面 ====================
     function applyEditorCoverTransform() {
-      const { posX, posY, scale } = state.editorCover;
+      const { fit, offsetX, offsetY, scale } = state.editorCover;
       const img = $('album-cover-preview');
-      img.style.objectPosition = `${posX}% ${posY}%`;
-      img.style.transform = `scale(${scale})`;
-      img.style.transformOrigin = `${posX}% ${posY}%`;
+      img.className = `w-full h-full ${fit === 'cover' ? 'object-cover' : 'object-contain'} block pointer-events-none`;
+      img.style.objectPosition = 'center center';
+      img.style.transform = `translate(${offsetX}%, ${offsetY}%) scale(${scale})`;
+      img.style.transformOrigin = 'center center';
       $('input-cover-zoom').value = scale;
+      $('editor-cover-zoom-label').textContent = `${Math.round(scale * 100)}%`;
+
+      const activeCls = ['bg-nordic-yellow', 'text-nordic-navy'];
+      const idleCls = ['bg-oat-warm', 'dark:bg-nordic-darkBg'];
+      if (fit === 'cover') {
+        $('btn-cover-fit-cover').classList.add(...activeCls);
+        $('btn-cover-fit-cover').classList.remove(...idleCls);
+        $('btn-cover-fit-contain').classList.remove(...activeCls);
+        $('btn-cover-fit-contain').classList.add(...idleCls);
+      } else {
+        $('btn-cover-fit-contain').classList.add(...activeCls);
+        $('btn-cover-fit-contain').classList.remove(...idleCls);
+        $('btn-cover-fit-cover').classList.remove(...activeCls);
+        $('btn-cover-fit-cover').classList.add(...idleCls);
+      }
     }
 
     (function initEditorCoverCropper() {
@@ -1534,24 +1695,24 @@
       let dragging = false;
       let startX = 0;
       let startY = 0;
-      let origPosX = 50;
-      let origPosY = 50;
+      let origOffsetX = 0;
+      let origOffsetY = 0;
 
       stage.addEventListener('pointerdown', (e) => {
         dragging = true;
         startX = e.clientX;
         startY = e.clientY;
-        origPosX = state.editorCover.posX;
-        origPosY = state.editorCover.posY;
+        origOffsetX = state.editorCover.offsetX;
+        origOffsetY = state.editorCover.offsetY;
         stage.setPointerCapture(e.pointerId);
       });
       stage.addEventListener('pointermove', (e) => {
         if (!dragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        const sensitivity = 0.65;
-        state.editorCover.posX = Math.min(100, Math.max(0, Math.round(origPosX - dx * sensitivity)));
-        state.editorCover.posY = Math.min(100, Math.max(0, Math.round(origPosY - dy * sensitivity)));
+        const rect = stage.getBoundingClientRect();
+        const dxPct = ((e.clientX - startX) / rect.width) * 100;
+        const dyPct = ((e.clientY - startY) / rect.height) * 100;
+        state.editorCover.offsetX = Math.min(80, Math.max(-80, Math.round(origOffsetX + dxPct)));
+        state.editorCover.offsetY = Math.min(80, Math.max(-80, Math.round(origOffsetY + dyPct)));
         applyEditorCoverTransform();
       });
       const stopDrag = () => { dragging = false; };
@@ -1563,20 +1724,24 @@
         applyEditorCoverTransform();
       });
       $('btn-cover-zoom-in').addEventListener('click', () => {
-        state.editorCover.scale = Math.min(3, Number((state.editorCover.scale + 0.15).toFixed(2)));
+        state.editorCover.scale = Math.min(3, Number((state.editorCover.scale + 0.1).toFixed(2)));
         applyEditorCoverTransform();
       });
       $('btn-cover-zoom-out').addEventListener('click', () => {
-        state.editorCover.scale = Math.max(1, Number((state.editorCover.scale - 0.15).toFixed(2)));
+        state.editorCover.scale = Math.max(0.5, Number((state.editorCover.scale - 0.1).toFixed(2)));
+        applyEditorCoverTransform();
+      });
+      $('btn-cover-fit-contain').addEventListener('click', () => {
+        state.editorCover.fit = 'contain';
+        applyEditorCoverTransform();
+      });
+      $('btn-cover-fit-cover').addEventListener('click', () => {
+        state.editorCover.fit = 'cover';
         applyEditorCoverTransform();
       });
       $('btn-cover-reset').addEventListener('click', () => {
-        state.editorCover = { posX: 50, posY: 50, scale: 1 };
+        state.editorCover = { fit: 'contain', offsetX: 0, offsetY: 0, scale: 1 };
         applyEditorCoverTransform();
-      });
-      $('btn-editor-preview-zoom').addEventListener('click', () => {
-        const src = $('input-album-cover').value.trim() || $('album-cover-preview').src;
-        openImageZoomModal(src, $('input-album-title').value.trim() || '封面原圖預覽');
       });
     })();
 
@@ -1636,8 +1801,9 @@
       renderEditorViewerCheckboxes(Array.isArray(album?.allowedViewers) ? album.allowedViewers : []);
 
       state.editorCover = {
-        posX: typeof album?.coverPosX === 'number' ? album.coverPosX : 50,
-        posY: typeof album?.coverPosY === 'number' ? album.coverPosY : 50,
+        fit: album?.coverFit === 'cover' ? 'cover' : 'contain',
+        offsetX: typeof album?.coverOffsetX === 'number' ? album.coverOffsetX : 0,
+        offsetY: typeof album?.coverOffsetY === 'number' ? album.coverOffsetY : 0,
         scale: typeof album?.coverScale === 'number' ? album.coverScale : 1
       };
       updateCoverPreview(album?.coverUrl || '');
@@ -1685,10 +1851,10 @@
       try {
         const dataUrl = await compressImageFile(file, 900, 0.8);
         $('input-album-cover').value = dataUrl;
-        state.editorCover = { posX: 50, posY: 50, scale: 1 };
+        state.editorCover = { fit: 'contain', offsetX: 0, offsetY: 0, scale: 1 };
         updateCoverPreview(dataUrl);
         applyEditorCoverTransform();
-        showToast('封面照片已載入，可拖曳微調構圖');
+        showToast('封面照片已載入，可自由縮放與拖曳位置');
       } catch (err) {
         console.error('Cover upload error:', err);
         showToast('圖片處理失敗，請更換其他檔案');
@@ -1755,10 +1921,10 @@
         const imgUrl = data.image?.url || data.logo?.url || '';
         if (imgUrl) {
           $('input-album-cover').value = imgUrl;
-          state.editorCover = { posX: 50, posY: 50, scale: 1 };
+          state.editorCover = { fit: 'contain', offsetX: 0, offsetY: 0, scale: 1 };
           updateCoverPreview(imgUrl);
           applyEditorCoverTransform();
-          status.textContent = '已成功抓取封面！可在下方正方形框拖曳微調構圖。';
+          status.textContent = '已成功抓取封面（預設完整不裁切）！可自由縮小放大與移動位置。';
         } else {
           status.textContent = '未能自動取得封面（可能受相簿隱私限制），請手動貼上圖片網址或從裝置上傳。';
         }
@@ -1808,8 +1974,9 @@
         month: $('input-album-month').value.trim(),
         location: $('input-album-location').value.trim(),
         coverUrl: $('input-album-cover').value.trim(),
-        coverPosX: state.editorCover.posX,
-        coverPosY: state.editorCover.posY,
+        coverFit: state.editorCover.fit,
+        coverOffsetX: state.editorCover.offsetX,
+        coverOffsetY: state.editorCover.offsetY,
         coverScale: state.editorCover.scale,
         visibility,
         allowedViewers,
@@ -2044,6 +2211,14 @@
       state.filterLocation = e.target.value;
       renderAlbums();
     });
+    $('select-sort-by').addEventListener('change', (e) => {
+      state.sortBy = e.target.value;
+      renderAlbums();
+    });
+    $('select-group-mode').addEventListener('change', (e) => {
+      state.groupBy = e.target.value;
+      renderAlbums();
+    });
     $('btn-clear-filters').addEventListener('click', () => {
       state.searchQuery = '';
       state.filterYear = '';
@@ -2110,6 +2285,124 @@
     });
 
     $('btn-batch-delete').addEventListener('click', promptBatchDeleteAlbums);
+
+    // 批次設定所選相簿的可觀看親友
+    function openBatchPermissionsModal() {
+      const count = state.selectedAlbumIds.size;
+      if (count === 0) return;
+
+      $('batch-perm-count').textContent = count;
+      const customRadio = document.querySelector('input[name="batch-visibility"][value="custom"]');
+      if (customRadio) customRadio.checked = true;
+      const replaceRadio = document.querySelector('input[name="batch-apply-mode"][value="replace"]');
+      if (replaceRadio) replaceRadio.checked = true;
+      $('batch-viewers-box').classList.remove('hidden');
+      $('input-batch-extra-viewers').value = '';
+
+      const box = $('batch-viewers-checkboxes');
+      const candidates = (state.settings.allowedEmails || []).filter(
+        (e) => !state.settings.adminEmail || e.toLowerCase() !== state.settings.adminEmail.toLowerCase()
+      );
+      box.innerHTML = '';
+
+      if (candidates.length === 0) {
+        box.innerHTML = '<span class="text-[11px] text-nordic-navySoft dark:text-oat-light/60">授權名單尚無其他親友，可直接在下方欄位輸入 Gmail。</span>';
+      } else {
+        candidates.forEach((email) => {
+          const lower = email.toLowerCase();
+          const label = document.createElement('label');
+          label.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkCard text-xs font-semibold cursor-pointer';
+          label.innerHTML = `
+            <input type="checkbox" value="${escapeHtml(lower)}" class="accent-nordic-navy batch-viewer-checkbox" />
+            <span>${escapeHtml(lower)}</span>
+          `;
+          box.appendChild(label);
+        });
+      }
+
+      openModal('modal-batch-permissions');
+    }
+
+    document.querySelectorAll('input[name="batch-visibility"]').forEach((radio) => {
+      radio.addEventListener('change', (e) => {
+        $('batch-viewers-box').classList.toggle('hidden', e.target.value !== 'custom');
+      });
+    });
+
+    $('btn-batch-permissions').addEventListener('click', openBatchPermissionsModal);
+
+    $('form-batch-permissions').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const selectedIds = Array.from(state.selectedAlbumIds);
+      if (selectedIds.length === 0) return;
+
+      const visibility = document.querySelector('input[name="batch-visibility"]:checked')?.value || 'custom';
+      const applyMode = document.querySelector('input[name="batch-apply-mode"]:checked')?.value || 'replace';
+
+      let pickedViewers = [];
+      if (visibility === 'custom') {
+        const checked = Array.from(document.querySelectorAll('.batch-viewer-checkbox:checked')).map((el) => el.value.toLowerCase());
+        const extra = $('input-batch-extra-viewers').value
+          .split(/[\s,;]+/)
+          .map((s) => s.trim().toLowerCase())
+          .filter((s) => s && s.includes('@'));
+        pickedViewers = Array.from(new Set([...checked, ...extra]));
+
+        if (extra.length > 0) {
+          const mergedGlobal = Array.from(new Set([...(state.settings.allowedEmails || []), ...extra]));
+          if (mergedGlobal.length !== (state.settings.allowedEmails || []).length) {
+            state.settings.allowedEmails = mergedGlobal;
+            if (firebaseReady) {
+              try {
+                await setDoc(getSettingsDocRef(), state.settings, { merge: true });
+              } catch (err) {
+                console.warn('Batch auto add allowed email warning:', err);
+              }
+            } else {
+              saveLocalFallback();
+            }
+          }
+        }
+      }
+
+      const btn = $('btn-save-batch-permissions');
+      btn.disabled = true;
+      try {
+        const updates = selectedIds.map((id) => {
+          const album = state.albums.find((a) => a.id === id);
+          let nextViewers = [];
+          if (visibility === 'custom') {
+            if (applyMode === 'append' && album?.visibility === 'custom' && Array.isArray(album.allowedViewers)) {
+              nextViewers = Array.from(new Set([...album.allowedViewers.map((v) => v.toLowerCase()), ...pickedViewers]));
+            } else {
+              nextViewers = pickedViewers;
+            }
+          }
+          return { id, payload: { visibility, allowedViewers: nextViewers, updatedAt: Date.now() } };
+        });
+
+        if (firebaseReady) {
+          await Promise.all(
+            updates.map(({ id, payload }) => updateDoc(doc(getAlbumsColRef(), id), payload))
+          );
+        } else {
+          updates.forEach(({ id, payload }) => {
+            const idx = state.albums.findIndex((a) => a.id === id);
+            if (idx !== -1) state.albums[idx] = { ...state.albums[idx], ...payload };
+          });
+          saveLocalFallback();
+          renderAlbums();
+        }
+
+        closeModal('modal-batch-permissions');
+        showToast(`已更新 ${selectedIds.length} 本相簿的觀看權限！`);
+      } catch (err) {
+        console.error('Batch permissions update error:', err);
+        showToast('批次更新權限失敗：請確認已用管理者 Google 帳號登入');
+      } finally {
+        btn.disabled = false;
+      }
+    });
 
     $('select-preview-user').addEventListener('change', (e) => {
       state.previewAsEmail = e.target.value;

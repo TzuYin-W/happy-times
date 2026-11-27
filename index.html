@@ -246,35 +246,44 @@
 
         <h2 class="font-display text-2xl sm:text-3xl font-bold leading-snug mb-2">歡迎來到快樂時光</h2>
         <p class="text-sm text-nordic-navySoft dark:text-oat-light/80 mb-6 leading-relaxed">
-          這裡收藏了我們珍貴的 Google 相簿回憶。請使用受授權的 Gmail 帳號登入以瀏覽與收藏照片。
+          這裡收藏了我們珍貴的 Google 相簿回憶。請輸入受授權的 Gmail 快速進入瀏覽與收藏照片。
         </p>
 
-        <button id="btn-google-login" class="w-full py-3.5 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 nordic-shadow-sm nordic-btn">
-          <svg class="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#1D3557" d="M21.35 11.1H12v2.98h5.35c-.23 1.48-1.69 4.35-5.35 4.35-3.22 0-5.85-2.67-5.85-5.93S8.78 6.57 12 6.57c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.68 4.02 14.55 3 12 3 7.03 3 3 7.03 3 12s4.03 9 9 9c5.19 0 8.63-3.65 8.63-8.79 0-.59-.06-1.04-.15-1.11z"/>
-          </svg>
-          <span>使用 Google 帳號登入</span>
-        </button>
-
-        <p id="google-auth-hint" class="hidden mt-3 text-xs font-semibold text-nordic-coral bg-oat-light dark:bg-nordic-darkBg p-2.5 rounded-xl border border-nordic-coral">
-          若在預覽視窗中無法彈出 Google 登入，請先使用下方「測試用 Gmail」體驗，或部署至正式網域後使用。
-        </p>
-
-        <div class="my-6 flex items-center gap-3">
-          <div class="flex-1 h-0.5 bg-nordic-navy/15 dark:bg-nordic-darkBorder"></div>
-          <span class="text-xs font-bold text-nordic-navySoft dark:text-oat-light/60">或預覽測試用登入</span>
-          <div class="flex-1 h-0.5 bg-nordic-navy/15 dark:bg-nordic-darkBorder"></div>
-        </div>
-
+        <!-- 主要入口：親友快速登入 -->
         <form id="form-sim-login" class="space-y-3">
           <div>
-            <label for="input-sim-email" class="block text-xs font-bold mb-1.5">輸入授權 Gmail（預覽測試用）</label>
-            <input id="input-sim-email" type="email" required placeholder="yourname@gmail.com" class="w-full px-4 py-2.5 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
+            <label for="input-sim-email" class="block text-xs font-bold mb-1.5">親友快速登入（授權 Gmail）</label>
+            <input id="input-sim-email" type="email" autocomplete="email" required placeholder="yourname@gmail.com" class="w-full px-4 py-3 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg text-sm focus:outline-none focus:ring-2 focus:ring-nordic-blue" />
           </div>
-          <button type="submit" class="w-full py-2.5 px-4 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy font-bold text-sm transition-colors">
-            以此 Gmail 進入
+          <button type="submit" class="w-full py-3.5 px-4 rounded-2xl border-2 border-nordic-navy bg-nordic-yellow text-nordic-navy font-bold text-sm sm:text-base flex items-center justify-center gap-2 nordic-shadow-sm nordic-btn">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>親友快速登入</span>
           </button>
+          <p class="text-[11px] text-center text-nordic-navySoft dark:text-oat-light/65">
+            登入後會自動記住帳號，下次開啟不用重複輸入喔！
+          </p>
         </form>
+
+        <!-- 折疊區塊：管理者專用 Google 登入（點開才顯示，避免親友誤觸） -->
+        <div class="mt-6 pt-5 border-t-2 border-dashed border-nordic-navy/15 dark:border-nordic-darkBorder">
+          <button type="button" id="btn-toggle-admin-login" class="w-full flex items-center justify-center gap-1.5 text-xs font-bold text-nordic-navySoft dark:text-oat-light/70 hover:text-nordic-navy dark:hover:text-nordic-yellow transition-colors py-1">
+            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+            <span>管理者專用 Google 登入</span>
+            <i id="admin-login-chevron" data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform"></i>
+          </button>
+
+          <div id="admin-login-panel" class="hidden mt-3 space-y-2.5">
+            <button type="button" id="btn-google-login" class="w-full py-3 px-4 rounded-2xl border-2 border-nordic-navy dark:border-nordic-darkBorder bg-oat-light dark:bg-nordic-darkBg hover:bg-nordic-blue hover:text-nordic-navy font-bold text-sm flex items-center justify-center gap-2.5 transition-colors">
+              <svg class="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M21.35 11.1H12v2.98h5.35c-.23 1.48-1.69 4.35-5.35 4.35-3.22 0-5.85-2.67-5.85-5.93S8.78 6.57 12 6.57c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.68 4.02 14.55 3 12 3 7.03 3 3 7.03 3 12s4.03 9 9 9c5.19 0 8.63-3.65 8.63-8.79 0-.59-.06-1.04-.15-1.11z"/>
+              </svg>
+              <span>使用管理者 Google 帳號登入</span>
+            </button>
+            <p id="google-auth-hint" class="hidden text-xs font-semibold text-nordic-coral bg-oat-light dark:bg-nordic-darkBg p-2.5 rounded-xl border border-nordic-coral">
+              若無法彈出 Google 登入視窗，請確認瀏覽器未封鎖彈出視窗或改用 Chrome 開啟。
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -840,7 +849,7 @@
     // ==================== 1. Firebase 初始化 ====================
     // 部署至 GitHub Pages / Vercel 時，請將下方 firebaseConfig 替換為您的 Firebase 專案設定碼
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'happy-times-archive';
-    const firebaseConfig = {
+   const firebaseConfig = {
   apiKey: "AIzaSyCEPIQ7ziVpGgdUlYMk4982djktit9Kouk",
   authDomain: "happy-times-8c74e.firebaseapp.com",
   projectId: "happy-times-8c74e",
@@ -2441,10 +2450,59 @@
     });
 
     // ==================== 12. 登入與登出流程（含狀態持久化） ====================
+    function saveSimEmail(email) {
+      try {
+        localStorage.setItem(SIM_EMAIL_STORAGE_KEY, email);
+      } catch (e) {
+        console.warn('localStorage save skipped:', e);
+      }
+      try {
+        document.cookie = `${SIM_EMAIL_STORAGE_KEY}=${encodeURIComponent(email)}; max-age=31536000; path=/; SameSite=Lax`;
+      } catch (e) {
+        console.warn('cookie save skipped:', e);
+      }
+    }
+
+    function getSavedSimEmail() {
+      try {
+        const fromLs = localStorage.getItem(SIM_EMAIL_STORAGE_KEY);
+        if (fromLs) return fromLs;
+      } catch (e) {
+        console.warn('localStorage read skipped:', e);
+      }
+      try {
+        const match = document.cookie.match(new RegExp(`(?:^|; )${SIM_EMAIL_STORAGE_KEY}=([^;]*)`));
+        if (match && match[1]) return decodeURIComponent(match[1]);
+      } catch (e) {
+        console.warn('cookie read skipped:', e);
+      }
+      return null;
+    }
+
+    function clearSimEmail() {
+      try {
+        localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
+      } catch (e) {
+        console.warn('localStorage remove skipped:', e);
+      }
+      try {
+        document.cookie = `${SIM_EMAIL_STORAGE_KEY}=; max-age=0; path=/; SameSite=Lax`;
+      } catch (e) {
+        console.warn('cookie remove skipped:', e);
+      }
+    }
+
+    $('btn-toggle-admin-login').addEventListener('click', () => {
+      const panel = $('admin-login-panel');
+      const chevron = $('admin-login-chevron');
+      const isHidden = panel.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180', !isHidden);
+    });
+
     $('btn-google-login').addEventListener('click', async () => {
       if (!firebaseReady || !auth) {
         $('google-auth-hint').classList.remove('hidden');
-        showToast('目前為離線預覽模式，請使用下方測試用 Gmail 登入');
+        showToast('目前為離線預覽模式，請使用上方親友快速登入');
         return;
       }
       try {
@@ -2452,7 +2510,7 @@
         provider.setCustomParameters({ prompt: 'select_account' });
         const result = await signInWithPopup(auth, provider);
         if (result.user?.email) {
-          localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
+          clearSimEmail();
           state.currentEmail = result.user.email.toLowerCase();
           state.visitorPreviewMode = false;
           startRealtimeListeners();
@@ -2462,32 +2520,43 @@
       } catch (err) {
         console.warn('Google popup sign-in error:', err);
         $('google-auth-hint').classList.remove('hidden');
-        showToast('無法開啟 Google 登入視窗，可改用下方測試用 Gmail');
+        showToast('無法開啟 Google 登入視窗，請確認瀏覽器設定');
       }
     });
 
-    $('form-sim-login').addEventListener('submit', (e) => {
+    $('form-sim-login').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = $('input-sim-email').value.trim().toLowerCase();
       if (!email || !email.includes('@')) {
         showToast('請輸入有效的 Gmail 地址');
         return;
       }
-      localStorage.setItem(SIM_EMAIL_STORAGE_KEY, email);
+      saveSimEmail(email);
       state.currentEmail = email;
       state.visitorPreviewMode = false;
+
+      if (firebaseReady && auth && !auth.currentUser) {
+        try {
+          await signInAnonymously(auth);
+        } catch (err) {
+          console.warn('Anonymous sign-in on quick login skipped:', err);
+        }
+      }
+
       startRealtimeListeners();
       evaluateAccessAndRender();
-      showToast(`已以 ${email} 登入`);
+      showToast(`歡迎回來，已記住您的帳號 ${email}`);
     });
 
     async function handleLogout() {
-      localStorage.removeItem(SIM_EMAIL_STORAGE_KEY);
+      clearSimEmail();
       state.currentEmail = null;
       state.visitorPreviewMode = false;
       state.previewAsEmail = '';
       state.selectMode = false;
       state.selectedAlbumIds.clear();
+      $('admin-login-panel').classList.add('hidden');
+      $('admin-login-chevron').classList.remove('rotate-180');
       if (firebaseReady && auth) {
         try {
           await signOut(auth);
@@ -2507,7 +2576,7 @@
       lucide.createIcons();
 
       if (!firebaseReady || !auth) {
-        const savedSim = localStorage.getItem(SIM_EMAIL_STORAGE_KEY);
+        const savedSim = getSavedSimEmail();
         if (savedSim) state.currentEmail = savedSim;
         startRealtimeListeners();
         return;
@@ -2534,7 +2603,7 @@
 
         if (!initialResolved) {
           initialResolved = true;
-          const savedSim = localStorage.getItem(SIM_EMAIL_STORAGE_KEY);
+          const savedSim = getSavedSimEmail();
           if (savedSim) state.currentEmail = savedSim;
 
           if (!user) {
